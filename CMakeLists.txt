@@ -4,10 +4,8 @@ cmake_minimum_required(VERSION 2.8)
 
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
 
-include(FindPkgConfig)
-
 if(NOT WIN32)
-  PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
+  find_package(SDL2 REQUIRED)
 else(NOT WIN32 )
   find_package(SDL2 REQUIRED)
 endif(NOT WIN32 )
