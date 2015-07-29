@@ -15,6 +15,13 @@ message(STATUS "OpenGL lib: ${OPENGL_LIBRARIES}")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/shaders ${CMAKE_BINARY_DIR}/shaders)
+
+if(NOT EXISTS ${CMAKE_BINARY_DIR}/shaders)
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/shaders ${CMAKE_BINARY_DIR}/shaders)
+endif (NOT EXISTS ${CMAKE_BINARY_DIR}/shaders)
+
+
 add_subdirectory(gl3w)
 add_subdirectory(core)
 add_subdirectory(tests)

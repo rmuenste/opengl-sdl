@@ -15,14 +15,14 @@ void BasicShader::linkShader()
   {
     glGetProgramInfoLog(vertexShader_,sizeof(log), &length, log);
     std::cout << "Program linking failed." << std::endl;
-    exit(1);
+//    exit(1);
   }
 
   glGetProgramiv(program_, GL_VALIDATE_STATUS, &status);
   if (status==0)
   {
     std::cout << "Program validation failed." << std::endl;
-    exit(1);
+//    exit(1);
   }
 
 }
