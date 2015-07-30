@@ -67,6 +67,7 @@
 
 SET(SDL2_SEARCH_PATHS
 	~/Library/Frameworks
+  ~/lib
 	/Library/Frameworks
 	/usr/local
 	/usr
