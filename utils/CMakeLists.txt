@@ -1,17 +1,3 @@
-cmake_minimum_required(VERSION 2.8)
-CMAKE_POLICY(SET CMP0054 NEW)
-
-# name of the project
-PROJECT(Utility)
-
-# set module directory
-#SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_scripts/modules")
-
-# allow easier if-else syntax
-SET(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE)
-
-# output the system name
-MESSAGE(STATUS "Configuring utils for a ${CMAKE_SYSTEM} system")
 
 include_directories (. ${CMAKE_SOURCE_DIR}/../glm/glm)
 

@@ -1,6 +1,13 @@
+cmake_minimum_required(VERSION 2.8)
+CMAKE_POLICY(SET CMP0054 NEW)
+
 project(SDL_GL)
 
-cmake_minimum_required(VERSION 2.8)
+# allow easier if-else syntax
+SET(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE)
+
+# output the system name
+MESSAGE(STATUS "Configuring OpenGL-SDL for a ${CMAKE_SYSTEM} system")
 
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
 
@@ -22,6 +29,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/s
 endif (NOT EXISTS ${CMAKE_BINARY_DIR}/shaders)
 
 
+add_subdirectory(utils)
 add_subdirectory(gl3w)
 add_subdirectory(core)
 add_subdirectory(tests)
