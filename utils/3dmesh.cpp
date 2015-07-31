@@ -165,7 +165,7 @@ void Mesh3D::calcVertexNormals()
   using namespace std;
   //correctely size the vectors
   vector<int>* pFacesAtVertex = new vector<int>[vertices_.size()];
-  Normal3Array pNormals;
+  std::vector<Vec3> pNormals;
   pNormals.clear();
   vertexNormals_.clear();
   //calculate the face normals in a

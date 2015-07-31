@@ -141,14 +141,14 @@ namespace i3d {
        * 
        * Reads a single texture coordinate from the input stream
        */      
-      void readTexCoord(ifstream &in, char strLine[]);
+      void readTexCoord(Mesh3D &mesh, ifstream &in, char strLine[]);
 
       /**
        * @brief Reads the texture coordinates for a face from the stream
        * 
        * Reads the texture coordinates for a face from the stream
        */      
-      void readFaceTex(ifstream &in, char strLine[]);
+      void readFaceTex(Mesh3D &pMesh, ifstream &in, char strLine[]);
 
       /**
        * @brief Initiates reading of a sub mesh from the stream
@@ -166,6 +166,8 @@ namespace i3d {
       FaceArray faces_;
 
       bool uv_;
+
+      bool normals_;
 
       Model3D *model_;
 

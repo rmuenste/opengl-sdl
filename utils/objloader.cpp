@@ -86,6 +86,7 @@ namespace i3d {
       }
       else if(first == string("vn"))
       {
+        normals_=true;
         //readVertex(in,strLine);
         Vector3f vec;
         in >> vec.x;
@@ -98,7 +99,7 @@ namespace i3d {
       //case: TexCoord
       else if(first == string("vt"))
       {
-        readTexCoord(in, strLine);
+        readTexCoord(mesh, in, strLine);
         uv_ = true;
       }
       //case: Face
@@ -106,7 +107,7 @@ namespace i3d {
       {
         std::cout << "face: " << faces  << std::endl;
         std::cout << "line: " << line  << std::endl;
-        readFaceTex(in, strLine);
+        readFaceTex(mesh, in, strLine);
         in.getline(strLine, 256);
         printf("strLine: %s\n",strLine);
         faces++;
@@ -136,24 +137,8 @@ namespace i3d {
 
     cout <<"Number of vertices: "<<mesh.vertices_.size()<<endl;
     cout <<"Number of normals: "<<mesh.vertexNormals_.size()<<endl;
-    cout <<"Number of faces: "<<faces_.size()<<endl;
-
-    //assign number of vertices
-    mesh.vertices_.clear();
-    mesh.numVerts_=vertices_.size();
-    mesh.numFaces_=faces_.size();
-    mesh.numTexCoords_=texCoords_.size();
-    mesh.texCoords_.clear();
-
-    for(unsigned int i=0;i<texCoords_.size();i++)
-    {
-      mesh.texCoords_.push_back(texCoords_[i]);
-    }
-
-    for(unsigned int i=0;i<faces_.size();i++)
-    {
-      mesh.faces_.push_back(TriFace(faces_[i].VertexIndex));
-    }//end for
+    cout <<"Number of faces: "<<mesh.faces_.size()<<endl;
+    cout <<"Number of texVertex: "<<mesh.texCoords_.size()<<endl;
 
     model_->meshes_.push_back(mesh);
 
@@ -317,19 +302,18 @@ namespace i3d {
 
   }//end ReadFace
 
-  void ObjLoader::readTexCoord(ifstream &in, char strLine[])
+  void ObjLoader::readTexCoord(Mesh3D &mesh, ifstream &in, char strLine[])
   {
 
     VECTOR2 vec;
     in >> vec.x;
     in >> vec.y;
-    texCoords_.push_back(vec);
-    //cout<<m_pTexCoords.size()<<" "<<vec.x<<" "<<vec.y<<endl;
+    mesh.texCoords_.push_back(vec);
     in.getline(strLine,256);
 
   }//end ReadTexCoord
 
-  void ObjLoader::readFaceTex(ifstream &in, char strLine[])
+  void ObjLoader::readFaceTex(Mesh3D &mesh, ifstream &in, char strLine[])
   {
     tObjFace Face;
 
@@ -344,6 +328,8 @@ namespace i3d {
     {
 
       // Format for a face is vertexIndex/texture index vertexIndex/textureIndex vertexIndex/texture index 
+      // Format for a face is vI//tI vI//tI vI//tI 
+      // Format for a face is vI/tI/nI vI/tI/nI vI/tI/nI 
       in >> s;
       std::cout << "String: " << s  << std::endl;
       if(s.empty()) return;
@@ -367,7 +353,7 @@ namespace i3d {
 
     }
 
-    faces_.push_back(Face);
+    mesh.faces_.push_back(TriFace(Face.VertexIndex));
 
   }//end ReadFaceTex
 
@@ -385,13 +371,12 @@ namespace i3d {
 
   }//end GetVertices
 
-
   bool ObjLoader::hasUV(void) const
   {
     return uv_;
   }
 
-  const std::vector<VECTOR2>& ObjLoader::getTexCoords(void) const
+  const std::vector<Vec2>& ObjLoader::getTexCoords(void) const
   {
     return texCoords_;
   }//end GetTexCoords

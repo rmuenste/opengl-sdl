@@ -19,10 +19,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifdef WIN32
-#pragma once
-#endif
-
 #ifndef _3DMESH_H_
 #define _3DMESH_H_
 
@@ -45,14 +41,10 @@ namespace i3d {
 /**
 	Typedefs for the model data
 */
-typedef std::vector<VECTOR3> Vertex3Array;
-typedef std::vector<VECTOR2> TCoordArray;
-typedef std::vector<VECTOR3> Normal3Array;
-typedef std::vector<TriFace>  TriFaceArray;
 typedef std::vector<TriFace>::iterator FaceIter;
 typedef std::vector<TriFace>::const_iterator ConstFaceIter;
 
-typedef std::vector<VECTOR3>::iterator MeshVertexIter;
+typedef std::vector<Vec3>::iterator MeshVertexIter;
 
 
 /** \brief A Mesh3D is a class that holds actual mesh data like vertices and connectivity.
@@ -88,19 +80,19 @@ class Mesh3D
 
     /** \brief Returns the array of vertices.
      *
-     * \return Returns a Vertex3Array reference that stores the vertices of the array.
+     * \return Returns a std::vector<Vec3> reference that stores the vertices of the array.
      */
     // Returns a handle to the model's vertices
-    inline Vertex3Array& getVertices(void)
+    inline std::vector<Vec3>& getVertices(void)
     {
       return vertices_;
     }
 
     /** \brief Returns the array of vertices.
      *
-     * \return Returns a const Vertex3Array reference that stores the vertices of the array.
+     * \return Returns a const std::vector<Vec3> reference that stores the vertices of the array.
      */
-    inline const Vertex3Array& GetVertices(void) const
+    inline const std::vector<Vec3>& GetVertices(void) const
     {
       return vertices_;
     }
@@ -110,7 +102,7 @@ class Mesh3D
      * \return Returns a reference to the array of vertex normals.
      */
     // Returns a handle to the model's normals
-    inline Normal3Array& getNormals(void)
+    inline std::vector<Vec3>& getNormals(void)
     {
       return vertexNormals_;
     }
@@ -120,7 +112,7 @@ class Mesh3D
      * \return Returns a reference to the array of texture coordinates.
      */
     // Returns a handle to the model's texture coordinates
-    inline TCoordArray& getTexCoords(void)
+    inline std::vector<Vec2>& getTexCoords(void)
     {
       return texCoords_;
     }
@@ -130,7 +122,7 @@ class Mesh3D
      * \return Returns a reference to the array of triangles of the model.
      */
     // Returns the models faces
-    inline TriFaceArray& getFaces(void)
+    inline std::vector<TriFace>& getFaces(void)
     {
       return faces_;
     }
@@ -220,18 +212,18 @@ class Mesh3D
       std::cout<<box_.vertices_[0].x<<" "<<box_.vertices_[0].y<<" "<<box_.vertices_[0].z<<std::endl;
       std::cout<<box_.vertices_[1].x<<" "<<box_.vertices_[1].y<<" "<<box_.vertices_[1].z<<std::endl;
     }
-    VECTOR3 TransformModelWorldSingle(const VECTOR3 &vVec);
+    Vec3 TransformModelWorldSingle(const Vec3 &vVec);
 
     void TransformModelWorld();
 
-    VECTOR3 TransfromWorldModelSingle(const VECTOR3 &vVec);
+    Vec3 TransfromWorldModelSingle(const Vec3 &vVec);
 
-    void moveToPosition(const VECTOR3 &vPos)
+    void moveToPosition(const Vec3 &vPos)
     {
       com_ = vPos;
     }
 
-    void createFrom(std::vector<VECTOR3> &vVertices,  std::vector<TriFace> &vFaces);
+    void createFrom(std::vector<Vec3> &vVertices,  std::vector<TriFace> &vFaces);
 
     FaceIter begin();
     FaceIter end();
@@ -290,7 +282,7 @@ class Mesh3D
     /** \brief The center of mass of the model.
      *
      */
-    VECTOR3 com_;
+    Vec3 com_;
 
     /** \brief Rotation of the model.
      *
@@ -302,22 +294,22 @@ class Mesh3D
     /** \brief The array of vertices.
      *
      */
-    Vertex3Array          vertices_;
+    std::vector<Vec3>          vertices_;
 
     /** \brief The array of texture coordinates.
      *
      */
-    TCoordArray           texCoords_;
+    std::vector<Vec2>           texCoords_;
 
     /** \brief The array of vertex normals.
      *
      */
-    Vertex3Array vertexNormals_;
+    std::vector<Vec3> vertexNormals_;
 
     /** \brief The array of faces.
      *
      */
-    TriFaceArray          faces_;
+    std::vector<TriFace>          faces_;
 
     /** \brief The array of indices.
      *
@@ -351,11 +343,11 @@ class Mesh3D
 
     inline int getMaterialId() {return matId_;};
 
-    inline VECTOR3 getCOM() {return com_;};
+    inline Vec3 getCOM() {return com_;};
 
     inline MATRIX3X3 getTransform() {return transform_;};
 
-    inline Vertex3Array getVertexNormals() {return vertexNormals_;};
+    inline std::vector<Vec3> getVertexNormals() {return vertexNormals_;};
 
     inline unsigned int* getIndices() {return indices_;};
 
@@ -374,17 +366,17 @@ class Mesh3D
 
     inline void setMaterialId(int ID) {matId_=ID;};
 
-    inline void setCOM(VECTOR3 Origin) {com_=Origin;};
+    inline void setCOM(Vec3 Origin) {com_=Origin;};
 
     inline void setTransform(const MATRIX3X3 &transformation) {transform_=transformation;};
 
-    inline void detVertices(Vertex3Array Vertices) {vertices_=Vertices;};
+    inline void detVertices(std::vector<Vec3> Vertices) {vertices_=Vertices;};
 
-    inline void setTexCoords(TCoordArray TCoords) {texCoords_=TCoords;};
+    inline void setTexCoords(std::vector<Vec2> TCoords) {texCoords_=TCoords;};
 
-    inline void setVertexNormals(Vertex3Array VertexNormals) {vertexNormals_=VertexNormals;};
+    inline void setVertexNormals(std::vector<Vec3> VertexNormals) {vertexNormals_=VertexNormals;};
 
-    inline void setFaces(TriFaceArray Faces) {faces_=Faces;};
+    inline void setFaces(std::vector<TriFace> Faces) {faces_=Faces;};
 
     inline void setIndices(unsigned int* Indices) {indices_=Indices;};
 

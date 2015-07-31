@@ -125,7 +125,6 @@ namespace i3d {
        */
       std::vector<Triangle3r> GenTriangleVector();
 
-
       MeshIter begin();
       MeshIter end();
 
