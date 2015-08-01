@@ -355,7 +355,7 @@ template<class T> std::ostream& operator<<(std::ostream& out, const Vector3<T> &
 
 /* typedefs to create double and double vectors */
 typedef Vector3<double> Vector3d;
-typedef Vector3<double>  Vector3f;
+typedef Vector3<float>  Vector3f;
 typedef Vector3<Real> VECTOR3;
 typedef Vector3<Real> v3d;
 typedef Vector3<Real> Vec3;

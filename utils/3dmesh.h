@@ -331,6 +331,8 @@ class Mesh3D
      */
     void generateTriangleBoundingBoxes();
 
+    float *varray_;
+
 
 
     inline bool getValid() {return valid_;};

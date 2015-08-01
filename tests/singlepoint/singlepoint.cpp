@@ -42,7 +42,7 @@ public:
 
     float x = (float)rand()/(float)(RAND_MAX);
 
-    const GLfloat col[]={x, 0.f, 0.0f, 1.0f};
+    const GLfloat col[]={1.0f, 0.f, 0.0f, 1.0f};
 
     shader.bind();
 

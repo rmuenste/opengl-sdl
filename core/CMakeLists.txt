@@ -1,4 +1,4 @@
-include_directories(. ${CMAKE_SOURCE_DIR}/core ${CMAKE_SOURCE_DIR}/gl3w/include  ${SDL2_INCLUDE_DIR})
+include_directories(. ${CMAKE_SOURCE_DIR}/core ${CMAKE_SOURCE_DIR}/gl3w/include  ${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE_DIR})
 
 set(src_core 
 basicshader.cpp  
@@ -7,6 +7,10 @@ sdl_gl_application.cpp
 sdl_gl_application.hpp
 shaderloader.cpp
 shaderloader.hpp
+textureloader.cpp
+textureloader.hpp
+texture.hpp
+texture.cpp
 )
 
 add_library(core ${src_core})

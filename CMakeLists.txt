@@ -11,11 +11,8 @@ MESSAGE(STATUS "Configuring OpenGL-SDL for a ${CMAKE_SYSTEM} system")
 
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
 
-if(NOT WIN32)
-  find_package(SDL2 REQUIRED)
-else(NOT WIN32 )
-  find_package(SDL2 REQUIRED)
-endif(NOT WIN32 )
+find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
 
 find_package(OpenGL)
 message(STATUS "OpenGL lib: ${OPENGL_LIBRARIES}")

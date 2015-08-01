@@ -76,7 +76,7 @@ namespace i3d {
       else if(first == string("v"))
       {
         //readVertex(in,strLine);
-        Vector3f vec;
+        Vec3 vec;
         in >> vec.x;
         in >> vec.y;
         in >> vec.z;
@@ -326,31 +326,32 @@ namespace i3d {
 
     for(int i = 0; i < 3; i++)
     {
-
       // Format for a face is vertexIndex/texture index vertexIndex/textureIndex vertexIndex/texture index 
       // Format for a face is vI//tI vI//tI vI//tI 
       // Format for a face is vI/tI/nI vI/tI/nI vI/tI/nI 
-      in >> s;
-      std::cout << "String: " << s  << std::endl;
-      if(s.empty()) return;
-      // find separator 
-      basic_string<char>::size_type index = s.find("//");
+      if(uv_ && normals_)
+      {
+        in >> s;
+        std::cout << "String: " << s  << std::endl;
+        if(s.empty()) return;
+        // find separator 
+        basic_string<char>::size_type index = s.find("/");
 
-      // extract indices
-      vertIndex = s.substr(0,index);
-      texIndex = s.substr(index+2,s.size()-1);
+        // extract indices
+        vertIndex = s.substr(0,index);
+        texIndex = s.substr(index+1,index+2);
 
-      // convert indices from string to int
-      istringstream VertStream(vertIndex);
-      istringstream TexStream(texIndex);
+        // convert indices from string to int
+        istringstream VertStream(vertIndex);
+        istringstream TexStream(texIndex);
+        
+        VertStream >> vi;
+        TexStream  >> ti;
 
-      VertStream >> vi;
-      TexStream  >> ti;
-
-      //assign the values to the face structure
-      Face.VertexIndex[i] = vi-1;
-      Face.TexIndex[i]    = ti-1;		
-
+        //assign the values to the face structure
+        Face.VertexIndex[i] = vi-1;
+        Face.TexIndex[i]    = ti-1;		
+      }
     }
 
     mesh.faces_.push_back(TriFace(Face.VertexIndex));

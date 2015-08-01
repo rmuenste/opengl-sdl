@@ -20,6 +20,3 @@ aabb3.cpp
 add_definitions(-std=c++11 -g)
 add_library (Utility ${utilities_src})
 
-add_executable(test test.cpp)
-target_link_libraries(test Utility)
-
