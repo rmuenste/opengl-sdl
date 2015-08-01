@@ -140,6 +140,8 @@ namespace i3d {
     cout <<"Number of faces: "<<mesh.faces_.size()<<endl;
     cout <<"Number of texVertex: "<<mesh.texCoords_.size()<<endl;
 
+    mesh.reorderTextureCoordinates();
+
     model_->meshes_.push_back(mesh);
 
     //add a dummy material
@@ -308,6 +310,8 @@ namespace i3d {
     VECTOR2 vec;
     in >> vec.x;
     in >> vec.y;
+//    vec.x = 1.0f - vec.x;
+//    vec.y = 1.0f - vec.y;
     mesh.texCoords_.push_back(vec);
     in.getline(strLine,256);
 
@@ -354,7 +358,10 @@ namespace i3d {
       }
     }
 
-    mesh.faces_.push_back(TriFace(Face.VertexIndex));
+    mesh.faces_.push_back(TriFace(Face.VertexIndex, Face.TexIndex));
+//    std::cout << "Face.TexIndex:0:" << mesh.faces_.back().m_TexIndices[0] << std::endl;
+//    std::cout << "Face.TexIndex:1:" << mesh.faces_.back().m_TexIndices[1] << std::endl;
+//    std::cout << "Face.TexIndex:2:" << mesh.faces_.back().m_TexIndices[2] << std::endl;
 
   }//end ReadFaceTex
 

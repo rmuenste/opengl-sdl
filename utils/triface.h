@@ -43,6 +43,8 @@ namespace i3d {
 
       TriFace(int vertexIndex[3]);
 
+      TriFace(int vertexIndex[3], int texIndex[3]);
+
       ~TriFace(void);
 
       int operator[](int number) const
@@ -61,6 +63,7 @@ namespace i3d {
         for(int i=0;i<3;i++)
         {
           m_VertIndices[i]=f[i];
+          m_TexIndices[i]=f.m_TexIndices[i];
         }//end for
 
         return *this;
@@ -70,9 +73,12 @@ namespace i3d {
 
       void InitFace(int vertexIndex[3]);
 
+      void InitFace(int vertexIndex[3], int texIndex[3]);
+
+      int m_TexIndices[3];
+      int m_VertIndices[3];
     private:
 
-      int m_VertIndices[3];
 
 
   };

@@ -1,4 +1,3 @@
-
 /***************************************************************************
  *   Copyright (C) 2009 by Raphael Münster   *
  *   raphael@Cortez   *
@@ -35,6 +34,7 @@
 #include <aabb3.h>
 #include <string>
 #include <matrix3x3.h>
+
 
 namespace i3d {
 
@@ -207,6 +207,8 @@ class Mesh3D
      */
     inline const AABB3r& getBox() const {return box_;}
 
+    void reorderTextureCoordinates();
+
     inline void outBox()
     {
       std::cout<<box_.vertices_[0].x<<" "<<box_.vertices_[0].y<<" "<<box_.vertices_[0].z<<std::endl;
@@ -231,11 +233,10 @@ class Mesh3D
     ConstFaceIter begin() const;
     ConstFaceIter end() const;
 
-
     MeshVertexIter meshVertexBegin();
     MeshVertexIter meshVertexEnd();
 
-    void buildVertexArrays(void);
+    void buildIndexArrays(void);
 
     /** \brief Calculated vertex normals for the mesh from face normals.
      *
@@ -301,6 +302,10 @@ class Mesh3D
      */
     std::vector<Vec2>           texCoords_;
 
+    /** \brief The ordered array of texture coordinates.
+     *
+     */
+    std::vector<Vec2>           orderedTexCoords_;
     /** \brief The array of vertex normals.
      *
      */
@@ -315,6 +320,11 @@ class Mesh3D
      *
      */
     unsigned int*         indices_;
+
+    /** \brief The array of texture indices.
+     *
+     */
+    unsigned int*         texIndices_;
 
     /** \brief Bounding box of the model.
      *

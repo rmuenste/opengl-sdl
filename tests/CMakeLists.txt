@@ -1,2 +1,4 @@
 add_subdirectory(singlepoint)
 add_subdirectory(triangle)
+add_subdirectory(triangle_tex)
+add_subdirectory(indexed_triangle)

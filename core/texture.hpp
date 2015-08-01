@@ -17,9 +17,13 @@ public:
     glBindTexture(GL_TEXTURE_2D, id_);
   }
 
+  void makeCheckImage();
+
 private:
   /* data */
   GLuint id_;
+  GLubyte checkImage[64][64][4];
+  GLubyte* pixels_;
 };
 
 

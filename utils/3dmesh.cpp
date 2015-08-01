@@ -39,6 +39,8 @@ Mesh3D::Mesh3D(void)
   triangleAABBs_ = nullptr;
   indices_ = nullptr;
 
+  texIndices_ = nullptr;
+
 }//end constructor
 
 Mesh3D::Mesh3D(char *strName)
@@ -66,6 +68,11 @@ Mesh3D::~Mesh3D(void)
 
   indices_ = nullptr;
 
+  if(texIndices_)
+    delete[] texIndices_;
+
+  texIndices_ = nullptr;
+
   if (triangleAABBs_)
     delete[] triangleAABBs_;
 
@@ -87,6 +94,8 @@ Mesh3D::Mesh3D(const Mesh3D &pMesh)
   this->vertexNormals_=pMesh.vertexNormals_;
   this->vertices_  =pMesh.vertices_;
   this->box_      =pMesh.box_;
+  this->orderedTexCoords_   =pMesh.orderedTexCoords_;
+
 
   fileName_ = pMesh.fileName_;
 
@@ -280,18 +289,50 @@ void Mesh3D::TransformModelWorld()
 }
 
 
-void Mesh3D::buildVertexArrays(void)
+void Mesh3D::buildIndexArrays(void)
 {
+  if (indices_ != nullptr)
+  {
+    return; 
+  }
   //allocate memory for the index array
-  this->indices_ = new unsigned int[3*this->faces_.size()];
-  for(int i=0;i<numFaces_;i++)
+  indices_ = new unsigned int[3*this->faces_.size()];
+  texIndices_ = new unsigned int[3*this->faces_.size()];
+  for(int i=0; i < faces_.size(); i++)
   {
     for(int j=0;j<3;j++)
     {
-      indices_[i*3+j]=faces_[i][j];
+      indices_[i*3+j]=faces_[i].m_VertIndices[j];
+      texIndices_[i*3+j]=faces_[i].m_TexIndices[j];
+      std::cout << "face: " << i << "index: " << faces_[i].m_VertIndices[j] << std::endl;
+      std::cout << "texFace: " << i << "index: " << faces_[i].m_TexIndices[j] << std::endl;
     }//end for
   }//end for
-}//end BuildVertexArrays
+
+}//end buildIndexArrays
+
+void Mesh3D::reorderTextureCoordinates()
+{
+
+  orderedTexCoords_ = std::vector<Vec2>(texCoords_.size());
+  for (auto &f : faces_)
+  {
+    int i;
+    for (i = 0; i < 3; ++i)
+    {
+      int i_t = f.m_TexIndices[i]; 
+      int i_v = f.m_VertIndices[i];
+
+      orderedTexCoords_[i_v] = texCoords_[i_t]; 
+    } 
+  }
+
+  for (auto &i : orderedTexCoords_)
+  {
+    std::cout << "tex coord index: " << i  << std::endl; 
+  }
+
+}
 
 void Mesh3D::generateBoundingBox()
 {

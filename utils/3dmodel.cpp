@@ -115,7 +115,7 @@ namespace i3d {
     //loop oover all the meshes and build their subobjects
     for(unsigned int i = 0; i < meshes_.size();i++)
     {
-      meshes_[i].buildVertexArrays();
+      meshes_[i].buildIndexArrays();
     }//end for
 
   }//end BuildVertexArrays

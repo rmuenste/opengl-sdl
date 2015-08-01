@@ -25,6 +25,7 @@ if(NOT EXISTS ${CMAKE_BINARY_DIR}/shaders)
 execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/shaders ${CMAKE_BINARY_DIR}/shaders)
 endif (NOT EXISTS ${CMAKE_BINARY_DIR}/shaders)
 
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/meshes ${CMAKE_BINARY_DIR}/meshes)
 
 add_subdirectory(utils)
 add_subdirectory(gl3w)
