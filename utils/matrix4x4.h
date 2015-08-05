@@ -99,7 +99,7 @@ public:
 
 	T Determinate() const;
 	
-	inline T* Get() {return m_Entries;};
+	inline T* get() {return m_Entries;};
 
 
 	inline void SetIdentity()
@@ -165,6 +165,7 @@ public:
 
 typedef CMatrix4x4<float> CMatrix4x4f;
 typedef CMatrix4x4<double> CMatrix4x4d;
+typedef CMatrix4x4<Real> Mat4;
 
 }
 

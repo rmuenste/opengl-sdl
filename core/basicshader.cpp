@@ -1,6 +1,8 @@
 #include <basicshader.hpp>
 #include <shaderloader.hpp>
 #include <stdlib.h>
+#include <vector3.h>
+#include <matrix4x4.h>
 
 
 void BasicShader::linkShader()
@@ -122,5 +124,48 @@ void BasicShader::addGeometryShader(std::string fileName)
 void BasicShader::addTesselationShader(std::string fileName)
 {
 
+}
+
+void BasicShader::addUniform(std::string name)
+{
+
+  int uniformLoc = glGetUniformLocation(program_, name.c_str());
+
+  if (uniformLoc == -1)
+  {
+    std::cout << "Error: could not find uniform: " << name  << std::endl;
+    exit(1); 
+  }
+
+  uniforms_.insert({name, uniformLoc});
+
+}
+
+template <>
+void BasicShader::setUniform<int> (std::string name, int _uniform)
+{
+  int loc = (*(uniforms_.find(name))).second;
+  glUniform1i(loc, _uniform);
+}
+
+template <>
+void BasicShader::setUniform<float> (std::string name, float _uniform)
+{
+  int loc = (*(uniforms_.find(name))).second;
+  glUniform1f(loc, _uniform);
+}
+
+template <>
+void BasicShader::setUniform<i3d::Vec3> (std::string name, i3d::Vec3 _uniform)
+{
+  int loc = (*(uniforms_.find(name))).second;
+  glUniform3f(loc, _uniform.x, _uniform.y, _uniform.z);
+}
+
+template <>
+void BasicShader::setUniform<i3d::Mat4> (std::string name, i3d::Mat4 _uniform)
+{
+  int loc = (*(uniforms_.find(name))).second;
+  glUniformMatrix4fv(loc, 1, GL_FALSE, _uniform.get());
 }
 

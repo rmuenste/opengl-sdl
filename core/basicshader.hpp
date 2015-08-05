@@ -7,6 +7,7 @@
 #include <GL/gl3w.h>
 #include <GL/gl.h>
 #include <shaderloader.hpp>
+#include <unordered_map>
 
 //GLuint glCreateShader(GLenum type);
 //GLuint glCreateProgram();
@@ -34,11 +35,17 @@ public:
     }
 
   };
+
+  void addUniform(std::string name);
+
   void addVertexShader(std::string fileName);
   void addFragmentShader(std::string fileName);
   void addGeometryShader(std::string fileName);
   void addTesselationShader(std::string fileName);
   void linkShader();
+
+  template <typename T>
+  void setUniform(std::string name, T _uniform){};
 
   void bind()
   {
@@ -52,6 +59,8 @@ private:
   GLuint fragmentShader_;
   GLuint geometryShader_;
   GLuint tesselationShader_;
+  std::unordered_map<std::string, int> uniforms_;
 };
+
 
 #endif /* end of include guard: BASICSHADER_HPP_DFQJYGHL */
