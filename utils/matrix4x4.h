@@ -147,10 +147,14 @@ namespace i3d {
 
           for(int i = 0; i < 4; i++)
           {
-            for(int j = 0; j < 4; j++)
+            for(int j = 0; j <4; j++)
             {
-              tmp.m_Entries[i*4+j] = m_Entries[i*4+j] * rhs.m_Entries[j*4+i];
-            }//end for k
+              for(int k = 0; k < 4; k++)
+              {
+                tmp.m_Entries[i*4+j] += m_Entries[i*4+k] * rhs.m_Entries[k*4+j];
+
+              }//end for k
+            }//end for j
           }//end for i
 
           return tmp;
@@ -175,25 +179,25 @@ namespace i3d {
         template<typename Templateparm>
           friend std::ostream &operator << (std::ostream &out, const CMatrix4x4<Templateparm> &rhs);
 
-};//end class
+    };//end class
 
-template<typename T>
-  std::ostream &operator << (std::ostream &out, const CMatrix4x4<T> &rhs)
-  {
-    for(int i = 0; i < 4; i++)
+  template<typename T>
+    std::ostream &operator << (std::ostream &out, const CMatrix4x4<T> &rhs)
     {
-      for(int j = 0; j < 4; j++)
+      for(int i = 0; i < 4; i++)
       {
-        out<< rhs.m_Entries[i*4+j]<<" ";
+        for(int j = 0; j < 4; j++)
+        {
+          out<< rhs.m_Entries[i*4+j]<<" ";
+        }//end for
+        out<<std::endl;
       }//end for
-      out<<std::endl;
-    }//end for
-    return out;
-  }//end operator <<
+      return out;
+    }//end operator <<
 
-typedef CMatrix4x4<float> CMatrix4x4f;
-typedef CMatrix4x4<double> CMatrix4x4d;
-typedef CMatrix4x4<Real> Mat4;
+  typedef CMatrix4x4<float> CMatrix4x4f;
+  typedef CMatrix4x4<double> CMatrix4x4d;
+  typedef CMatrix4x4<Real> Mat4;
 
 }
 

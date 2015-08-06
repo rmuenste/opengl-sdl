@@ -8,6 +8,8 @@
 #include <3dmesh.h>
 #include <texture.hpp>
 #include <transform.hpp>
+#include <sys/time.h>
+#include <cmath>
 
 class TransformedTriangle : public SDL_GL_application
 {
@@ -16,6 +18,7 @@ public:
   {
     setTitle(std::string("Transformed Triangle Render"));
     frame=0;
+    time_=0;
   };
 
   virtual ~TransformedTriangle (){};
@@ -30,7 +33,7 @@ public:
     shader.linkShader();
     shader.addUniform(std::string("transform"));
     transform_.translation_ = i3d::Vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    transform_.setRotationEuler(i3d::Vec3(0.0,0.0,3.13));
+    transform_.setRotationEuler(i3d::Vec3(0.0,0.0,0.0));
 
     glEnable(GL_TEXTURE_2D);
 
@@ -96,9 +99,27 @@ public:
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iao);
     glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, 0);
+    
+    struct timeval start, end;
+
+    long mtime, seconds, useconds;    
+
+    gettimeofday(&start, NULL);
 
     SDL_GL_SwapWindow(window);
 
+    gettimeofday(&end, NULL);
+
+    seconds  = end.tv_sec  - start.tv_sec;
+    useconds = end.tv_usec - start.tv_usec;
+
+    mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+
+    printf("time: %f milliseconds\n", time_);
+
+    time_+=mtime;
+    transform_.setRotationEuler(i3d::Vec3(0.0,0.0,std::sin(frame*0.001)*3.14));
+    
     frame++;
 
   }
@@ -115,6 +136,7 @@ private:
   int size;
   int frame;
   Transform transform_;
+  float time_;
 };
 
 int main(int argc, char *argv[])

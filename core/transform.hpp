@@ -14,6 +14,7 @@ public:
 
   i3d::Vec4 translation_;
   i3d::Quat rotation_;
+  i3d::Vec3 scale_;
 
   inline i3d::Mat4 getMatrix()
   {
@@ -24,7 +25,14 @@ public:
     translationMatrix.m_23 = translation_.z; 
 
     i3d::Mat4 rotationMatrix = rotation_.getMatrix4();
-    return translationMatrix * rotationMatrix;
+
+    i3d::Mat4 scaleMatrix;
+    scaleMatrix.setIdentity();
+    scaleMatrix.m_00 = scale_.x;
+    scaleMatrix.m_11 = scale_.y;
+    scaleMatrix.m_22 = scale_.z;
+
+    return  translationMatrix * rotationMatrix * scaleMatrix;
   }
 
   inline void setRotationEuler(const i3d::Vec3 &eulerAngles)
