@@ -23,7 +23,7 @@ namespace i3d
   const double CMath<double>::EPSILON3(1.0e-4);
 
   template<>
-  const float CMath<float>::SYS_PI(3.14159265358979323846f);
+  const float CMath<float>::SYS_PI(3.14159265358979f);
 
   template<>
   const float CMath<float>::EPSILON7(1.0e-8f);

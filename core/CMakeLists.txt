@@ -11,6 +11,8 @@ textureloader.cpp
 textureloader.hpp
 texture.hpp
 texture.cpp
+transform.hpp
+transform.cpp
 )
 
 add_library(core ${src_core})

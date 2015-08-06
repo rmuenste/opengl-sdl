@@ -1,20 +1,20 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) <year>  <name of author>
+   <one line to give the program's name and a brief idea of what it does.>
+   Copyright (C) <year>  <name of author>
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License along
-    with this program; if not, write to the Free Software Foundation, Inc.,
-    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation, Inc.,
+   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 */
 
@@ -22,154 +22,141 @@
 
 namespace i3d {
 
-std::ostream &operator << (std::ostream &out, const CMatrix4x4f &rhs)
-{
-	for(int i = 0; i < 4; i++)
-	{
-		for(int j = 0; j < 4; j++)
-		{
-			out<< rhs.m_Entries[i*4+j]<<" ";
-		}//end for
-		out<<std::endl;
-	}//end for
-	return out;
-}//end operator <<
+  //===================================================
+  //			  construct via array
+  //===================================================
+  template <class T>
+    CMatrix4x4<T>::CMatrix4x4(T nEntries[])
+    {
+      memcpy(m_Entries, nEntries, 16 * sizeof(T));
+    }//End constructor
 
-//===================================================
-//			  construct via array
-//===================================================
-template <class T>
-CMatrix4x4<T>::CMatrix4x4(T nEntries[])
-{
-	memcpy(m_Entries, nEntries, 16 * sizeof(T));
-}//End constructor
+  //===================================================
+  //			Matrix vector product
+  //===================================================
 
-//===================================================
-//			Matrix vector product
-//===================================================
+  template <class T>
+    Vector4<T> CMatrix4x4<T>::operator *(const Vector4<T> &vVec) const
+    {
 
-template <class T>
-Vector4<T> CMatrix4x4<T>::operator *(const Vector4<T> &vVec) const
-{
+      Vector4<T> res(0,0,0,0);
 
-	Vector4<T> res(0,0,0,0);
-	
-	for(int i = 0; i < 4; i++)
-		for(int j = 0; j < 4; j++)
-			res.m_dCoords[i] += m_Entries[i*4+j] * vVec.m_dCoords[j];
+      for(int i = 0; i < 4; i++)
+        for(int j = 0; j < 4; j++)
+          res.m_dCoords[i] += m_Entries[i*4+j] * vVec.m_dCoords[j];
 
-	return res;
+      return res;
 
-}//end operator
+    }//end operator
 
-//===================================================
-//			     SubMatrix3x3
-//===================================================
-template<class T>
-Matrix3x3<T> CMatrix4x4<T>::GetSubMatrix3x3(int i, int j) const
-{
+  //===================================================
+  //			     SubMatrix3x3
+  //===================================================
+  template<class T>
+    Matrix3x3<T> CMatrix4x4<T>::GetSubMatrix3x3(int i, int j) const
+    {
 
-	T entries[9];
+      T entries[9];
 
-	int iTarget, jTarget;
+      int iTarget, jTarget;
 
-	for(int k = 0; k < 4; k++)
-	{
+      for(int k = 0; k < 4; k++)
+      {
 
-		if(k < i)
-		{
-			iTarget = k;
-		}
-		else if(k > i)
-		{
-			iTarget = k-1;
-		}
+        if(k < i)
+        {
+          iTarget = k;
+        }
+        else if(k > i)
+        {
+          iTarget = k-1;
+        }
 
-		for(int l = 0; l < 4; l++)
-		{
+        for(int l = 0; l < 4; l++)
+        {
 
-			if(l < j)
-			{
-				jTarget = l;
-			}
-			else if(l > j)
-			{
-				jTarget = l-1;
-			}
-			
-			if(k != i && l != j)
-			{
-				entries[iTarget*3 + jTarget] = m_Entries[k*4+l];
-			}
+          if(l < j)
+          {
+            jTarget = l;
+          }
+          else if(l > j)
+          {
+            jTarget = l-1;
+          }
 
-		}//end for l
+          if(k != i && l != j)
+          {
+            entries[iTarget*3 + jTarget] = m_Entries[k*4+l];
+          }
 
-	}//end for k
+        }//end for l
 
-	return Matrix3x3<T>(entries);
-}//end GetSubMatrix3x3
+      }//end for k
 
-//===================================================
-//  			Determinate		
-//===================================================
-template<class T>
-T CMatrix4x4<T>::Determinate() const
-{
-	
-	T det, res = 0;
-	T i = 1;
-	for(int n = 0; n < 4; n++, i*=-1)
-	{
-		Matrix3x3<T> mat = GetSubMatrix3x3(0,n);
+      return Matrix3x3<T>(entries);
+    }//end GetSubMatrix3x3
 
-		det = mat.Determinate();
+  //===================================================
+  //  			Determinate		
+  //===================================================
+  template<class T>
+    T CMatrix4x4<T>::Determinate() const
+    {
 
-		res+=m_Entries[n] * i * det;
+      T det, res = 0;
+      T i = 1;
+      for(int n = 0; n < 4; n++, i*=-1)
+      {
+        Matrix3x3<T> mat = GetSubMatrix3x3(0,n);
 
-	}//end for
+        det = mat.Determinate();
 
-	return res;
+        res+=m_Entries[n] * i * det;
 
-}//end Determinate
+      }//end for
 
-template<class T>
-bool CMatrix4x4<T>::GetInverseMatrix(CMatrix4x4 &matInverse) const
-{
+      return res;
 
-	T nDeterminate = Determinate();
+    }//end Determinate
 
-	int i, j, sign;
+  template<class T>
+    bool CMatrix4x4<T>::GetInverseMatrix(CMatrix4x4 &matInverse) const
+    {
 
-	if(fabs(nDeterminate) < 0.0005)
-	{
-		return false;
-	}
+      T nDeterminate = Determinate();
 
-	for(i = 0; i < 4; i++)
-	{
-		for(j = 0; j < 4; j++)
-		{
+      int i, j, sign;
 
-			sign = 1 - ((i+j)%2) * 2;
+      if(fabs(nDeterminate) < 0.0005)
+      {
+        return false;
+      }
 
-			Matrix3x3<T> matSub = GetSubMatrix3x3(i,j);
+      for(i = 0; i < 4; i++)
+      {
+        for(j = 0; j < 4; j++)
+        {
 
-			T det = matSub.Determinate();
+          sign = 1 - ((i+j)%2) * 2;
 
-			matInverse.m_Entries[i+j*4] = (det * sign)/nDeterminate;
+          Matrix3x3<T> matSub = GetSubMatrix3x3(i,j);
 
-		}//end for
-	}//end for
+          T det = matSub.Determinate();
 
-	return true;
-}//end GetInverseMatrix
+          matInverse.m_Entries[i+j*4] = (det * sign)/nDeterminate;
 
-//----------------------------------------------------------------------------
-// Explicit instantiation.
-//----------------------------------------------------------------------------
-template class CMatrix4x4<float>;
+        }//end for
+      }//end for
 
-template class CMatrix4x4<double>;
-//----------------------------------------------------------------------------
+      return true;
+    }//end GetInverseMatrix
+
+  //----------------------------------------------------------------------------
+  // Explicit instantiation.
+  //----------------------------------------------------------------------------
+  template class CMatrix4x4<float>;
+
+  template class CMatrix4x4<double>;
+  //----------------------------------------------------------------------------
 
 }

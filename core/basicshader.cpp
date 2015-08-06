@@ -166,6 +166,8 @@ template <>
 void BasicShader::setUniform<i3d::Mat4> (std::string name, i3d::Mat4 _uniform)
 {
   int loc = (*(uniforms_.find(name))).second;
-  glUniformMatrix4fv(loc, 1, GL_FALSE, _uniform.get());
+  glUniformMatrix4fv(loc, 1, GL_TRUE, _uniform.get());
+  //std::cout << _uniform << std::endl;
+
 }
 

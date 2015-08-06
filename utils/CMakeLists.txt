@@ -10,6 +10,12 @@ objloader.cpp
 triface.cpp
 matrix3x3.cpp
 aabb3.cpp
+quaternion.cpp
+quaternion.h
+mymath.cpp
+mymath.h
+matrix4x4.cpp
+matrix4x4.h
 )
 
 
