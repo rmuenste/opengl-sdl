@@ -26,7 +26,7 @@ namespace i3d {
   //			  construct via array
   //===================================================
   template <class T>
-    CMatrix4x4<T>::CMatrix4x4(T nEntries[])
+    Matrix4x4<T>::Matrix4x4(T nEntries[])
     {
       memcpy(m_Entries, nEntries, 16 * sizeof(T));
     }//End constructor
@@ -36,7 +36,7 @@ namespace i3d {
   //===================================================
 
   template <class T>
-    Vector4<T> CMatrix4x4<T>::operator *(const Vector4<T> &vVec) const
+    Vector4<T> Matrix4x4<T>::operator *(const Vector4<T> &vVec) const
     {
 
       Vector4<T> res(0,0,0,0);
@@ -53,7 +53,7 @@ namespace i3d {
   //			     SubMatrix3x3
   //===================================================
   template<class T>
-    Matrix3x3<T> CMatrix4x4<T>::GetSubMatrix3x3(int i, int j) const
+    Matrix3x3<T> Matrix4x4<T>::GetSubMatrix3x3(int i, int j) const
     {
 
       T entries[9];
@@ -100,7 +100,7 @@ namespace i3d {
   //  			Determinate		
   //===================================================
   template<class T>
-    T CMatrix4x4<T>::Determinate() const
+    T Matrix4x4<T>::Determinate() const
     {
 
       T det, res = 0;
@@ -120,7 +120,7 @@ namespace i3d {
     }//end Determinate
 
   template<class T>
-    bool CMatrix4x4<T>::GetInverseMatrix(CMatrix4x4 &matInverse) const
+    bool Matrix4x4<T>::GetInverseMatrix(Matrix4x4 &matInverse) const
     {
 
       T nDeterminate = Determinate();
@@ -154,9 +154,9 @@ namespace i3d {
   //----------------------------------------------------------------------------
   // Explicit instantiation.
   //----------------------------------------------------------------------------
-  template class CMatrix4x4<float>;
+  template class Matrix4x4<float>;
 
-  template class CMatrix4x4<double>;
+  template class Matrix4x4<double>;
   //----------------------------------------------------------------------------
 
 }

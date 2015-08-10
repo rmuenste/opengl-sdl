@@ -1,4 +1,5 @@
 #include <sdl_gl_application.hpp>
+#include <iostream>
 
 SDL_GL_application::SDL_GL_application() : quit(false), window(nullptr), window_width_(640), window_height_(480), title_("SDL2 Window")
 {
@@ -59,12 +60,7 @@ void SDL_GL_application::run()
   while(!quit)
   {
     while(SDL_PollEvent(&event)) {
-      
-      if (event.type == SDL_QUIT)
-      {
-        quit = true; 
-      }
-
+      handleEvent(event);      
     }
     render();
   }
@@ -82,4 +78,46 @@ SDL_GL_application::~SDL_GL_application()
     SDL_DestroyWindow(window);
   }
 }
+
+void SDL_GL_application::handleEvent(SDL_Event &event)
+{
+  if (event.type == SDL_QUIT)
+  {
+    quit = true; 
+  }
+  else if(event.type == SDL_WINDOWEVENT)
+  {
+    switch(event.window.event)
+    {
+      case SDL_WINDOWEVENT_RESIZED:
+        handleResizeEvent(event);
+        break;
+    }
+  }
+  else if(event.type == SDL_KEYDOWN)
+  {
+    handleKeyPressEvent(event);
+  }
+}
+
+void SDL_GL_application::handleResizeEvent(SDL_Event &event)
+{
+  setWindowWidth(event.window.data1);
+  setWindowHeight(event.window.data2);
+}
+
+void SDL_GL_application::handleKeyPressEvent(SDL_Event &event)
+{
+switch(event.key.keysym.sym) {
+
+  case SDLK_RIGHT:
+    std::cout << "right arrow pressed" << std::endl;
+    break;
+  case SDLK_LEFT:
+    std::cout << "left arrow pressed" << std::endl;
+    break;
+  }
+
+}
+
 

@@ -13,6 +13,10 @@ texture.hpp
 texture.cpp
 transform.hpp
 transform.cpp
+perspectivetransform.hpp
+perspectivetransform.cpp
+camera.hpp
+camera.cpp
 )
 
 add_library(core ${src_core})

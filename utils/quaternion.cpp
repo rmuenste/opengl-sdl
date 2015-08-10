@@ -92,7 +92,7 @@ Matrix3x3< T > Quaternion<T>::GetMatrix() const
   
   
 template <class T>
-void Quaternion<T>::CreateMatrix(CMatrix4x4<T> &pMatrix)
+void Quaternion<T>::CreateMatrix(Matrix4x4<T> &pMatrix)
 {
 
 	T xx = x * x;
@@ -128,7 +128,7 @@ void Quaternion<T>::CreateMatrix(CMatrix4x4<T> &pMatrix)
 }//end CreateMatrix
 
 template <class T>
-void Quaternion<T>::CreateMatrix(CMatrix4x4<T> &pMatrix) const
+void Quaternion<T>::CreateMatrix(Matrix4x4<T> &pMatrix) const
 {
 
 	T xx = x * x;

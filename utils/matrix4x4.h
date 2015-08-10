@@ -49,7 +49,7 @@ namespace i3d {
    * A 4x4 matrix
    */    
   template <class T>
-    class CMatrix4x4
+    class Matrix4x4
     {
 
       public:
@@ -70,15 +70,15 @@ namespace i3d {
           };
         };
 
-        CMatrix4x4(T nEntries[]);
+        Matrix4x4(T nEntries[]);
 
 
-        CMatrix4x4()
+        Matrix4x4()
         {
           setZero();
         };
 
-        CMatrix4x4(T n00, T n01, T n02, T n03,
+        Matrix4x4(T n00, T n01, T n02, T n03,
             T n10, T n11, T n12, T n13,
             T n20, T n21, T n22, T n23,
             T n30, T n31, T n32, T n33)
@@ -91,7 +91,7 @@ namespace i3d {
 
         }//end constructor
 
-        bool GetInverseMatrix(CMatrix4x4 &matInverse) const;
+        bool GetInverseMatrix(Matrix4x4 &matInverse) const;
 
         //===================================================
         //  			Determinate		
@@ -120,7 +120,7 @@ namespace i3d {
         //  			Assignment operator		
         //===================================================
 
-        inline const CMatrix4x4& operator=(const CMatrix4x4 &rhs)
+        inline const Matrix4x4& operator=(const Matrix4x4 &rhs)
         {
           memcpy(m_Entries, rhs.m_Entries, 16*sizeof(T));
           return *this;
@@ -129,10 +129,10 @@ namespace i3d {
 
         Vector4<T> operator * (const Vector4<T> &vVec) const;
 
-        inline CMatrix4x4 GetTransposedMatrix()
+        inline Matrix4x4 GetTransposedMatrix()
         {
 
-          CMatrix4x4 mat(m_00, m_10, m_20, m_30,
+          Matrix4x4 mat(m_00, m_10, m_20, m_30,
               m_01, m_11, m_21, m_31,
               m_02, m_12, m_22, m_32,
               m_03, m_13, m_23, m_33);
@@ -141,9 +141,9 @@ namespace i3d {
 
         }//end GetTransposedMatrix
 
-        CMatrix4x4<T> operator *(const CMatrix4x4<T> &rhs) const
+        Matrix4x4<T> operator *(const Matrix4x4<T> &rhs) const
         {
-          CMatrix4x4<T> tmp;
+          Matrix4x4<T> tmp;
 
           for(int i = 0; i < 4; i++)
           {
@@ -162,7 +162,7 @@ namespace i3d {
 
         inline void TransposeMatrix()
         {
-          CMatrix4x4 mat(m_00, m_10, m_20, m_30,
+          Matrix4x4 mat(m_00, m_10, m_20, m_30,
               m_01, m_11, m_21, m_31,
               m_02, m_12, m_22, m_32,
               m_03, m_13, m_23, m_33);
@@ -177,12 +177,12 @@ namespace i3d {
         //  			output operator		
         //===================================================
         template<typename Templateparm>
-          friend std::ostream &operator << (std::ostream &out, const CMatrix4x4<Templateparm> &rhs);
+          friend std::ostream &operator << (std::ostream &out, const Matrix4x4<Templateparm> &rhs);
 
     };//end class
 
   template<typename T>
-    std::ostream &operator << (std::ostream &out, const CMatrix4x4<T> &rhs)
+    std::ostream &operator << (std::ostream &out, const Matrix4x4<T> &rhs)
     {
       for(int i = 0; i < 4; i++)
       {
@@ -195,9 +195,9 @@ namespace i3d {
       return out;
     }//end operator <<
 
-  typedef CMatrix4x4<float> CMatrix4x4f;
-  typedef CMatrix4x4<double> CMatrix4x4d;
-  typedef CMatrix4x4<Real> Mat4;
+  typedef Matrix4x4<float> Matrix4x4f;
+  typedef Matrix4x4<double> Matrix4x4d;
+  typedef Matrix4x4<Real> Mat4;
 
 }
 

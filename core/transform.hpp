@@ -34,7 +34,7 @@ public:
 
     return  translationMatrix * rotationMatrix * scaleMatrix;
   }
-
+  
   inline void setRotationEuler(const i3d::Vec3 &eulerAngles)
   {
     rotation_.createFromEulerAngles(eulerAngles.y, eulerAngles.z, eulerAngles.x);

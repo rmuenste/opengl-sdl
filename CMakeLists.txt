@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 CMAKE_POLICY(SET CMP0054 NEW)
 
 project(SDL_GL)
+set( CMAKE_EXPORT_COMPILE_COMMANDS 1 )    
 
 # allow easier if-else syntax
 SET(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE)

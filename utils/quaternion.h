@@ -29,7 +29,7 @@
 //           		INCLUDES
 //===================================================
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include "matrix4x4.h"
 #include "vector3.h"
 
@@ -90,16 +90,16 @@ namespace i3d {
           return sqrt(norm2());
         }//end  Mag
 
-        inline void Normalize()
+        inline void normalize()
         {
           double InvMag = 1.0/Mag();
           x*= (T)InvMag;
           y*= (T)InvMag;
           z*= (T)InvMag;
           w*= (T)InvMag;
-        }//end Normalize
+        }//end normalize
 
-        inline const Quaternion& GetNormalized()
+        inline const Quaternion& getNormalized()
         {
           double InvMag = 1.0/Mag();
           x*= (T)InvMag;
@@ -107,7 +107,7 @@ namespace i3d {
           z*= (T)InvMag;
           w*= (T)InvMag;
           return *this;
-        }//end GetNormalized
+        }//end getNormalized
 
         inline Quaternion operator *(T s) const
         {
@@ -128,7 +128,7 @@ namespace i3d {
 
           Quaternion result(q_vec.x, q_vec.y, q_vec.z, nS);
 
-          result.Normalize();
+          result.normalize();
 
           return result;
 
@@ -176,14 +176,14 @@ namespace i3d {
          *
          * @param pMatrix the rotation matrix
          */
-        void CreateMatrix(CMatrix4x4<T> &pMatrix);
+        void CreateMatrix(Matrix4x4<T> &pMatrix);
 
         /**
          * Converts the quaternion to a rotation matrix
          *
          * @param pMatrix the rotation matrix
          */  
-        void CreateMatrix(CMatrix4x4<T> &pMatrix) const;
+        void CreateMatrix(Matrix4x4<T> &pMatrix) const;
 
         /**
          * Returns a rotation matrix correspoinding to the quaternion
@@ -197,10 +197,10 @@ namespace i3d {
          * 
          * @Return Returns a 4x4 rotation matrix
          */  
-        inline CMatrix4x4<T> getMatrix4() const
+        inline Matrix4x4<T> getMatrix4() const
         {
 
-          CMatrix4x4<T> mat;
+          Matrix4x4<T> mat;
 
           T xx = x * x;
           T xy = x * y;
@@ -263,6 +263,33 @@ namespace i3d {
          */    
         void AxisAngleToQuat(Vector3<T> vAxis, T W);
 
+        /**
+         * Rotates a vector around an axis 
+         *
+         * @param v the vector to be rotated 
+         * @param axis the rotation axis
+         * @param alpha the rotation around the axis
+         */    
+        inline static Vector3<T> rotate(const Vector3<T> &v, const Vector3<T> &axis, T alpha)
+        {
+          T sineHalfAngle = std::sin(alpha/T(2)); 
+          T cosHalfAngle  = std::cos(alpha/T(2)); 
+
+          Quaternion q(axis.x * sineHalfAngle,
+                       axis.y * sineHalfAngle,
+                       axis.z * sineHalfAngle, cosHalfAngle);
+
+          q.normalize();
+
+          Quaternion<T> _q = -q;
+
+          Quaternion<T> w = (q * v) * _q;
+
+          // Return rotated vector
+          return Vector3<T> (w.x,w.y,w.z);
+        }//end  operator
+
+
         union
         {
           T m_Data[4];
@@ -278,6 +305,25 @@ namespace i3d {
 
     };//end class Quaternion
 
+  template <typename T>
+    inline Quaternion<T> operator *(const Quaternion<T> &q, const Vector3<T> &v) 
+    {
+
+      T w = -(q.x * v.x) - (q.y * v.y) - (q.z * v.z);
+
+      T x =  (q.w * v.x) + (q.y * v.z) - (q.z * v.y);
+
+      T y =  (q.w * v.y) + (q.z * v.x) - (q.x * v.z);
+
+      T z =  (q.w * v.z) + (q.x * v.y) - (q.y * v.x);
+
+      Quaternion<T> result(x, y, z, w);
+
+      return result;
+
+    }//end operator *
+
+
   template<class T> Quaternion<T> operator*(T a,const Quaternion<T> &vRHS);
 
 
@@ -291,6 +337,7 @@ namespace i3d {
   {
     return out << "["<<v1.w<<","<<v1.x<<","<<v1.y<<","<<v1.z<<"]"<<std::endl;
   }
+
 
   typedef Quaternion<float> Quaternionf;
   typedef Quaternion<double> Quaterniond;

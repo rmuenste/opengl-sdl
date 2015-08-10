@@ -4,6 +4,7 @@
 #include <GL/gl3w.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
+#include <SDL_events.h>
 #include <stdio.h>
 #include <string>
 
@@ -58,6 +59,12 @@ public:
   {
     title_ = title;
   }
+
+  void handleEvent(SDL_Event &event);
+  
+  virtual void handleResizeEvent(SDL_Event &event);
+
+  virtual void handleKeyPressEvent(SDL_Event &event);
 
 private:
   /* data */

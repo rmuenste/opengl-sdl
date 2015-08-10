@@ -123,7 +123,6 @@ void BasicShader::addGeometryShader(std::string fileName)
 
 void BasicShader::addTesselationShader(std::string fileName)
 {
-
 }
 
 void BasicShader::addUniform(std::string name)
