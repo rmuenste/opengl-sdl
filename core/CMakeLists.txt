@@ -17,12 +17,14 @@ perspectivetransform.hpp
 perspectivetransform.cpp
 camera.hpp
 camera.cpp
+mesh.cpp
+mesh.hpp
 )
 
 add_library(core ${src_core})
 
 #if(NOT WIN32)
-#  target_link_libraries(core gl3w ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES})
+target_link_libraries(core Utility)
 #else(NOT WIN32)  
 #  target_link_libraries(core gl3w ${OPENGL_LIBRARIES} ${SDL2_LIBRARY})
 #endif(NOT WIN32)

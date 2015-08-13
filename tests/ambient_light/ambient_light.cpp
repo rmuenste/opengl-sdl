@@ -1,5 +1,5 @@
 #include <sdl_gl_application.hpp>
-#include<GL/gl.h>
+#include <GL/gl.h>
 #include <basicshader.hpp>
 #include <shaderloader.hpp>
 #include <stdlib.h>
@@ -12,6 +12,7 @@
 #include <perspectivetransform.hpp>
 #include <cmath>
 #include <camera.hpp>
+#include <mesh.hpp>
 
 namespace i3d {
 
@@ -34,62 +35,22 @@ namespace i3d {
         perspective_.setPerspectiveTransform(70.0, getWindowWidth(), getWindowHeight(), 0.0, 100.0);
         camera_.initCamera(Vec3(0,0,-3.0), Vec3(1,0,0), Vec3(0,1,0), Vec3(0,0,1));
 
-        shader.initShader();
-        shader.addVertexShader("../../shaders/transform.vert");
-        shader.addFragmentShader("../../shaders/transform.frag");
-        shader.linkShader();
-        shader.addUniform(std::string("transform"));
-        shader.addUniform(std::string("perspective"));
-        shader.addUniform(std::string("camera"));
-        shader.addUniform(std::string("cameraRotation"));
-
-        transform_.translation_ = i3d::Vec4(0.0f, 0.0f, 0.0f, 1.0f);
-        transform_.setRotationEuler(i3d::Vec3(0.0,0.0,0.0));
-
         glEnable(GL_TEXTURE_2D);
 
-        earth.createTextureFromImage(std::string("../../textures/australia.png"));
-        //earth.makeCheckImage();
+        triangle_.loadMesh("../../meshes/earth_tri2.obj"); 
+        triangle_.shader_.initShader();
+        triangle_.setVertexShader("../../shaders/transform.vert");
+        triangle_.setFragmentShader("../../shaders/transform.frag");
+        triangle_.shader_.linkShader();
+        triangle_.shader_.addUniform(std::string("transform"));
+        triangle_.shader_.addUniform(std::string("perspective"));
+        triangle_.shader_.addUniform(std::string("camera"));
+        triangle_.shader_.addUniform(std::string("cameraRotation"));
 
-        i3d::ObjLoader loader;
-        i3d::Model3D model;
-        loader.readModelFromFile(&model, "../../meshes/earth_tri2.obj");
-        model.BuildVertexArrays();
-
-        for(auto v : model.meshes_.front().vertices_)
-        {
-          std::cout << v << std::endl;
-        }
-
-        for(auto t : model.meshes_.front().texCoords_)
-        {
-          std::cout << t << std::endl;
-        }
-
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
-
-        glGenBuffers(3, &buffers[0]);
-        glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-        glBufferData(GL_ARRAY_BUFFER, model.meshes_[0].vertices_.size() * 3 * sizeof(float),
-            model.meshes_.front().vertices_.data() , GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-        glEnableVertexAttribArray(0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-        glBufferData(GL_ARRAY_BUFFER, model.meshes_.front().orderedTexCoords_.size() * 2 * sizeof(float),
-            model.meshes_.front().orderedTexCoords_.data() , GL_STATIC_DRAW);
-
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-        glEnableVertexAttribArray(1);
-
-        size = 3 * model.meshes_.front().faces_.size(); 
-
-        glGenBuffers(1, &iao);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iao);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, model.meshes_.front().faces_.size() * 3 * sizeof(int),
-            model.meshes_.front().indices_, GL_STATIC_DRAW); 
+        triangle_.transform_.translation_ = i3d::Vec4(0,0,0,1);
+        triangle_.transform_.setRotationEuler(i3d::Vec3(0.0,0.0,0.0));
+        
+        triangle_.initRender();
 
       }
 
@@ -103,16 +64,9 @@ namespace i3d {
 
         const GLfloat col[]={x, 0.f, 0.0f, 1.0f};
 
-        shader.bind();
-        shader.setUniform(std::string("transform"), transform_.getMatrix());
-        shader.setUniform(std::string("perspective"), perspective_.getPerspectiveTransform());
-        shader.setUniform(std::string("camera"), camera_.getCameraTranslationTransform());
-        shader.setUniform(std::string("cameraRotation"), camera_.getCameraCoordinateTransform());
-
-        earth.bind();
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iao);
-        glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, 0);
+        triangle_.render(perspective_.getPerspectiveTransform(), 
+                     camera_.getCameraTranslationTransform(),
+                     camera_.getCameraCoordinateTransform());
 
         struct timeval start, end;
 
@@ -192,6 +146,7 @@ namespace i3d {
       float time_;
       PerspectiveTransform perspective_;
       Camera camera_;
+      Mesh triangle_;
   };
 }
 int main(int argc, char *argv[])
