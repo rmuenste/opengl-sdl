@@ -38,6 +38,7 @@ namespace i3d {
         glEnable(GL_TEXTURE_2D);
 
         triangle_.loadMesh("../../meshes/earth_tri2.obj"); 
+        triangle_.loadTexture("../../textures/australia.png");
         triangle_.shader_.initShader();
         triangle_.setVertexShader("../../shaders/transform.vert");
         triangle_.setFragmentShader("../../shaders/transform.frag");
