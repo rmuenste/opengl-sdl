@@ -48,7 +48,7 @@ namespace i3d {
 
   }
 
-  void Model3D::GenerateBoundingBox()
+  void Model3D::generateBoundingBox()
   {
     int iVertsTotal = 0;
     for(unsigned int i = 0; i < meshes_.size();i++)
@@ -71,7 +71,7 @@ namespace i3d {
 
   }
 
-  void Model3D::AddMaterial(tMaterialInfo& pMatInfo)
+  void Model3D::addMaterial(tMaterialInfo& pMatInfo)
   {
 
     //add the new material
@@ -81,7 +81,7 @@ namespace i3d {
   }//end AddMaterial
 
   // Outputs the most important data of the model in a structered way
-  void Model3D::OutputModelInfo(void)
+  void Model3D::outputModelInfo(void)
   {
     int iVertsTotal = 0;
     for(unsigned int i = 0; i < meshes_.size();i++)
@@ -108,8 +108,22 @@ namespace i3d {
     }//end for
   }//end OutputModelInfo
 
+  void Model3D::prepareIndexing()
+  {
+    //loop oover all the meshes and build their subobjects
+    for(unsigned int i = 0; i < meshes_.size();i++)
+    {
+      if(meshes_[i].isTextured())
+        meshes_[i].prepareIndexArrays();
 
-  void Model3D::BuildVertexArrays(void)
+      meshes_[i].buildIndexArrays();
+      meshes_[i].calcVertexNormals();
+    }//end for
+
+  }
+
+
+  void Model3D::buildVertexArrays(void)
   {
 
     //loop oover all the meshes and build their subobjects
@@ -121,7 +135,7 @@ namespace i3d {
   }//end BuildVertexArrays
 
 
-  void Model3D::CreateFrom(std::vector<VECTOR3 > &vVertices, std::vector<TriFace> &vFaces)
+  void Model3D::createFrom(std::vector<VECTOR3 > &vVertices, std::vector<TriFace> &vFaces)
   {
 
     this->numMaterials_=0;
@@ -168,7 +182,7 @@ namespace i3d {
     return meshes_.end();
   }
 
-  std::vector<Triangle3r> Model3D::GenTriangleVector()
+  std::vector<Triangle3r> Model3D::genTriangleVector()
   {
     std::vector<Triangle3r> vTriangles;
     MeshIter mIter = begin();

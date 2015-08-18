@@ -39,7 +39,7 @@ public:
     i3d::ObjLoader loader;
     i3d::Model3D model;
     loader.readModelFromFile(&model, "../../meshes/earth_tri2.obj");
-    model.BuildVertexArrays();
+    model.buildVertexArrays();
 
     for(auto v : model.meshes_.front().vertices_)
     {

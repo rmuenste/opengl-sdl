@@ -30,6 +30,7 @@ namespace i3d {
   {
 
     uv_ = false;	
+    normals_ = false;
 
   }//end constructor
 
@@ -59,7 +60,6 @@ namespace i3d {
     while(!in.eof())
     {    
       in>>first;
-      std::cout << "found " << first << std::endl;
       if(first == string("#"))
       {
         in.getline(strLine,256);
@@ -101,15 +101,16 @@ namespace i3d {
       {
         readTexCoord(mesh, in, strLine);
         uv_ = true;
+        mesh.setIsTextured(true);
       }
       //case: Face
       else if(first == string("f"))
       {
-        std::cout << "face: " << faces  << std::endl;
-        std::cout << "line: " << line  << std::endl;
+//        std::cout << "face: " << faces  << std::endl;
+//        std::cout << "line: " << line  << std::endl;
         readFaceTex(mesh, in, strLine);
         in.getline(strLine, 256);
-        printf("strLine: %s\n",strLine);
+//        printf("strLine: %s\n",strLine);
         faces++;
         line++;
       }
@@ -140,7 +141,6 @@ namespace i3d {
     cout <<"Number of faces: "<<mesh.faces_.size()<<endl;
     cout <<"Number of texVertex: "<<mesh.texCoords_.size()<<endl;
 
-    mesh.reorderTextureCoordinates();
 
     model_->meshes_.push_back(mesh);
 
@@ -149,7 +149,7 @@ namespace i3d {
     char f[255]="COWLOFTH.bmp";
     strcpy(info.strFile,f);
     info.texureId = 0;
-    pModel->AddMaterial(info);
+    pModel->addMaterial(info);
     pModel->meshes_[0].setMaterialId(0);
 
   }//end ReadModelFromFile
@@ -344,6 +344,29 @@ namespace i3d {
         // extract indices
         vertIndex = s.substr(0,index);
         texIndex = s.substr(index+1,index+2);
+
+        // convert indices from string to int
+        istringstream VertStream(vertIndex);
+        istringstream TexStream(texIndex);
+        
+        VertStream >> vi;
+        TexStream  >> ti;
+
+        //assign the values to the face structure
+        Face.VertexIndex[i] = vi-1;
+        Face.TexIndex[i]    = ti-1;		
+      }
+      else if(normals_)
+      {
+        in >> s;
+        //std::cout << "String: " << s  << std::endl;
+        if(s.empty()) return;
+        // find separator 
+        basic_string<char>::size_type index = s.find("/");
+
+        // extract indices
+        vertIndex = s.substr(0,index);
+        texIndex = s.substr(index+2,index+3);
 
         // convert indices from string to int
         istringstream VertStream(vertIndex);

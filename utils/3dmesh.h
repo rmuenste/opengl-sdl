@@ -207,7 +207,7 @@ class Mesh3D
      */
     inline const AABB3r& getBox() const {return box_;}
 
-    void reorderTextureCoordinates();
+    void prepareIndexArrays();
 
     inline void outBox()
     {
@@ -235,6 +235,10 @@ class Mesh3D
 
     MeshVertexIter meshVertexBegin();
     MeshVertexIter meshVertexEnd();
+
+    void buildIndexArraysUV(void);
+
+    void buildIndexArraysN(void);
 
     void buildIndexArrays(void);
 

@@ -9,8 +9,8 @@ namespace i3d {
 
     ObjLoader loader;
     loader.readModelFromFile(&model_, fileName.c_str());
-    model_.BuildVertexArrays();
-    
+    model_.prepareIndexing();
+
   }
 
   void Mesh::loadTexture(std::string fileName)
@@ -20,12 +20,12 @@ namespace i3d {
 
   void Mesh::setFragmentShader(std::string fileName)
   {
-    shader_.addFragmentShader(fileName);
+    shader_->addFragmentShader(fileName);
   } 
 
   void Mesh::setVertexShader(std::string fileName)
   {
-    shader_.addVertexShader(fileName);
+    shader_->addVertexShader(fileName);
   } 
 
   void Mesh::initRender()
@@ -41,30 +41,42 @@ namespace i3d {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
     glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-    glBufferData(GL_ARRAY_BUFFER, model_.meshes_.front().orderedTexCoords_.size() * 2 * sizeof(float),
-        model_.meshes_.front().orderedTexCoords_.data() , GL_STATIC_DRAW);
+    if(model_.meshes_.front().getIsTextured())
+    {
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-    glEnableVertexAttribArray(1);
+      glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
+      glBufferData(GL_ARRAY_BUFFER, model_.meshes_.front().orderedTexCoords_.size() * 2 * sizeof(float),
+          model_.meshes_.front().orderedTexCoords_.data() , GL_STATIC_DRAW);
+
+      glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+      glEnableVertexAttribArray(1);
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
+    glBufferData(GL_ARRAY_BUFFER, model_.meshes_[0].vertexNormals_.size() * 3 * sizeof(float),
+        model_.meshes_.front().vertexNormals_.data(), GL_STATIC_DRAW);
+    
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glEnableVertexAttribArray(2);
 
     drawVertices_ = 3 * model_.meshes_.front().faces_.size(); 
 
     glGenBuffers(1, &iao);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iao);
+
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, model_.meshes_.front().faces_.size() * 3 * sizeof(int),
         model_.meshes_.front().indices_, GL_STATIC_DRAW); 
 
   }
 
-  void Mesh::render(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord)
+  void Mesh::render(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord, const Vec3 &cameraPos)
   {
-    shader_.bind();
+    shader_->bind();
 
-    shader_.setUniform(std::string("transform"), transform_.getMatrix());
-    shader_.setUniform(std::string("perspective"), perspective);
-    shader_.setUniform(std::string("camera"), cameraTrans);
-    shader_.setUniform(std::string("cameraRotation"), cameraCoord);
+    shader_->setUniform(std::string("transform"), transform_.getMatrix());
+    shader_->setUniform(std::string("perspective"), perspective);
+    shader_->setUniform(std::string("camera"), cameraTrans);
+    shader_->setUniform(std::string("cameraRotation"), cameraCoord);
 
     texture_.bind();
 
@@ -73,4 +85,9 @@ namespace i3d {
 
   }
 
+  void Mesh::rotate(const Vec3 &v)
+  {
+    transform_.setRotationEuler(v);
+  }
+      
 }

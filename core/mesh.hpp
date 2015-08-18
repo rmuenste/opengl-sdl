@@ -14,7 +14,12 @@ namespace i3d {
   class Mesh
   {
     public:
-      Mesh (){};
+      Mesh ()
+      {
+        this->shader_ = nullptr;
+        hasTexture_ = false;
+      };
+
       virtual ~Mesh (){};
 
       void loadMesh(std::string fileName);
@@ -28,16 +33,20 @@ namespace i3d {
       void setFragmentShader(std::string fileName);
 
       void initRender();
+       
+      void rotate(const Vec3 &v);
 
-      void render(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord);
+      void render(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord, const Vec3 &cameraPos);
 
       Transform transform_;
 
-      BasicShader shader_;
+      BasicShader* shader_;
 
       Texture texture_;
 
       Model3D model_;
+
+      bool hasTexture_;
 
     private:
       /* data */

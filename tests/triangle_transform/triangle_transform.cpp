@@ -54,7 +54,7 @@ namespace i3d {
         i3d::ObjLoader loader;
         i3d::Model3D model;
         loader.readModelFromFile(&model, "../../meshes/earth_tri2.obj");
-        model.BuildVertexArrays();
+        model.prepareIndexing();
 
         for(auto v : model.meshes_.front().vertices_)
         {

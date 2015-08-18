@@ -58,22 +58,26 @@ Mesh3D::Mesh3D(char *strName)
 
   triangleAABBs_ = nullptr;
 
+  texIndices_ = nullptr;
+
 }//end constructor
 
 Mesh3D::~Mesh3D(void)
 {
 
-  if(indices_)
+  if(indices_!=nullptr)
     delete[] indices_;
 
   indices_ = nullptr;
 
-  if(texIndices_)
+  if(texIndices_!=nullptr)
+  {
     delete[] texIndices_;
+    texIndices_ = nullptr;
+  }
 
-  texIndices_ = nullptr;
 
-  if (triangleAABBs_)
+  if (triangleAABBs_!=nullptr)
     delete[] triangleAABBs_;
 
   triangleAABBs_ = nullptr;
@@ -96,21 +100,28 @@ Mesh3D::Mesh3D(const Mesh3D &pMesh)
   this->box_      =pMesh.box_;
   this->orderedTexCoords_   =pMesh.orderedTexCoords_;
 
-
   fileName_ = pMesh.fileName_;
 
-
-  //   while(pMesh.m_strName[i]!=0)
-  //   {
-  // 	  m_strName[i]=pMesh.m_strName[i];
-  // 	  i++;
-  //   };
-
-  if(indices_ != nullptr)
+  if(pMesh.indices_ != nullptr)
   {
     int numIndices=3*this->faces_.size();
     indices_ = new unsigned int[numIndices];
     memcpy(indices_,pMesh.indices_,numIndices);
+  }
+  else
+  {
+    texIndices_ = nullptr;
+  }
+
+  if(pMesh.texIndices_ != nullptr)
+  {
+    int numIndices=3*this->faces_.size();
+    texIndices_ = new unsigned int[numIndices];
+    memcpy(texIndices_,pMesh.texIndices_,numIndices);
+  }
+  else
+  {
+    texIndices_ = nullptr;
   }
 
   triangleAABBs_ = nullptr;
@@ -171,9 +182,10 @@ void Mesh3D::generateTriangleBoundingBoxes()
 
 void Mesh3D::calcVertexNormals()
 {
+
   using namespace std;
   //correctely size the vectors
-  vector<int>* pFacesAtVertex = new vector<int>[vertices_.size()];
+  vector<int> *pFacesAtVertex = new vector<int>[vertices_.size()];
   std::vector<Vec3> pNormals;
   pNormals.clear();
   vertexNormals_.clear();
@@ -220,9 +232,10 @@ void Mesh3D::calcVertexNormals()
 
     //divide by the number of neighboring face
     //and normalize
-    vSum/=count;
+    vSum/=Real(count);
     vSum.Normalize();
-    vertexNormals_[i] =vSum;//*-1.0;
+    vertexNormals_.push_back(vSum);
+    //std::cout << -vSum << std::endl;
 
   }//end for
 
@@ -289,12 +302,27 @@ void Mesh3D::TransformModelWorld()
 }
 
 
+
 void Mesh3D::buildIndexArrays(void)
 {
   if (indices_ != nullptr)
   {
     return; 
   }
+
+  if(isTextured())
+  {
+    buildIndexArraysUV();
+  }
+  else if(!vertexNormals_.empty())
+  {
+    buildIndexArraysN();
+  }
+
+}//end buildIndexArrays
+
+void Mesh3D::buildIndexArraysUV()
+{
   //allocate memory for the index array
   indices_ = new unsigned int[3*this->faces_.size()];
   texIndices_ = new unsigned int[3*this->faces_.size()];
@@ -304,29 +332,82 @@ void Mesh3D::buildIndexArrays(void)
     {
       indices_[i*3+j]=faces_[i].m_VertIndices[j];
       texIndices_[i*3+j]=faces_[i].m_TexIndices[j];
+      std::cout << "face: " << i << " index: " << faces_[i].m_VertIndices[j] << std::endl;
+      std::cout << "texFace: " << i << " index: " << faces_[i].m_TexIndices[j] << std::endl;
+    }//end for
+    std::cout << "-----------" << std::endl;
+  }//end for
+}
+
+void Mesh3D::buildIndexArraysN()
+{
+  //allocate memory for the index array
+  indices_ = new unsigned int[3*this->faces_.size()];
+  for(int i=0; i < faces_.size(); i++)
+  {
+    for(int j=0;j<3;j++)
+    {
+      indices_[i*3+j]=faces_[i].m_VertIndices[j];
       std::cout << "face: " << i << "index: " << faces_[i].m_VertIndices[j] << std::endl;
-      std::cout << "texFace: " << i << "index: " << faces_[i].m_TexIndices[j] << std::endl;
     }//end for
   }//end for
+}
 
-}//end buildIndexArrays
-
-void Mesh3D::reorderTextureCoordinates()
+// One has to choose the max(vertices.size(),texCoords.size())
+// and fill the smaller array with the required data
+void Mesh3D::prepareIndexArrays()
 {
 
-  orderedTexCoords_ = std::vector<Vec2>(texCoords_.size());
-  for (auto &f : faces_)
+  if(vertices_.size()>=texCoords_.size())
   {
-    int i;
-    for (i = 0; i < 3; ++i)
+    std::cout << "v>=vt" << std::endl;
+    orderedTexCoords_ = std::vector<Vec2>(vertices_.size());
+    for (auto &f : faces_)
     {
-      int i_t = f.m_TexIndices[i]; 
-      int i_v = f.m_VertIndices[i];
+      int i;
+      for (i = 0; i < 3; ++i)
+      {
+        int i_t = f.m_TexIndices[i]; 
+        int i_v = f.m_VertIndices[i];
 
-      orderedTexCoords_[i_v] = texCoords_[i_t]; 
-    } 
+        orderedTexCoords_[i_v] = texCoords_[i_t]; 
+      } 
+    }
+  }
+  else
+  {
+    orderedTexCoords_ = texCoords_;
+    std::vector<Vec3> temp(texCoords_.size());
+
+    for (auto &f : faces_)
+    {
+      int i;
+      for (i = 0; i < 3; ++i)
+      {
+        int i_t = f.m_TexIndices[i]; 
+        int i_v = f.m_VertIndices[i];
+        temp[i_t] = vertices_[i_v];
+        f.m_VertIndices[i]=i_t;
+      } 
+    }
+    vertices_ = temp;
+    setNumVerts(vertices_.size());
   }
 
+//    orderedTexCoords_ = std::vector<Vec2>(texCoords_.size());
+//    for (auto &f : faces_)
+//    {
+//      int i;
+//      for (i = 0; i < 3; ++i)
+//      {
+//        int i_t = f.m_TexIndices[i]; 
+//        int i_v = f.m_VertIndices[i];
+//
+//        orderedTexCoords_[i_v] = texCoords_[i_t]; 
+//      } 
+//    }
+
+  std::cout << "tex coord size: " << orderedTexCoords_.size()  << std::endl; 
   for (auto &i : orderedTexCoords_)
   {
     std::cout << "tex coord index: " << i  << std::endl; 

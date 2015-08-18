@@ -37,37 +37,47 @@ namespace i3d {
 
         glEnable(GL_TEXTURE_2D);
 
-        triangle_.loadMesh("../../meshes/earth_tri2.obj"); 
-        triangle_.loadTexture("../../textures/australia.png");
-        triangle_.shader_.initShader();
-        triangle_.setVertexShader("../../shaders/transform.vert");
-        triangle_.setFragmentShader("../../shaders/transform.frag");
-        triangle_.shader_.linkShader();
-        triangle_.shader_.addUniform(std::string("transform"));
-        triangle_.shader_.addUniform(std::string("perspective"));
-        triangle_.shader_.addUniform(std::string("camera"));
-        triangle_.shader_.addUniform(std::string("cameraRotation"));
+        quad_.loadMesh("../../meshes/earth_plane.obj"); 
+        quad_.loadTexture("../../textures/australia.png");
 
-        triangle_.transform_.translation_ = i3d::Vec4(0,0,0,1);
-        triangle_.transform_.setRotationEuler(i3d::Vec3(0.0,0.0,0.0));
+        shader_.initShader();
+        shader_.addVertexShader("../../shaders/phong.vert");
+        shader_.addFragmentShader("../../shaders/phong.frag");
+
+        shader_.linkShader();
+        shader_.addUniform(std::string("transform"));
+        shader_.addUniform(std::string("perspective"));
+        shader_.addUniform(std::string("camera"));
+        shader_.addUniform(std::string("cameraRotation"));
+
+        quad_.shader_ = &shader_;
+
+        quad_.transform_.translation_ = i3d::Vec4(0,0,0,1);
+        quad_.transform_.setRotationEuler(i3d::Vec3(0.0,0.0,0.0));
         
-        triangle_.initRender();
+        quad_.initRender();
 
       }
 
       void render()
       {
 
-        static const GLfloat red[]={0.0f, 0.25f, 0.0f, 1.0f};
-        glClearBufferfv(GL_COLOR, 0, red);
+        static const GLfloat black[]={0.0f, 0.0, 0.0f, 1.0f};
+        glClearBufferfv(GL_COLOR, 0, black);
+//        glEnable(GL_CULL_FACE);
+//        glFrontFace(GL_CCW);
+//
+//        glEnable(GL_DEPTH_TEST);
+//        glDepthFunc(GL_LEQUAL);
 
         float x = (float)rand()/(float)(RAND_MAX);
 
         const GLfloat col[]={x, 0.f, 0.0f, 1.0f};
 
-        triangle_.render(perspective_.getPerspectiveTransform(), 
+        quad_.render(perspective_.getPerspectiveTransform(), 
                      camera_.getCameraTranslationTransform(),
-                     camera_.getCameraCoordinateTransform());
+                     camera_.getCameraCoordinateTransform(),
+                     camera_.getPos());
 
         struct timeval start, end;
 
@@ -84,12 +94,9 @@ namespace i3d {
 
         mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
 
-        //printf("time: %f milliseconds\n", time_);
-
-//        time_+=mtime;
-//        transform_.setRotationEuler(i3d::Vec3(0.0,0.0,std::sin(frame*0.001)*3.14));
-//
-//        frame++;
+        time_+=mtime;
+        //quad_.rotate(i3d::Vec3(0.0,0.0,std::sin(frame*0.001)*3.14));
+        frame++;
 
       }
 
@@ -139,7 +146,7 @@ namespace i3d {
       GLuint iao;
       GLuint tiao;
       GLuint buffers[3];
-      BasicShader shader;
+      BasicShader shader_;
       Texture earth;
       int size;
       int frame;
@@ -147,7 +154,7 @@ namespace i3d {
       float time_;
       PerspectiveTransform perspective_;
       Camera camera_;
-      Mesh triangle_;
+      Mesh quad_;
   };
 }
 int main(int argc, char *argv[])

@@ -242,7 +242,11 @@ namespace i3d {
     };
 
   //template<class T> Vector3<T> operator*(T a,const Vector3<T> &vRHS);
-  template<typename T> Vector4<T> operator*(T num, const Vector4<T> &vRHS);
+  template<typename T>
+  std::ostream& operator<<(std::ostream& out, const Vector4<T> &v1) 
+  {
+          return out << "("<<v1.x<<","<<v1.y<<","<<v1.z<<","<<v1.w<<")"<<std::endl;
+  }
 
   template<typename T>
     Vector4<T> operator*(T num, const Vector4<T> &vRHS) 

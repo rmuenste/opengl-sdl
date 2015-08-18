@@ -63,14 +63,14 @@ namespace i3d {
        */
       ~Model3D(void);
 
-      void CreateFrom(std::vector<VECTOR3 > &vVertices,  std::vector<TriFace> &vFaces);
+      void createFrom(std::vector<VECTOR3 > &vVertices,  std::vector<TriFace> &vFaces);
 
       /** \brief Returns the number of materials.
        *
        * Returns the number of materials
        * \return Number of materials
        */
-      inline void IncNumMaterials(){numMaterials_++;};
+      inline void incNumMaterials(){numMaterials_++;};
 
       /** \brief A brief description of myProcedure().
        *
@@ -78,7 +78,7 @@ namespace i3d {
        * \param aParameter A brief description of aParameter.
        * \return A brief description of what myProcedure() returns.
        */
-      inline void BuildVertexNormals()
+      inline void buildVertexNormals()
       {
         for(int i=0;i<(int)meshes_.size();i++)
         {
@@ -91,12 +91,12 @@ namespace i3d {
        * Generates a bounding box that contains all sub-objects
        *
        */
-      void GenerateBoundingBox();
+      void generateBoundingBox();
 
       /** \brief Returns the bounding box.
        * \return Returns the bounding box..
        */
-      inline const AABB3r& GetBox() {return box_;}
+      inline const AABB3r& getBox() {return box_;}
 
       /** \brief A brief description of myProcedure().
        *
@@ -104,7 +104,7 @@ namespace i3d {
        * \param aParameter A brief description of aParameter.
        * \return A brief description of what myProcedure() returns.
        */
-      void AddMaterial(tMaterialInfo& pMatInfo);
+      void addMaterial(tMaterialInfo& pMatInfo);
 
       // Outputs the most important data of the model in a structered way
       /** \brief A brief description of myProcedure().
@@ -113,8 +113,8 @@ namespace i3d {
        * \param aParameter A brief description of aParameter.
        * \return A brief description of what myProcedure() returns.
        */
-      void OutputModelInfo(void);
-      void BuildVertexArrays(void);
+      void outputModelInfo(void);
+      void buildVertexArrays(void);
 
       // Generates a triangle vector
       /** \brief The routine builds a vector that contains the coordinates of each triangle
@@ -123,16 +123,18 @@ namespace i3d {
        * \param aParameter A brief description of aParameter.
        * \return A brief description of what myProcedure() returns.
        */
-      std::vector<Triangle3r> GenTriangleVector();
+      std::vector<Triangle3r> genTriangleVector();
+
+      void prepareIndexing();
 
       MeshIter begin();
       MeshIter end();
 
       std::vector<tMaterialInfo> materials_;
       int                        numMaterials_;
-      std::vector<Mesh3D>       meshes_;
+      std::vector<Mesh3D>        meshes_;
       Real                       radius_; //Radius of a bounding sphere
-      AABB3r                    box_;
+      AABB3r                     box_;
 
 
   };
