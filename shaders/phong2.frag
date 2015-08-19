@@ -12,7 +12,7 @@ in VS_OUT
 
 vec3 diffuse_albedo = vec3(0.5, 0.2, 0.7);
 vec3 specular_albedo = vec3(1.0,1.0,1.0);
-float specular_power = 20.0;
+float specular_power = 60.0;
 
 uniform sampler2D sampler;
 

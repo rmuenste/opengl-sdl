@@ -38,12 +38,12 @@ namespace i3d {
 
         glEnable(GL_TEXTURE_2D);
 
-        quad_.loadMesh("../../meshes/test2.obj"); 
+        quad_.loadMesh("../../meshes/test5.obj",false); 
         quad_.loadTexture("../../textures/test.png");
 
         shader_.initShader();
-        shader_.addVertexShader("../../shaders/phong2.vert");
-        shader_.addFragmentShader("../../shaders/phong3.frag");
+        shader_.addVertexShader("../../shaders/cube.vert");
+        shader_.addFragmentShader("../../shaders/cube.frag");
 
         shader_.linkShader();
         shader_.addUniform(std::string("transform"));
@@ -56,7 +56,7 @@ namespace i3d {
         quad_.transform_.translation_ = i3d::Vec4(0,0,0,1);
         quad_.transform_.setRotationEuler(i3d::Vec3(0.0,0.0,0.0));
         
-        quad_.initRender();
+        quad_.initNonIndexedRender();
 
       }
 
@@ -76,7 +76,7 @@ namespace i3d {
 
         const GLfloat col[]={x, 0.f, 0.0f, 1.0f};
 
-        quad_.render(perspective_.getPerspectiveTransform(), 
+        quad_.renderNonIndexed(perspective_.getPerspectiveTransform(), 
                      camera_.getCameraTranslationTransform(),
                      camera_.getCameraCoordinateTransform(),
                      camera_.getPos());

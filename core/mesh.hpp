@@ -11,6 +11,9 @@
 
 namespace i3d {
 
+  // export from blender
+  // Z up, Y forward -> Cull counter-clockwise
+  // load obj: swap y with z
   class Mesh
   {
     public:
@@ -22,7 +25,7 @@ namespace i3d {
 
       virtual ~Mesh (){};
 
-      void loadMesh(std::string fileName);
+      void loadMesh(std::string fileName, bool indexed = true);
 
       void loadTexture(std::string fileName);
 
@@ -33,10 +36,14 @@ namespace i3d {
       void setFragmentShader(std::string fileName);
 
       void initRender();
+
+      void initNonIndexedRender();
        
       void rotate(const Vec3 &v);
 
       void render(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord, const Vec3 &cameraPos);
+
+      void renderNonIndexed(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord, const Vec3 &cameraPos);
 
       Transform transform_;
 

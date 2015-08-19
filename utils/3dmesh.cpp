@@ -353,6 +353,24 @@ void Mesh3D::buildIndexArraysN()
   }//end for
 }
 
+void Mesh3D::prepareNonIndexedRendering()
+{
+  std::vector<Vec3> temp;
+  orderedTexCoords_.clear();
+  for (auto &f : faces_)
+  {
+    int i;
+    for (i = 0; i < 3; ++i)
+    {
+      int i_t = f.m_TexIndices[i]; 
+      int i_v = f.m_VertIndices[i];
+      temp.push_back(vertices_[i_v]);
+      orderedTexCoords_.push_back(texCoords_[i_t]);
+    } 
+  }
+  vertices_ = temp;
+}
+
 // One has to choose the max(vertices.size(),texCoords.size())
 // and fill the smaller array with the required data
 void Mesh3D::prepareIndexArrays()

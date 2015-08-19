@@ -209,6 +209,8 @@ class Mesh3D
 
     void prepareIndexArrays();
 
+    void prepareNonIndexedRendering();
+
     inline void outBox()
     {
       std::cout<<box_.vertices_[0].x<<" "<<box_.vertices_[0].y<<" "<<box_.vertices_[0].z<<std::endl;

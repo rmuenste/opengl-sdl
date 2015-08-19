@@ -2,6 +2,7 @@
 
 out vec4 color; 
 in vec2 vs_texCoord;
+in vec4 vs_color;
 
 uniform sampler2D sampler;
 

@@ -38,7 +38,7 @@ namespace i3d {
         glEnable(GL_TEXTURE_2D);
 
         quad_.loadMesh("../../meshes/earth_plane.obj"); 
-        quad_.loadTexture("../../textures/australia.png");
+        quad_.loadTexture("../../textures/test.png");
 
         shader_.initShader();
         shader_.addVertexShader("../../shaders/phong.vert");

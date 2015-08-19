@@ -127,6 +127,8 @@ namespace i3d {
 
       void prepareIndexing();
 
+      void prepareNonIndexedRendering();
+
       MeshIter begin();
       MeshIter end();
 

@@ -122,6 +122,16 @@ namespace i3d {
 
   }
 
+  void Model3D::prepareNonIndexedRendering()
+  {
+    //loop oover all the meshes and build their subobjects
+    for(unsigned int i = 0; i < meshes_.size();i++)
+    {
+      meshes_[i].prepareNonIndexedRendering();
+      meshes_[i].calcVertexNormals();
+    }//end for
+
+  }
 
   void Model3D::buildVertexArrays(void)
   {
