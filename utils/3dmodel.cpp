@@ -128,7 +128,7 @@ namespace i3d {
     for(unsigned int i = 0; i < meshes_.size();i++)
     {
       meshes_[i].prepareNonIndexedRendering();
-      meshes_[i].calcVertexNormals();
+      meshes_[i].calcFakeVertexNormals();
     }//end for
 
   }

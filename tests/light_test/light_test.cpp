@@ -34,7 +34,7 @@ namespace i3d {
         SDL_GL_application::init();
 
         perspective_.setPerspectiveTransform(70.0, getWindowWidth(), getWindowHeight(), 0.0, 100.0);
-        camera_.initCamera(Vec3(0,2,-10.0), Vec3(1,0,0), Vec3(0,1,0), Vec3(0,0,1));
+        camera_.initCamera(Vec3(0,1,-10.0), Vec3(1,0,0), Vec3(0,1,0), Vec3(0,0,1));
 
         glEnable(GL_TEXTURE_2D);
 
@@ -42,8 +42,8 @@ namespace i3d {
         quad_.loadTexture("../../textures/test.png");
 
         shader_.initShader();
-        shader_.addVertexShader("../../shaders/cube.vert");
-        shader_.addFragmentShader("../../shaders/cube.frag");
+        shader_.addVertexShader("../../shaders/phong2.vert");
+        shader_.addFragmentShader("../../shaders/phong2.frag");
 
         shader_.linkShader();
         shader_.addUniform(std::string("transform"));

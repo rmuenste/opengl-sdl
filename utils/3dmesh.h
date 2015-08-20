@@ -249,6 +249,8 @@ class Mesh3D
      */
     void calcVertexNormals();
 
+    void calcFakeVertexNormals();
+
     //<member_variables>
     /** \brief False if there are problems in the mesh.
      *

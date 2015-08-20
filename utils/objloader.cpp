@@ -77,16 +77,12 @@ namespace i3d {
       {
         //readVertex(in,strLine);
         Vec3 vec;
-//        in >> vec.x;
-//        in >> vec.y;
-//        in >> vec.z;
-    in >> vec.x;
-    in >> vec.y;
-    in >> vec.z;
-    float t = vec.y;
-    vec.y=vec.z;
-    vec.z=t;
-    
+        in >> vec.x;
+        in >> vec.y;
+        in >> vec.z;
+        float t = vec.y;
+        vec.y=vec.z;
+        vec.z=t;
         in.getline(strLine,256);
         mesh.vertices_.push_back(vec);
         line++;

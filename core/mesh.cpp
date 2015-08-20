@@ -50,7 +50,7 @@ namespace i3d {
     {
       glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
       glBufferData(GL_ARRAY_BUFFER, model_.meshes_.front().orderedTexCoords_.size() * 2 * sizeof(float),
-          model_.meshes_.front().orderedTexCoords_.data() , GL_STATIC_DRAW);
+      model_.meshes_.front().orderedTexCoords_.data() , GL_STATIC_DRAW);
 
       glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
       glEnableVertexAttribArray(1);
@@ -74,6 +74,19 @@ namespace i3d {
 
   void Mesh::initNonIndexedRender()
   {
+
+    drawVertices_ = 3 * model_.meshes_.front().faces_.size(); 
+    std::cout << "Draw vertices: " << drawVertices_  << std::endl;
+
+
+    for (int i = 6; i < 9; ++i)
+    {
+      std::cout << model_.meshes_.front().vertices_[i] << std::endl;   
+      std::cout << model_.meshes_.front().vertexNormals_[i] << std::endl;   
+    }
+    std::cout << "size v " << model_.meshes_.front().vertices_.size()  << std::endl;
+    std::cout << "size t " << model_.meshes_.front().orderedTexCoords_.size()  << std::endl;
+    std::cout << "size n " << model_.meshes_.front().vertexNormals_.size()  << std::endl;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
@@ -92,24 +105,13 @@ namespace i3d {
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
     glEnableVertexAttribArray(1);
 
-//    glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
-//    glBufferData(GL_ARRAY_BUFFER, model_.meshes_[0].vertexNormals_.size() * 3 * sizeof(float),
-//        model_.meshes_.front().vertexNormals_.data(), GL_STATIC_DRAW);
-//    
-//    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-//    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
+    glBufferData(GL_ARRAY_BUFFER, model_.meshes_[0].vertexNormals_.size() * 3 * sizeof(float),
+        model_.meshes_.front().vertexNormals_.data(), GL_STATIC_DRAW);
+    
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glEnableVertexAttribArray(2);
 
-    drawVertices_ = 3 * model_.meshes_.front().faces_.size(); 
-    std::cout << "Draw vertices: " << drawVertices_  << std::endl;
-    std::cout << "size v " << model_.meshes_.front().vertices_.size()  << std::endl;
-    std::cout << "size t " << model_.meshes_.front().faces_.size()  << std::endl;
-
-
-    for (int i = 6; i < 9; ++i)
-    {
-      std::cout << model_.meshes_.front().vertices_[i] << std::endl;   
-      std::cout << model_.meshes_.front().orderedTexCoords_[i] << std::endl;   
-    }
   }
 
   void Mesh::render(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord, const Vec3 &cameraPos)
@@ -140,7 +142,8 @@ namespace i3d {
     texture_.bind();
 
     glDrawArrays(GL_TRIANGLES, 0, drawVertices_);
-    //glDrawArrays(GL_TRIANGLES, 0, 9);
+    //glDrawArrays(GL_TRIANGLES, 6, 3);
+
 
   }
 

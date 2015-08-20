@@ -171,12 +171,38 @@ void Mesh3D::generateTriangleBoundingBoxes()
 
     }
 
-
-
-    //void init(const Vector3<T> &minVec, const Vector3<T> &maxVec);
-    //triangleAABBs_[i].
-
   }
+
+}
+
+void Mesh3D::calcFakeVertexNormals()
+{
+
+  using namespace std;
+  std::vector<Vec3> pNormals;
+  vertexNormals_.clear();
+  vertexNormals_ = std::vector<Vec3>(3 * faces_.size());
+  //calculate the face normals in a
+  //first loop
+  for(int i = 0; i < (int)vertices_.size(); i+=3)
+  {
+    //get the vertex indices of the face
+    VECTOR3 v0 = vertices_[i];
+    VECTOR3 v1 = vertices_[i+1];
+    VECTOR3 v2 = vertices_[i+2];
+
+    //create 2 vectors, the face normal will be
+    //perpendicular to those
+    VECTOR3 vV1 = VECTOR3::createVector(v0, v2);
+    VECTOR3 vV2 = VECTOR3::createVector(v2, v1);
+
+    //Calculate and assign the face normal		
+    Vec3 faceNormal = Vec3::Cross(vV1, vV2);
+    faceNormal.normalize();
+    vertexNormals_[i] = faceNormal; 
+    vertexNormals_[i+1] = faceNormal;
+    vertexNormals_[i+2] = faceNormal;
+  }//end for
 
 }
 
@@ -234,8 +260,7 @@ void Mesh3D::calcVertexNormals()
     //and normalize
     vSum/=Real(count);
     vSum.Normalize();
-    vertexNormals_.push_back(vSum);
-    //std::cout << -vSum << std::endl;
+    vertexNormals_.push_back(-vSum);
 
   }//end for
 
