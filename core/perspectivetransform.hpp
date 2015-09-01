@@ -13,8 +13,10 @@ public:
 
   void setPerspectiveTransform(float fov, float w, float h, float zNear, float zFar)
   {
+    const float pi = 4.0 * std::atan(1.0);
+    float myFov = fov * pi/(180.0);
     pMat_.setZero();
-    float tanHalfAlpha = std::tan(fov * 0.5);
+    float tanHalfAlpha = std::tan(myFov * 0.5);
     float zRange = zNear - zFar;
     float ar = w/h;
     pMat_.m_Entries[0]  = 1.0/(tanHalfAlpha*ar); pMat_.m_Entries[1] =  0;              pMat_.m_Entries[2] = 0;    pMat_.m_Entries[3] = 0; 

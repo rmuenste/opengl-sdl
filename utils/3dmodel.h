@@ -129,6 +129,10 @@ namespace i3d {
 
       void prepareNonIndexedRendering();
 
+      void buildSmoothNormals();
+
+      void buildFakeVertexNormals();
+
       MeshIter begin();
       MeshIter end();
 

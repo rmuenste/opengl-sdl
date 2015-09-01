@@ -3,7 +3,7 @@
 
 SDL_GL_application::SDL_GL_application() : quit(false), window(nullptr), window_width_(640), window_height_(480), title_("SDL2 Window")
 {
-
+  renderMode_ = GL_FILL;
 }
 
 void SDL_GL_application::init()

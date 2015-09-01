@@ -249,6 +249,8 @@ class Mesh3D
      */
     void calcVertexNormals();
 
+    void calcRawVertexNormals();
+
     void calcFakeVertexNormals();
 
     //<member_variables>
@@ -319,6 +321,8 @@ class Mesh3D
      */
     std::vector<Vec3> vertexNormals_;
 
+    std::vector<Vec3> rawVertices_ ;
+
     /** \brief The array of faces.
      *
      */
@@ -348,10 +352,6 @@ class Mesh3D
      *  Generate bounding boxes for all triangles
      */
     void generateTriangleBoundingBoxes();
-
-    float *varray_;
-
-
 
     inline bool getValid() {return valid_;};
 

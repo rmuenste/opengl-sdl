@@ -109,11 +109,8 @@ namespace i3d {
       //case: Face
       else if(first == string("f"))
       {
-//        std::cout << "face: " << faces  << std::endl;
-//        std::cout << "line: " << line  << std::endl;
         readFaceTex(mesh, in, strLine);
         in.getline(strLine, 256);
-//        printf("strLine: %s\n",strLine);
         faces++;
         line++;
       }

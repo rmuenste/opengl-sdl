@@ -21,6 +21,8 @@ public:
 
   bool quit; 
 
+  GLuint renderMode_; 
+
   // Contstructor
   SDL_GL_application ();
 

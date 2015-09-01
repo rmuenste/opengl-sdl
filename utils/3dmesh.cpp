@@ -378,6 +378,79 @@ void Mesh3D::buildIndexArraysN()
   }//end for
 }
 
+void Mesh3D::calcRawVertexNormals()
+{
+
+  using namespace std;
+  //correctely size the vectors
+  vector<int> *pFacesAtVertex = new vector<int>[rawVertices_.size()];
+  std::vector<Vec3> pNormals;
+  std::vector<Vec3> tempNormals;
+  pNormals.clear();
+  vertexNormals_.clear();
+  //calculate the face normals in a
+  //first loop
+  for(int i = 0; i < (int)faces_.size(); i++)
+  {
+    //get the vertex indices of the face
+    int vi0 = faces_[i][0];
+    int vi1 = faces_[i][1];
+    int vi2 = faces_[i][2];
+
+    //remember the face index
+    pFacesAtVertex[vi0].push_back(i);
+    pFacesAtVertex[vi1].push_back(i);
+    pFacesAtVertex[vi2].push_back(i);
+
+    VECTOR3 v0 = rawVertices_[vi0];
+    VECTOR3 v1 = rawVertices_[vi1];
+    VECTOR3 v2 = rawVertices_[vi2];
+
+    //create 2 vectors, the face normal will be
+    //perpendicular to those
+    VECTOR3 vV1 = VECTOR3::createVector(v0, v2);
+    VECTOR3 vV2 = VECTOR3::createVector(v2, v1);
+
+    ////Calculate and assign the face normal		
+    pNormals.push_back(VECTOR3::Cross(vV1, vV2));
+
+  }//end for
+
+  //in this 2nd loop calculate the vertex normals
+  for(int i = 0; i < (int)rawVertices_.size(); i++)
+  {
+
+    VECTOR3 vSum(0,0,0);
+    int count = 0;
+
+    for(int j = 0; j < (int)pFacesAtVertex[i].size(); j++)
+    {
+      vSum+=pNormals[pFacesAtVertex[i][j]];
+      count++;
+    }//end for
+
+    //divide by the number of neighboring face
+    //and normalize
+    vSum/=Real(count);
+    vSum.Normalize();
+    tempNormals.push_back(-vSum);
+
+  }//end for
+
+  for (auto &f : faces_)
+  {
+    int i;
+    for (i = 0; i < 3; ++i)
+    {
+      int i_v = f.m_VertIndices[i];
+      vertexNormals_.push_back(tempNormals[i_v]);
+    } 
+  }
+
+  delete[] pFacesAtVertex;
+
+}//end CalcVertexNormals
+
 void Mesh3D::prepareNonIndexedRendering()
 {
   std::vector<Vec3> temp;
@@ -393,6 +466,7 @@ void Mesh3D::prepareNonIndexedRendering()
       orderedTexCoords_.push_back(texCoords_[i_t]);
     } 
   }
+  rawVertices_ = vertices_;
   vertices_ = temp;
 }
 

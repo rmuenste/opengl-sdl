@@ -11,6 +11,18 @@
 
 namespace i3d {
 
+  enum NormalGeneration
+  {
+    AVERAGED_NORMALS,
+    FAKE_VERTEX
+  };
+
+  enum RenderMode
+  {
+    ELEMENT_RENDER,
+    ARRAY_RENDER 
+  };
+
   // export from blender
   // Z up, Y forward -> Cull counter-clockwise
   // load obj: swap y with z
@@ -38,12 +50,20 @@ namespace i3d {
       void initRender();
 
       void initNonIndexedRender();
+
+      void initNonIndexedRender(int a0, int a1, int a2);
        
       void rotate(const Vec3 &v);
+      
+      void buildSmooothNormals();
+
+      void buildFakeVertexNormals();
 
       void render(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord, const Vec3 &cameraPos);
 
       void renderNonIndexed(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord, const Vec3 &cameraPos);
+
+      void renderNonIndexed(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord, const Vec3 &cameraPos, int a0, int a1, int a2);
 
       Transform transform_;
 

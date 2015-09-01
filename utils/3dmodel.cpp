@@ -128,9 +128,24 @@ namespace i3d {
     for(unsigned int i = 0; i < meshes_.size();i++)
     {
       meshes_[i].prepareNonIndexedRendering();
-      meshes_[i].calcFakeVertexNormals();
     }//end for
 
+  }
+
+  void Model3D::buildSmoothNormals()
+  {
+    for(unsigned int i = 0; i < meshes_.size();i++)
+    {
+      meshes_[i].calcRawVertexNormals();
+    }//end for
+  }
+
+  void Model3D::buildFakeVertexNormals()
+  {
+    for(unsigned int i = 0; i < meshes_.size();i++)
+    {
+      meshes_[i].calcFakeVertexNormals();
+    }//end for
   }
 
   void Model3D::buildVertexArrays(void)

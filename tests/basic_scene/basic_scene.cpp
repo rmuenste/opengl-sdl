@@ -21,7 +21,7 @@ namespace i3d {
     public:
       LightTest ()
       {
-        setTitle(std::string("Mesh Light Test"));
+        setTitle(std::string("Basic Scene Test"));
         frame=0;
         time_=0;
         speed_ = 0.05f; 
@@ -33,14 +33,14 @@ namespace i3d {
       {
         SDL_GL_application::init();
 
-        perspective_.setPerspectiveTransform(70.0, getWindowWidth(), getWindowHeight(), 0.0, 100.0);
-        camera_.initCamera(Vec3(0,1,-5.0), Vec3(1,0,0), Vec3(0,1,0), Vec3(0,0,1));
+        perspective_.setPerspectiveTransform(50.0, getWindowWidth(), getWindowHeight(), 0.0, 100.0);
+        camera_.initCamera(Vec3(0,1,-6.0), Vec3(1,0,0), Vec3(0,1,0), Vec3(0,0,1));
 
         glEnable(GL_TEXTURE_2D);
 
-        quad_.loadMesh("../../meshes/sphere.obj",false); 
-        quad_.buildSmooothNormals();
-        quad_.loadTexture("../../textures/earth1.png");
+        room_.loadMesh("../../meshes/room.obj",false); 
+        room_.buildFakeVertexNormals(); 
+        room_.loadTexture("../../textures/wall_floor.png");
 
         shader_.initShader();
         shader_.addVertexShader("../../shaders/phong2.vert");
@@ -52,12 +52,33 @@ namespace i3d {
         shader_.addUniform(std::string("camera"));
         shader_.addUniform(std::string("cameraRotation"));
 
-        quad_.shader_ = &shader_;
+        room_.shader_ = &shader_;
 
-        quad_.transform_.translation_ = i3d::Vec4(0,0,0,1);
-        quad_.transform_.setRotationEuler(i3d::Vec3(0.0,0.0,0.0));
+        room_.transform_.translation_ = i3d::Vec4(0,0,0,1);
+        room_.transform_.setRotationEuler(i3d::Vec3(0.0,0.0,0.0));
 
-        quad_.initNonIndexedRender();
+        room_.initNonIndexedRender();
+
+        world_.loadMesh("../../meshes/world.obj",false); 
+        world_.buildSmooothNormals();
+        world_.loadTexture("../../textures/earth1.png");
+
+        worldShader_.initShader();
+        worldShader_.addVertexShader("../../shaders/phong2.vert");
+        worldShader_.addFragmentShader("../../shaders/phong2.frag");
+
+        worldShader_.linkShader();
+        worldShader_.addUniform(std::string("transform"));
+        worldShader_.addUniform(std::string("perspective"));
+        worldShader_.addUniform(std::string("camera"));
+        worldShader_.addUniform(std::string("cameraRotation"));
+
+        world_.shader_ = &worldShader_; 
+
+        world_.transform_.translation_ = i3d::Vec4(0,0,0,1);
+        world_.transform_.setRotationEuler(i3d::Vec3(0.0,0.0,0.0));
+
+        world_.initNonIndexedRender();
 
       }
 
@@ -65,8 +86,10 @@ namespace i3d {
       {
 
         static const GLfloat black[]={0.0f, 0.25, 0.0f, 1.0f};
+        static const GLfloat ones[]={1.0f};
         glClearBufferfv(GL_COLOR, 0, black);
-
+        glClearBufferfv(GL_DEPTH, 0, ones);
+        
         glEnable(GL_CULL_FACE);
         glFrontFace(GL_CCW);
 
@@ -79,7 +102,12 @@ namespace i3d {
 
         glPolygonMode(GL_FRONT_AND_BACK,renderMode_);
 
-        quad_.renderNonIndexed(perspective_.getPerspectiveTransform(), 
+        room_.renderNonIndexed(perspective_.getPerspectiveTransform(), 
+            camera_.getCameraTranslationTransform(),
+            camera_.getCameraCoordinateTransform(),
+            camera_.getPos());
+
+        world_.renderNonIndexed(perspective_.getPerspectiveTransform(), 
             camera_.getCameraTranslationTransform(),
             camera_.getCameraCoordinateTransform(),
             camera_.getPos());
@@ -100,8 +128,8 @@ namespace i3d {
         mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
 
         time_+=mtime;
-        //quad_.rotate(i3d::Vec3(0.0,std::sin(frame*0.001)*3.14,0.0));
-        quad_.rotate(i3d::Vec3(0.0,frame*0.005,0.0));
+        //room_.rotate(i3d::Vec3(0.0,std::sin(frame*0.001)*3.14,0.0));
+        //room_.rotate(i3d::Vec3(0.0,frame*0.005,0.0));
         frame++;
 
       }
@@ -165,6 +193,7 @@ namespace i3d {
       GLuint tiao;
       GLuint buffers[3];
       BasicShader shader_;
+      BasicShader worldShader_;
       Texture earth;
       int size;
       int frame;
@@ -172,7 +201,8 @@ namespace i3d {
       float time_;
       PerspectiveTransform perspective_;
       Camera camera_;
-      Mesh quad_;
+      Mesh room_;
+      Mesh world_;
       float speed_;
   };
 }
