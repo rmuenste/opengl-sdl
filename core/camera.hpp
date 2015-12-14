@@ -22,6 +22,8 @@ namespace i3d {
 
       Vec3 getU(){return u_;}
 
+      Vec3 getV(){ return v_; }
+
       Vec3 getN(){return n_;}
 
       // rotate camera around the global 'up' axis

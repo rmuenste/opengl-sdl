@@ -336,7 +336,7 @@ namespace i3d {
       if(uv_ && normals_)
       {
         in >> s;
-        std::cout << "String: " << s  << std::endl;
+        //std::cout << "String: " << s  << std::endl;
         if(s.empty()) return;
         // find separator 
         basic_string<char>::size_type index = s.find("/");

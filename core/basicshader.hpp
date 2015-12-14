@@ -8,59 +8,101 @@
 #include <GL/gl.h>
 #include <shaderloader.hpp>
 #include <unordered_map>
+#include <vector3.h>
+#include <matrix4x4.h>
+#include <light.hpp>
 
 //GLuint glCreateShader(GLenum type);
 //GLuint glCreateProgram();
 
-class BasicShader
+namespace i3d
 {
-public:
-  BasicShader () : 
-    program_(0), vertexShader_(0), fragmentShader_(0), geometryShader_(0), tesselationShader_(0)
+  class BasicShader
   {
-
-
-  };
-
-  virtual ~BasicShader () {};
-
-  void initShader()
-  {
-
-    program_ = glCreateProgram();
-
-    if(program_ == 0)
+  public:
+    BasicShader() :
+      program_(0), vertexShader_(0), fragmentShader_(0), geometryShader_(0), tesselationShader_(0)
     {
-      std::cerr << "Could not create shader program." << std::endl;
+
+
+    };
+
+    virtual ~BasicShader() {};
+
+    virtual void updateUniforms()
+    {
+
     }
 
+    virtual void initShader()
+    {
+
+      program_ = glCreateProgram();
+
+      if (program_ == 0)
+      {
+        std::cerr << "Could not create shader program." << std::endl;
+      }
+
+    };
+
+    void addUniform(std::string name);
+
+    void addVertexShader(std::string fileName);
+    void addFragmentShader(std::string fileName);
+    void addGeometryShader(std::string fileName);
+    void addTesselationShader(std::string fileName);
+    void linkShader();
+
+    template <typename T>
+    void setUniform(std::string name, T _uniform);
+
+    void bind()
+    {
+      glUseProgram(program_);
+    };
+
+    /* data */
+    GLuint program_;
+    GLuint vertexShader_;
+    GLuint fragmentShader_;
+    GLuint geometryShader_;
+    GLuint tesselationShader_;
+    std::unordered_map<std::string, int> uniforms_;
   };
 
-  void addUniform(std::string name);
-
-  void addVertexShader(std::string fileName);
-  void addFragmentShader(std::string fileName);
-  void addGeometryShader(std::string fileName);
-  void addTesselationShader(std::string fileName);
-  void linkShader();
-
-  template <typename T>
-  void setUniform(std::string name, T _uniform){};
-
-  void bind()
+  template <>
+  inline void BasicShader::setUniform<int>(std::string name, int _uniform)
   {
-    glUseProgram(program_);
-  };
+    int loc = (*(uniforms_.find(name))).second;
+    glUniform1i(loc, _uniform);
+  }
 
-private:
-  /* data */
-  GLuint program_;
-  GLuint vertexShader_;
-  GLuint fragmentShader_;
-  GLuint geometryShader_;
-  GLuint tesselationShader_;
-  std::unordered_map<std::string, int> uniforms_;
-};
+  template <>
+  inline void BasicShader::setUniform<float>(std::string name, float _uniform)
+  {
+    int loc = (*(uniforms_.find(name))).second;
+    glUniform1f(loc, _uniform);
+  }
+
+  template <>
+  inline void BasicShader::setUniform<Vec3>(std::string name, i3d::Vec3 _uniform)
+  {
+    int loc = (*(uniforms_.find(name))).second;
+    glUniform3f(loc, _uniform.x, _uniform.y, _uniform.z);
+  }
+
+  template <>
+  inline void BasicShader::setUniform<Mat4>(std::string name, i3d::Mat4 _uniform)
+  {
+    int loc = (*(uniforms_.find(name))).second;
+    glUniformMatrix4fv(loc, 1, GL_TRUE, _uniform.get());
+    //std::cout << _uniform << std::endl;
+
+  }
+
+}
+
 
 
 #endif /* end of include guard: BASICSHADER_HPP_DFQJYGHL */

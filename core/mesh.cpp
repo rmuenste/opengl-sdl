@@ -1,49 +1,48 @@
 #include <mesh.hpp>
-#include <objloader.h>
+
 
 namespace i3d {
-
-  void Mesh::loadMesh(std::string fileName, bool indexed)
+  template<int rendermode>
+  void Mesh<rendermode>::loadMesh(std::string fileName)
   {
     ObjLoader loader;
     loader.readModelFromFile(&model_, fileName.c_str());
-    if (indexed)
-    {
-      model_.prepareIndexing();
-    }
-    else
-    {
-      model_.prepareNonIndexedRendering();
-    }
+    model_.prepareNonIndexedRendering();
   }
 
-  void Mesh::buildSmooothNormals()
+  template<int rendermode>
+  void Mesh<rendermode>::buildSmoothNormals()
   {
     model_.buildSmoothNormals();
   }
 
-  void Mesh::buildFakeVertexNormals()
+  template<int rendermode>
+  void Mesh<rendermode>::buildFakeVertexNormals()
   {
     model_.buildFakeVertexNormals();
   }
 
-  void Mesh::loadTexture(std::string fileName)
+  template<int rendermode>
+  void Mesh<rendermode>::loadTexture(std::string fileName)
   {
     texture_.createTextureFromImage(fileName);
     hasTexture_ = true;
   }
 
-  void Mesh::setFragmentShader(std::string fileName)
+  template<int rendermode>
+  void Mesh<rendermode>::setFragmentShader(std::string fileName)
   {
     shader_->addFragmentShader(fileName);
   } 
 
-  void Mesh::setVertexShader(std::string fileName)
+  template<int rendermode>
+  void Mesh<rendermode>::setVertexShader(std::string fileName)
   {
     shader_->addVertexShader(fileName);
   } 
 
-  void Mesh::initRender()
+  template<int rendermode>
+  void Mesh<rendermode>::initRender()
   {
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -82,7 +81,8 @@ namespace i3d {
         model_.meshes_.front().indices_, GL_STATIC_DRAW); 
   }
 
-  void Mesh::initNonIndexedRender()
+  template<int rendermode>
+  void Mesh<rendermode>::initNonIndexedRender()
   {
 
     drawVertices_ = 3 * model_.meshes_.front().faces_.size(); 
@@ -115,7 +115,8 @@ namespace i3d {
 
   }
 
-  void Mesh::initNonIndexedRender(int a0, int a1, int a2)
+  template<int rendermode>
+  void Mesh<rendermode>::initNonIndexedRender(int a0, int a1, int a2)
   {
 
     drawVertices_ = 3 * model_.meshes_.front().faces_.size(); 
@@ -148,7 +149,8 @@ namespace i3d {
 
   }
 
-  void Mesh::render(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord, const Vec3 &cameraPos)
+  template<int rendermode>
+  void Mesh<rendermode>::render(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord, const Vec3 &cameraPos)
   {
     shader_->bind();
 
@@ -161,10 +163,10 @@ namespace i3d {
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iao);
     glDrawElements(GL_TRIANGLES, drawVertices_, GL_UNSIGNED_INT, 0);
-
   }
 
-  void Mesh::renderNonIndexed(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord, const Vec3 &cameraPos)
+  template<int rendermode>
+  void Mesh<rendermode>::renderNonIndexed(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord, const Vec3 &cameraPos)
   {
 
     glBindVertexArray(vao);
@@ -203,7 +205,8 @@ namespace i3d {
 
   }
 
-  void Mesh::renderNonIndexed(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord, const Vec3 &cameraPos, int a0, int a1, int a2)
+  template<int rendermode>
+  void Mesh<rendermode>::renderNonIndexed(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord, const Vec3 &cameraPos, int a0, int a1, int a2)
   {
 
     glBindVertexArray(vao);
@@ -242,9 +245,12 @@ namespace i3d {
 
   }
 
-  void Mesh::rotate(const Vec3 &v)
+  template<int rendermode>
+  void Mesh<rendermode>::rotate(const Vec3 &v)
   {
     transform_.setRotationEuler(v);
   }
-      
+  
+  template class Mesh<array_render>;
+
 }

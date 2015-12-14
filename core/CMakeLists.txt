@@ -11,8 +11,12 @@ textureloader.cpp
 textureloader.hpp
 texture.hpp
 texture.cpp
+light.hpp
+light.cpp
 transform.hpp
 transform.cpp
+phongshader.cpp  
+phongshader.hpp  
 perspectivetransform.hpp
 perspectivetransform.cpp
 camera.hpp

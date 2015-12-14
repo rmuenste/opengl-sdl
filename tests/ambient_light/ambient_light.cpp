@@ -8,7 +8,9 @@
 #include <3dmesh.h>
 #include <texture.hpp>
 #include <transform.hpp>
+#ifndef WIN32
 #include <sys/time.h>
+#endif
 #include <perspectivetransform.hpp>
 #include <cmath>
 #include <camera.hpp>
@@ -64,11 +66,11 @@ namespace i3d {
 
         static const GLfloat black[]={0.0f, 0.0, 0.0f, 1.0f};
         glClearBufferfv(GL_COLOR, 0, black);
-//        glEnable(GL_CULL_FACE);
-//        glFrontFace(GL_CCW);
-//
-//        glEnable(GL_DEPTH_TEST);
-//        glDepthFunc(GL_LEQUAL);
+        glEnable(GL_CULL_FACE);
+        glFrontFace(GL_CCW);
+
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
 
         float x = (float)rand()/(float)(RAND_MAX);
 
@@ -79,22 +81,24 @@ namespace i3d {
                      camera_.getCameraCoordinateTransform(),
                      camera_.getPos());
 
+#ifndef _MSC_VER
         struct timeval start, end;
 
         long mtime, seconds, useconds;    
 
         gettimeofday(&start, NULL);
+#endif
 
         SDL_GL_SwapWindow(window);
 
+#ifndef _MSC_VER
         gettimeofday(&end, NULL);
 
         seconds  = end.tv_sec  - start.tv_sec;
         useconds = end.tv_usec - start.tv_usec;
 
         mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-
-        time_+=mtime;
+#endif
         //quad_.rotate(i3d::Vec3(0.0,0.0,std::sin(frame*0.001)*3.14));
         frame++;
 

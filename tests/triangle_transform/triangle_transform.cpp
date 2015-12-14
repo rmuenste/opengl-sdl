@@ -8,7 +8,9 @@
 #include <3dmesh.h>
 #include <texture.hpp>
 #include <transform.hpp>
+#ifndef WIN32
 #include <sys/time.h>
+#endif
 #include <perspectivetransform.hpp>
 #include <cmath>
 #include <camera.hpp>
@@ -114,21 +116,25 @@ namespace i3d {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iao);
         glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, 0);
 
+
+#ifndef _MSC_VER
         struct timeval start, end;
 
         long mtime, seconds, useconds;    
 
         gettimeofday(&start, NULL);
+#endif
 
         SDL_GL_SwapWindow(window);
 
+#ifndef _MSC_VER
         gettimeofday(&end, NULL);
 
         seconds  = end.tv_sec  - start.tv_sec;
         useconds = end.tv_usec - start.tv_usec;
 
         mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-
+#endif
         //printf("time: %f milliseconds\n", time_);
 
 //        time_+=mtime;

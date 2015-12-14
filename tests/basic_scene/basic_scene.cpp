@@ -8,18 +8,22 @@
 #include <3dmesh.h>
 #include <texture.hpp>
 #include <transform.hpp>
+#ifndef WIN32
 #include <sys/time.h>
+#endif
 #include <perspectivetransform.hpp>
 #include <cmath>
 #include <camera.hpp>
 #include <mesh.hpp>
+#include <light.hpp>
+#include <phongshader.hpp>
 
 namespace i3d {
 
-  class LightTest : public SDL_GL_application
+  class BasicScene : public SDL_GL_application
   {
     public:
-      LightTest ()
+      BasicScene()
       {
         setTitle(std::string("Basic Scene Test"));
         frame=0;
@@ -27,65 +31,49 @@ namespace i3d {
         speed_ = 0.05f; 
       };
 
-      virtual ~LightTest (){};
+      virtual ~BasicScene(){};
 
       void init()
       {
         SDL_GL_application::init();
 
         perspective_.setPerspectiveTransform(50.0, getWindowWidth(), getWindowHeight(), 0.0, 100.0);
-        camera_.initCamera(Vec3(0,1,-6.0), Vec3(1,0,0), Vec3(0,1,0), Vec3(0,0,1));
+        camera_.initCamera(Vec3(0,1.8,-6.0), Vec3(1,0,0), Vec3(0,1,0), Vec3(0,0,1));
+
+        light_ = Light(Vec3(0, 0, -3.0), Vec3(1.0, 1.0, 1.0), 0.5f);
 
         glEnable(GL_TEXTURE_2D);
 
-        room_.loadMesh("../../meshes/room.obj",false); 
+        room_.loadMesh("../../meshes/room.obj"); 
         room_.buildFakeVertexNormals(); 
         room_.loadTexture("../../textures/wall_floor.png");
 
-        shader_.initShader();
-        shader_.addVertexShader("../../shaders/phong2.vert");
-        shader_.addFragmentShader("../../shaders/phong2.frag");
-
-        shader_.linkShader();
-        shader_.addUniform(std::string("transform"));
-        shader_.addUniform(std::string("perspective"));
-        shader_.addUniform(std::string("camera"));
-        shader_.addUniform(std::string("cameraRotation"));
-
+        shader_.initShader(light_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
         room_.shader_ = &shader_;
 
         room_.transform_.translation_ = i3d::Vec4(0,0,0,1);
         room_.transform_.setRotationEuler(i3d::Vec3(0.0,0.0,0.0));
 
-        room_.initNonIndexedRender();
+        room_.initRender();
 
-        world_.loadMesh("../../meshes/world.obj",false); 
-        world_.buildSmooothNormals();
+        world_.loadMesh("../../meshes/world.obj"); 
+        world_.buildSmoothNormals();
         world_.loadTexture("../../textures/earth1.png");
 
-        worldShader_.initShader();
-        worldShader_.addVertexShader("../../shaders/phong2.vert");
-        worldShader_.addFragmentShader("../../shaders/phong2.frag");
-
-        worldShader_.linkShader();
-        worldShader_.addUniform(std::string("transform"));
-        worldShader_.addUniform(std::string("perspective"));
-        worldShader_.addUniform(std::string("camera"));
-        worldShader_.addUniform(std::string("cameraRotation"));
-
+        worldShader_.initShader(light_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
         world_.shader_ = &worldShader_; 
 
-        world_.transform_.translation_ = i3d::Vec4(0,0,0,1);
+        world_.transform_.translation_ = i3d::Vec4(0,0,2.0,1);
         world_.transform_.setRotationEuler(i3d::Vec3(0.0,0.0,0.0));
 
-        world_.initNonIndexedRender();
+        world_.initRender();
 
       }
 
       void render()
       {
 
-        static const GLfloat black[]={0.0f, 0.25, 0.0f, 1.0f};
+        static const GLfloat black[]={0.0f, 0.0f, 0.0f, 1.0f};
         static const GLfloat ones[]={1.0f};
         glClearBufferfv(GL_COLOR, 0, black);
         glClearBufferfv(GL_DEPTH, 0, ones);
@@ -102,33 +90,30 @@ namespace i3d {
 
         glPolygonMode(GL_FRONT_AND_BACK,renderMode_);
 
-        room_.renderNonIndexed(perspective_.getPerspectiveTransform(), 
-            camera_.getCameraTranslationTransform(),
-            camera_.getCameraCoordinateTransform(),
-            camera_.getPos());
+        room_.render();
 
-        world_.renderNonIndexed(perspective_.getPerspectiveTransform(), 
-            camera_.getCameraTranslationTransform(),
-            camera_.getCameraCoordinateTransform(),
-            camera_.getPos());
+        world_.render();
 
+#ifndef _MSC_VER
         struct timeval start, end;
 
-        long mtime, seconds, useconds;    
+        long mtime, seconds, useconds;
 
         gettimeofday(&start, NULL);
+#endif
 
         SDL_GL_SwapWindow(window);
 
+#ifndef _MSC_VER
         gettimeofday(&end, NULL);
 
-        seconds  = end.tv_sec  - start.tv_sec;
+        seconds = end.tv_sec - start.tv_sec;
         useconds = end.tv_usec - start.tv_usec;
 
-        mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-
-        time_+=mtime;
-        //room_.rotate(i3d::Vec3(0.0,std::sin(frame*0.001)*3.14,0.0));
+        mtime = ((seconds)* 1000 + useconds / 1000.0) + 0.5;
+#endif
+        world_.transform_.translation_.x = std::sin(frame*0.01)*2.0;
+        light_.pos_.x = std::sin(frame*0.01);
         //room_.rotate(i3d::Vec3(0.0,frame*0.005,0.0));
         frame++;
 
@@ -192,8 +177,8 @@ namespace i3d {
       GLuint iao;
       GLuint tiao;
       GLuint buffers[3];
-      BasicShader shader_;
-      BasicShader worldShader_;
+      PhongShader shader_;
+      PhongShader worldShader_;
       Texture earth;
       int size;
       int frame;
@@ -201,15 +186,16 @@ namespace i3d {
       float time_;
       PerspectiveTransform perspective_;
       Camera camera_;
-      Mesh room_;
-      Mesh world_;
+      Mesh<> room_;
+      Mesh<> world_;
       float speed_;
+      Light light_;
   };
 }
 int main(int argc, char *argv[])
 {
 
-  i3d::LightTest app;
+  i3d::BasicScene app;
 
   app.init();
 
