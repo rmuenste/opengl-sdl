@@ -17,6 +17,8 @@ transform.hpp
 transform.cpp
 phongshader.cpp  
 phongshader.hpp  
+material.cpp  
+material.hpp  
 perspectivetransform.hpp
 perspectivetransform.cpp
 camera.hpp

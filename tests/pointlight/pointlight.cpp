@@ -17,6 +17,7 @@
 #include <mesh.hpp>
 #include <light.hpp>
 #include <phongshader.hpp>
+#include <material.hpp>
 
 namespace i3d {
 
@@ -47,8 +48,9 @@ namespace i3d {
         room_.loadMesh("../../meshes/room.obj"); 
         room_.buildFakeVertexNormals(); 
         room_.loadTexture("../../textures/wall_floor.png");
+        roomMat_ = PhongMaterial(15.0f, 200.0f, 1.0f);
 
-        shader_.initShader(light_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
+        shader_.initShader(light_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), roomMat_);
         room_.shader_ = &shader_;
 
         room_.transform_.translation_ = i3d::Vec4(0,0,0,1);
@@ -59,8 +61,9 @@ namespace i3d {
         world_.loadMesh("../../meshes/world.obj"); 
         world_.buildSmoothNormals();
         world_.loadTexture("../../textures/earth1.png");
+        worldMat_ = PhongMaterial(15.0f, 30.0f, 1.0f);
 
-        worldShader_.initShader(light_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
+        worldShader_.initShader(light_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), worldMat_);
         world_.shader_ = &worldShader_; 
 
         world_.transform_.translation_ = i3d::Vec4(0.3,-0.9,2.0,1);
@@ -206,6 +209,8 @@ namespace i3d {
       Mesh<> world_;
       float speed_;
       Light light_;
+      PhongMaterial worldMat_;
+      PhongMaterial roomMat_;
   };
 }
 int main(int argc, char *argv[])
