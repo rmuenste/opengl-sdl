@@ -11,13 +11,21 @@ namespace i3d
   {
   public:
 
-    std::unordered_map<std::string, Texture> textures_;
+    std::vector<Texture *> textures_;
 
     //void addTexture()
 
-    float getSpecularIntensity();
-    float getSpecularExponent();
-    float getDiffuseIntensity();
+    virtual float getSpecularIntensity(){ return 0.0f; };
+    virtual float getSpecularExponent(){ return 0.0f; };
+    virtual float getDiffuseIntensity(){ return 0.0f; };
+
+    virtual void bindTexture()
+    {
+      if (!textures_.empty())
+      {
+        textures_.front()->bind();
+      }
+    }
 
     Material();
     ~Material();
@@ -25,8 +33,6 @@ namespace i3d
   private:
 
   };
-
-
 
   class PhongMaterial : public Material
   {
@@ -41,6 +47,11 @@ namespace i3d
 
     }
 
+    PhongMaterial(float si, float se, float di, Texture *tex) : specularIntensity_(si), specularExponent_(se), diffuseIntensity_(di)
+    {
+      textures_.push_back(tex);
+    }
+
     PhongMaterial()
     {
     }
@@ -49,16 +60,15 @@ namespace i3d
     {
     }
 
-    float PhongMaterial::getSpecularIntensity();
+    float getSpecularIntensity() override;
 
-    float PhongMaterial::getSpecularExponent();
+    float getSpecularExponent() override;
 
-    float PhongMaterial::getDiffuseIntensity();
+    float getDiffuseIntensity() override;
 
   private:
 
   };
-
 
 }
 

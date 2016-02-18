@@ -42,7 +42,6 @@ namespace i3d
 
       material_ = &mat;
 
-
       perspective_ = &perspective;
       cameraTranslation_ = &cameraTranslation;
       cameraRotation_ = &cameraRotation;
@@ -50,14 +49,7 @@ namespace i3d
 
     }
 
-    void updateUniforms();
-
-    Vec3 *lightPos_;
-    Mat4 *perspective_;
-    Mat4 *cameraTranslation_;
-    Mat4 *cameraRotation_;
-
-    PhongMaterial *material_;
+    void updateUniforms() override;
 
     virtual ~PhongShader() {};
 

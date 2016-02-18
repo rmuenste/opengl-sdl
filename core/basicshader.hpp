@@ -11,15 +11,62 @@
 #include <vector3.h>
 #include <matrix4x4.h>
 #include <light.hpp>
+#include <material.hpp>
 
 //GLuint glCreateShader(GLenum type);
 //GLuint glCreateProgram();
 
 namespace i3d
 {
+
+
+
   class BasicShader
   {
   public:
+
+    Vec3 *lightPos_;
+    Mat4 *perspective_;
+    Mat4 *cameraTranslation_;
+    Mat4 *cameraRotation_;
+    Mat4 transform_;
+
+    Mat4 *shadowMatrix_;
+    Material *material_;
+
+    DirectionalLight *dirLight_;
+
+    void setDirectionLight(DirectionalLight *l)
+    {
+      dirLight_ = l;
+    }
+
+    void setTransform(const Mat4 &t)
+    {
+      transform_ = t;
+    }
+
+    void setMaterial(Material *m)
+    {
+      material_ = m;
+    }
+
+    void setShadowMatrix(Mat4 &shadowMatrix)
+    {
+      shadowMatrix_ = &shadowMatrix;
+    }
+
+    void setViewTransform(Mat4 &cameraTranslation, Mat4 &cameraRotation)
+    {
+      cameraTranslation_ = &cameraTranslation;
+      cameraRotation_ = &cameraRotation;
+    }
+
+    void setPerspectiveTransform(Mat4 &perspective)
+    {
+      perspective_ = &perspective;
+    }
+
     BasicShader() :
       program_(0), vertexShader_(0), fragmentShader_(0), geometryShader_(0), tesselationShader_(0)
     {
@@ -46,6 +93,29 @@ namespace i3d
 
     };
 
+    virtual void initShader(Vec3 &lightPos, Mat4 &perspective, Mat4 &cameraTranslation, Mat4 &cameraRotation)
+    {
+
+      BasicShader::initShader();
+
+      addVertexShader("../../shaders/phong_world.vert");
+      addFragmentShader("../../shaders/phong_world.frag");
+
+      linkShader();
+
+      addUniform(std::string("transform"));
+      addUniform(std::string("perspective"));
+      addUniform(std::string("camera"));
+      addUniform(std::string("cameraRotation"));
+      addUniform(std::string("lightPos"));
+
+      perspective_ = &perspective;
+      cameraTranslation_ = &cameraTranslation;
+      cameraRotation_ = &cameraRotation;
+      lightPos_ = &lightPos;
+
+    }
+
     void addUniform(std::string name);
 
     void addVertexShader(std::string fileName);
@@ -62,6 +132,13 @@ namespace i3d
       glUseProgram(program_);
     };
 
+    //void bindTexture(int unit, GLuint id, std::string name)
+    //{
+    //  glActiveTexture(GL_TEXTURE1);
+    //  glBindTexture(GL_TEXTURE_2D, id);
+    //  setUniform(name, 1);
+    //}
+
     /* data */
     GLuint program_;
     GLuint vertexShader_;
@@ -73,6 +150,13 @@ namespace i3d
 
   template <>
   inline void BasicShader::setUniform<int>(std::string name, int _uniform)
+  {
+    int loc = (*(uniforms_.find(name))).second;
+    glUniform1i(loc, _uniform);
+  }
+
+  template <>
+  inline void BasicShader::setUniform<GLuint>(std::string name, GLuint _uniform)
   {
     int loc = (*(uniforms_.find(name))).second;
     glUniform1i(loc, _uniform);

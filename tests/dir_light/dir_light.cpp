@@ -16,14 +16,14 @@
 #include <camera.hpp>
 #include <mesh.hpp>
 #include <light.hpp>
-#include <phongshader.hpp>
+#include <phong_dir.hpp>
 
 namespace i3d {
 
-  class BasicScene : public SDL_GL_application
+  class DirLight : public SDL_GL_application
   {
     public:
-      BasicScene()
+      DirLight()
       {
         setTitle(std::string("Basic Scene Test"));
         frame=0;
@@ -31,7 +31,7 @@ namespace i3d {
         speed_ = 0.05f; 
       };
 
-      virtual ~BasicScene(){};
+      virtual ~DirLight(){};
 
       void init()
       {
@@ -41,6 +41,11 @@ namespace i3d {
         camera_.initCamera(Vec3(0, 1.8, -6.0), Vec3(1, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, 1));
 
         light_ = Light(Vec3(0, 0, -3.0), Vec3(1.0, 1.0, 1.0), 0.5f);
+
+        dLight_.ambientIntensity_ = 0.8;
+        dLight_.diffuseIntensity_ = 1.0;
+        dLight_.color_ = Vec3(1.0, 1.0, 1.0);
+        dLight_.dir_ = Vec3(0.0, 0.0, 1.0);
 
         glEnable(GL_TEXTURE_2D);
 
@@ -58,6 +63,7 @@ namespace i3d {
         room_.setMaterial(&roomMat_);
 
         shader_.initShader(light_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), roomMat_);
+        shader_.setDirectionLight(&dLight_);
         room_.shader_ = &shader_;
 
         room_.transform_.translation_ = i3d::Vec4(0, 0, 0, 1);
@@ -206,8 +212,7 @@ namespace i3d {
       GLuint iao;
       GLuint tiao;
       GLuint buffers[3];
-      PhongShader shader_;
-      PhongShader worldShader_;
+      PhongDir shader_;
       std::vector<Texture> textures_;
       int size;
       int frame;
@@ -219,6 +224,7 @@ namespace i3d {
       Mesh<> world_;
       float speed_;
       Light light_;
+      DirectionalLight dLight_;
       PhongMaterial worldMat_;
       PhongMaterial roomMat_;
   };
@@ -226,7 +232,7 @@ namespace i3d {
 int main(int argc, char *argv[])
 {
 
-  i3d::BasicScene app;
+  i3d::DirLight app;
 
   app.init();
 

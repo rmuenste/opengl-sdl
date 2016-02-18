@@ -12,6 +12,7 @@ namespace i3d
   void PhongShader::updateUniforms()
   {
 
+    setUniform(std::string("transform"), transform_);
     setUniform(std::string("perspective"), *perspective_);
     setUniform(std::string("camera"), *cameraTranslation_);
     setUniform(std::string("cameraRotation"), *cameraRotation_);

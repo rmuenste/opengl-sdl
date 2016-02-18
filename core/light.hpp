@@ -62,31 +62,40 @@ namespace i3d {
 
   };
 
-  class DirectionalLight
-  {
-    public:
+  struct DirectionalLight {
 
-      Vec3 dir_;
-
-      Light light_;
-
-      DirectionalLight(const Vec3 &dir, const Light &light);
-
-      ~DirectionalLight();
-
-      Vec3& getDir()
-      {
-        return dir_;
-      }
-
-      void setDir(const Vec3 &dir)
-      {
-        dir_ = dir;
-      }
-
-    private:
+    Vec3 color_;
+    float ambientIntensity_;
+    Vec3 dir_;
+    float diffuseIntensity_;
 
   };
+
+  //class DirectionalLight
+  //{
+  //  public:
+
+  //    Vec3 dir_;
+
+  //    Light light_;
+
+  //    DirectionalLight(const Vec3 &dir, const Light &light);
+
+  //    ~DirectionalLight();
+
+  //    Vec3& getDir()
+  //    {
+  //      return dir_;
+  //    }
+
+  //    void setDir(const Vec3 &dir)
+  //    {
+  //      dir_ = dir;
+  //    }
+
+  //  private:
+
+  //};
 
 
 
