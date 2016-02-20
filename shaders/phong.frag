@@ -10,11 +10,25 @@ in VS_OUT
   vec3 V;
 } fs_in;
 
-vec3 diffuse_albedo = vec3(0.5, 0.2, 0.7);
-vec3 specular_albedo = vec3(1.0,1.0,1.0);
-float specular_power = 20.0;
+uniform float diffuseIntensity;
+uniform float specularIntensity;
+uniform float specularExponent;
+
+float base_intensity = 0.3;
 
 uniform sampler2D sampler;
+
+vec4 ambientLight = vec4(0.8,0.8,0.8,1);
+
+struct DirectionalLight
+{
+  vec3 color;
+  float ambientIntensity;
+  float diffuseIntensity;
+  vec3 dir;
+};
+
+uniform DirectionalLight dirLight;
 
 void main(void) 
 {
@@ -23,17 +37,19 @@ void main(void)
   vec3 L = normalize(fs_in.L);
   vec3 V = normalize(fs_in.V);
 
-  vec4 ambientLight = vec4(0.4,0.4,0.4,1);
+  vec4 totalLight = ambientLight;
+
   color = texture2D(sampler, vs_texCoord.xy);
+  vec3 base = color.xyz;
 
   vec3 R = reflect(-L,N);
 
-  vec3 diffuse = max(dot(N,L), 0.0) * color.xyz;
-  diffuse += color.xyz * vec3(ambientLight);
+  vec3 diffuse =  vec3(1.0,1.0,1.0) * max(dot(N,-L), 0.0) * base_intensity * diffuseIntensity;
 
-  vec3 specular = pow(max(dot(R, V), 0.0), specular_power) * specular_albedo;
+  vec3 specular = vec3(1.0,1.0,1.0) * pow(max(dot(R, V), 0.0), specularExponent) * base_intensity * specularIntensity;
 
-  color = vec4(diffuse + specular, 1.0); 
+  totalLight+=(vec4(diffuse + specular, 1.0));
 
+  color = color * (totalLight);
 }
 
