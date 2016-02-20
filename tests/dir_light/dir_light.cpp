@@ -43,7 +43,7 @@ namespace i3d {
         light_ = Light(Vec3(0, 0, -3.0), Vec3(1.0, 1.0, 1.0), 0.5f);
 
         dLight_.ambientIntensity_ = 0.8;
-        dLight_.diffuseIntensity_ = 1.0;
+        dLight_.diffuseIntensity_ = 0.3;
         dLight_.color_ = Vec3(1.0, 1.0, 1.0);
         dLight_.dir_ = Vec3(0.0, 0.0, 1.0);
 

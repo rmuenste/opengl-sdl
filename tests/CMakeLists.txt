@@ -1,5 +1,6 @@
 add_subdirectory(basic_scene)
 add_subdirectory(dir_light)
+add_subdirectory(point_light)
 add_subdirectory(pointlight)
 add_subdirectory(shadow_mapping)
 add_subdirectory(render_to_texture)

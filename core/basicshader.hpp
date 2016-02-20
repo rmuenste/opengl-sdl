@@ -26,6 +26,7 @@ namespace i3d
   public:
 
     Vec3 *lightPos_;
+    Vec3 *eyePos_;
     Mat4 *perspective_;
     Mat4 *cameraTranslation_;
     Mat4 *cameraRotation_;
