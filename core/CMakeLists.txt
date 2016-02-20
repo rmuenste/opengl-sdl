@@ -19,6 +19,8 @@ phongshader.cpp
 phongshader.hpp  
 phong_dir.cpp  
 phong_dir.hpp  
+phong.cpp  
+phong.hpp  
 shadowmapshader.cpp  
 shadowmapshader.hpp  
 textureshader.cpp  
