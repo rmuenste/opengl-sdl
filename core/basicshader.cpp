@@ -54,6 +54,7 @@ namespace i3d
     {
       glGetShaderInfoLog(vertexShader_, sizeof(log), &length, log);
       std::cout << "Vertex shader compilation failed." << std::endl;
+      std::cout << log << std::endl;
       exit(1);
     }
 
@@ -85,6 +86,7 @@ namespace i3d
     {
       glGetShaderInfoLog(fragmentShader_, sizeof(log), &length, log);
       std::cout << "Fragment shader compilation failed." << std::endl;
+      std::cout << log << std::endl;
       exit(1);
     }
 

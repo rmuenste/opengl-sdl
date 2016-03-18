@@ -11,11 +11,11 @@
 
 namespace i3d
 {
-  class PhongDir : public BasicShader
+  class Phong : public BasicShader
   {
   public:
 
-    PhongDir() : BasicShader()
+    Phong() : BasicShader()
     {
 
     };
@@ -25,8 +25,8 @@ namespace i3d
 
       BasicShader::initShader();
 
-      addVertexShader("../../shaders/phong_dir.vert");
-      addFragmentShader("../../shaders/phong_dir.frag");
+      addVertexShader("../../shaders/phong.vert");
+      addFragmentShader("../../shaders/phong.frag");
 
       linkShader();
 
@@ -37,7 +37,6 @@ namespace i3d
 
       addUniform(std::string("specularIntensity"));
       addUniform(std::string("specularExponent"));
-      //addUniform(std::string("diffuseIntensity"));
 
       addUniform(std::string("eyePos"));
 
@@ -57,7 +56,7 @@ namespace i3d
 
     void updateUniforms() override;
 
-    virtual ~PhongDir() {};
+    virtual ~Phong() {};
 
   };
 

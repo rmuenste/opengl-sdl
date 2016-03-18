@@ -4,12 +4,12 @@
 #include <vector3.h>
 #include <matrix4x4.h>
 #include <light.hpp>
-#include <phong_dir.hpp>
+#include <phong.hpp>
 
 namespace i3d
 {
 
-  void PhongDir::updateUniforms()
+  void Phong::updateUniforms()
   {
 
     setUniform(std::string("transform"), transform_);

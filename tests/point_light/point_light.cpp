@@ -20,18 +20,18 @@
 
 namespace i3d {
 
-  class DirLight : public SDL_GL_application
+  class PointLightTest : public SDL_GL_application
   {
     public:
-      DirLight()
+      PointLightTest()
       {
-        setTitle(std::string("Basic Scene Test"));
+        setTitle(std::string("Point Light Test"));
         frame=0;
         time_=0;
         speed_ = 0.05f; 
       };
 
-      virtual ~DirLight(){};
+      virtual ~PointLightTest(){};
 
       void init()
       {
@@ -40,12 +40,26 @@ namespace i3d {
         perspective_.setPerspectiveTransform(50.0, getWindowWidth(), getWindowHeight(), 1.0, 60.0);
         camera_.initCamera(Vec3(0, 1.8, -6.0), Vec3(1, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, 1));
 
-        light_ = Light(Vec3(0, 0, -3.0), Vec3(1.0, 1.0, 1.0), 0.5f);
+        //light_ = Light(Vec3(0, 0, -3.0), Vec3(1.0, 1.0, 1.0), 0.5f);
 
         dLight_.ambientIntensity_ = 0.8;
         dLight_.diffuseIntensity_ = 0.3;
         dLight_.color_ = Vec3(1.0, 1.0, 1.0);
         dLight_.dir_ = Vec3(0.0, 0.0, 1.0);
+
+        pLight_.color_    = Vec3(0.8, 0.0, 0.0);
+        pLight_.position_ = Vec3(1.5,1.0,5.0);
+        pLight_.ambientIntensity_ = 0.2;
+        pLight_.diffuseIntensity_ = 0.8;
+        pLight_.att_.constant_ = 0.2;
+        pLight_.att_.linear_ = 0.2;
+        pLight_.att_.exp_ = 0.2;
+
+        //pLight_.ambientIntensity_ = 0.2;
+        //pLight_.diffuseIntensity_ = 0.8;
+        //pLight_.att_.constant_ = 1.0;
+        //pLight_.att_.linear_ = 0.0;
+        //pLight_.att_.exp_ = 0.0;
 
         glEnable(GL_TEXTURE_2D);
 
@@ -58,12 +72,13 @@ namespace i3d {
         textures_.push_back(std::move(r));
         Texture *t = &textures_[0];
 
-        //roomMat_ = PhongMaterial(15.0f, 200.0f, 1.0f, &roomTex_);
         roomMat_ = PhongMaterial(15.0f, 200.0f, 1.0f, t);
         room_.setMaterial(&roomMat_);
 
-        shader_.initShader(light_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), roomMat_);
+        //renderManager.setupShaders(shaderList,shaderConfigurations,...);
+        shader_.initShader(camera_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), roomMat_);
         shader_.setDirectionLight(&dLight_);
+        shader_.setPointLight(&pLight_);
         room_.shader_ = &shader_;
 
         room_.transform_.translation_ = i3d::Vec4(0, 0, 0, 1);
@@ -81,9 +96,6 @@ namespace i3d {
 
         worldMat_ = PhongMaterial(15.0f, 30.0f, 1.0f, t);
         world_.setMaterial(&worldMat_);
-
-        //worldShader_.initShader(light_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), worldMat_);
-        //world_.shader_ = &worldShader_;
 
         world_.transform_.translation_ = i3d::Vec4(0.9, -1.0, 0.0, 1);
         world_.transform_.setRotationEuler(i3d::Vec3(0.0, 0.0, 0.0));
@@ -116,6 +128,7 @@ namespace i3d {
 
         shader_.bind();
         room_.material_->bindTexture();
+        //shader.setConfiguration(renderManager_.getConfiguration(GameObject* obj,...))
         shader_.setTransform(room_.transform_.getMatrix());
         shader_.material_ = room_.material_;
         shader_.updateUniforms();
@@ -225,6 +238,7 @@ namespace i3d {
       float speed_;
       Light light_;
       DirectionalLight dLight_;
+      PointLight pLight_;
       PhongMaterial worldMat_;
       PhongMaterial roomMat_;
   };
@@ -232,7 +246,7 @@ namespace i3d {
 int main(int argc, char *argv[])
 {
 
-  i3d::DirLight app;
+  i3d::PointLightTest app;
 
   app.init();
 

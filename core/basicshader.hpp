@@ -36,10 +36,24 @@ namespace i3d
     Material *material_;
 
     DirectionalLight *dirLight_;
+    PointLight *pointLight_;
+
+    /* data */
+    GLuint program_;
+    GLuint vertexShader_;
+    GLuint fragmentShader_;
+    GLuint geometryShader_;
+    GLuint tesselationShader_;
+    std::unordered_map<std::string, int> uniforms_;
 
     void setDirectionLight(DirectionalLight *l)
     {
       dirLight_ = l;
+    }
+
+    void setPointLight(PointLight *l)
+    {
+      pointLight_ = l;
     }
 
     void setTransform(const Mat4 &t)
@@ -140,13 +154,6 @@ namespace i3d
     //  setUniform(name, 1);
     //}
 
-    /* data */
-    GLuint program_;
-    GLuint vertexShader_;
-    GLuint fragmentShader_;
-    GLuint geometryShader_;
-    GLuint tesselationShader_;
-    std::unordered_map<std::string, int> uniforms_;
   };
 
   template <>

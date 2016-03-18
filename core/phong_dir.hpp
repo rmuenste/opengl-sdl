@@ -37,7 +37,6 @@ namespace i3d
 
       addUniform(std::string("specularIntensity"));
       addUniform(std::string("specularExponent"));
-      //addUniform(std::string("diffuseIntensity"));
 
       addUniform(std::string("eyePos"));
 
@@ -45,6 +44,15 @@ namespace i3d
       addUniform(std::string("dirLight.dir"));
       addUniform(std::string("dirLight.color"));
       addUniform(std::string("dirLight.ambientIntensity"));
+
+      addUniform(std::string("pointLight.color"));
+      addUniform(std::string("pointLight.ambientIntensity"));
+      addUniform(std::string("pointLight.diffuseIntensity"));
+      addUniform(std::string("pointLight.position"));
+
+      addUniform(std::string("pointLight.att.constant"));
+      addUniform(std::string("pointLight.att.linear"));
+      addUniform(std::string("pointLight.att.exp"));
 
       material_ = &mat;
 

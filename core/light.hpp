@@ -71,6 +71,25 @@ namespace i3d {
 
   };
 
+  struct Attenuation
+  {
+    float constant_;
+    float linear_;
+    float exp_;
+  };
+
+  struct PointLight {
+
+    Vec3 color_;
+    float ambientIntensity_;
+    float diffuseIntensity_;
+
+    Vec3 position_; 
+
+    Attenuation att_;
+
+  };
+
   //class DirectionalLight
   //{
   //  public:

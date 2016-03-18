@@ -15,7 +15,7 @@ bool ShaderLoader::load(std::string fileName)
     
   }
 
-  std::cout << shaderCode_ << std::endl;
+  //std::cout << shaderCode_ << std::endl;
 
   return true;
 }
