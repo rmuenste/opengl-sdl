@@ -25,8 +25,8 @@ namespace i3d {
   template<int rendermode>
   void Mesh<rendermode>::loadTexture(std::string fileName)
   {
-    texture_.createTextureFromImage(fileName);
-    hasTexture_ = true;
+//    texture_.createTextureFromImage(fileName);
+//    hasTexture_ = true;
   }
 
   template<int rendermode>
@@ -152,56 +152,56 @@ namespace i3d {
   template<int rendermode>
   void Mesh<rendermode>::render(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord, const Vec3 &cameraPos)
   {
-    shader_->bind();
-
-    shader_->setUniform(std::string("transform"), transform_.getMatrix());
-    shader_->setUniform(std::string("perspective"), perspective);
-    shader_->setUniform(std::string("camera"), cameraTrans);
-    shader_->setUniform(std::string("cameraRotation"), cameraCoord);
-
-    texture_.bind();
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iao);
-    glDrawElements(GL_TRIANGLES, drawVertices_, GL_UNSIGNED_INT, 0);
+//    shader_->bind();
+//
+//    shader_->setUniform(std::string("transform"), transform_.getMatrix());
+//    shader_->setUniform(std::string("perspective"), perspective);
+//    shader_->setUniform(std::string("camera"), cameraTrans);
+//    shader_->setUniform(std::string("cameraRotation"), cameraCoord);
+//
+//    texture_.bind();
+//
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iao);
+//    glDrawElements(GL_TRIANGLES, drawVertices_, GL_UNSIGNED_INT, 0);
   }
 
   template<int rendermode>
   void Mesh<rendermode>::renderNonIndexed(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord, const Vec3 &cameraPos)
   {
 
-    glBindVertexArray(vao);
-    glEnableVertexAttribArray(0);
-
-    if(hasTexture_)
-    {
-
-      glEnableVertexAttribArray(1);
-
-    }
-
-    glEnableVertexAttribArray(2);
-
-    shader_->bind();
-
-    shader_->setUniform(std::string("transform"), transform_.getMatrix());
-    shader_->setUniform(std::string("perspective"), perspective);
-    shader_->setUniform(std::string("camera"), cameraTrans);
-    shader_->setUniform(std::string("cameraRotation"), cameraCoord);
-
-    texture_.bind();
-
-    glDrawArrays(GL_TRIANGLES, 0, drawVertices_);
-
-    glDisableVertexAttribArray(0);
-
-    if(hasTexture_)
-    {
-
-      glDisableVertexAttribArray(1);
-
-    }
-
-    glDisableVertexAttribArray(2);
+//    glBindVertexArray(vao);
+//    glEnableVertexAttribArray(0);
+//
+//    if(hasTexture_)
+//    {
+//
+//      glEnableVertexAttribArray(1);
+//
+//    }
+//
+//    glEnableVertexAttribArray(2);
+//
+//    shader_->bind();
+//
+//    shader_->setUniform(std::string("transform"), transform_.getMatrix());
+//    shader_->setUniform(std::string("perspective"), perspective);
+//    shader_->setUniform(std::string("camera"), cameraTrans);
+//    shader_->setUniform(std::string("cameraRotation"), cameraCoord);
+//
+//    texture_.bind();
+//
+//    glDrawArrays(GL_TRIANGLES, 0, drawVertices_);
+//
+//    glDisableVertexAttribArray(0);
+//
+//    if(hasTexture_)
+//    {
+//
+//      glDisableVertexAttribArray(1);
+//
+//    }
+//
+//    glDisableVertexAttribArray(2);
 
   }
 
@@ -209,39 +209,39 @@ namespace i3d {
   void Mesh<rendermode>::renderNonIndexed(const Mat4 &perspective, const Mat4 &cameraTrans, const Mat4 &cameraCoord, const Vec3 &cameraPos, int a0, int a1, int a2)
   {
 
-    glBindVertexArray(vao);
-    glEnableVertexAttribArray(a0);
-
-    if(hasTexture_)
-    {
-
-      glEnableVertexAttribArray(a1);
-
-    }
-
-    glEnableVertexAttribArray(a2);
-
-    shader_->bind();
-
-    shader_->setUniform(std::string("transform"), transform_.getMatrix());
-    shader_->setUniform(std::string("perspective"), perspective);
-    shader_->setUniform(std::string("camera"), cameraTrans);
-    shader_->setUniform(std::string("cameraRotation"), cameraCoord);
-
-    texture_.bind();
-
-    glDrawArrays(GL_TRIANGLES, 0, drawVertices_);
-
-    glDisableVertexAttribArray(a0);
-
-    if(hasTexture_)
-    {
-
-      glDisableVertexAttribArray(a1);
-
-    }
-
-    glDisableVertexAttribArray(a2);
+//    glBindVertexArray(vao);
+//    glEnableVertexAttribArray(a0);
+//
+//    if(hasTexture_)
+//    {
+//
+//      glEnableVertexAttribArray(a1);
+//
+//    }
+//
+//    glEnableVertexAttribArray(a2);
+//
+//    shader_->bind();
+//
+//    shader_->setUniform(std::string("transform"), transform_.getMatrix());
+//    shader_->setUniform(std::string("perspective"), perspective);
+//    shader_->setUniform(std::string("camera"), cameraTrans);
+//    shader_->setUniform(std::string("cameraRotation"), cameraCoord);
+//
+//    texture_.bind();
+//
+//    glDrawArrays(GL_TRIANGLES, 0, drawVertices_);
+//
+//    glDisableVertexAttribArray(a0);
+//
+//    if(hasTexture_)
+//    {
+//
+//      glDisableVertexAttribArray(a1);
+//
+//    }
+//
+//    glDisableVertexAttribArray(a2);
 
   }
 

@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <texture.hpp>
+#include <vector>
 
 namespace i3d
 {
@@ -11,7 +12,7 @@ namespace i3d
   {
   public:
 
-    std::vector<Texture *> textures_;
+    std::vector<Texture*> textures_;
 
     //void addTexture()
 
