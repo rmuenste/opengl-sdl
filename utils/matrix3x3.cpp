@@ -147,7 +147,7 @@ namespace i3d {
       Matrix3x3<T> inv;
 
       //inverse of determinate of this matrix
-      T invdet = 1.0/Determinate();
+      T invdet = T(1.0)/Determinate();
 
       //entry(0,0)
       inv(0,0) = invdet * (GetEntry(1,1)*GetEntry(2,2) - GetEntry(2,1)*GetEntry(1,2));

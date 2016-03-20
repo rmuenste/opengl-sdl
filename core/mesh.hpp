@@ -69,8 +69,6 @@ namespace i3d {
 
       void shadowRender();
 
-      void setTexture(const Texture &t);
-
       void setMaterial(Material *m);
 
       Transform transform_;

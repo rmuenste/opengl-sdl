@@ -1,7 +1,7 @@
 #include <sdl_gl_application.hpp>
 #include <iostream>
 
-SDL_GL_application::SDL_GL_application() : quit(false), window(nullptr), window_width_(640), window_height_(480), title_("SDL2 Window")
+SDL_GL_application::SDL_GL_application() : quit(false), window(nullptr), window_width_(800), window_height_(600), title_("SDL2 Window")
 {
   renderMode_ = GL_FILL;
 }

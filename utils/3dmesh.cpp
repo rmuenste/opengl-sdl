@@ -316,13 +316,10 @@ VECTOR3 Mesh3D::TransfromWorldModelSingle(const VECTOR3 &vVec)
 
 void Mesh3D::TransformModelWorld()
 {
-  VECTOR3 vWorld;
-  for(int i=0;i<vertices_.size();i++)
+  for (auto &v : vertices_)
   {
-    vWorld = vertices_[i];
-    vWorld = transform_*vWorld;
-    vWorld += com_;
-    vertices_[i] = vWorld;
+    v = transform_ * v;
+    v += com_;
   }
 }
 
@@ -351,9 +348,10 @@ void Mesh3D::buildIndexArraysUV()
   //allocate memory for the index array
   indices_ = new unsigned int[3*this->faces_.size()];
   texIndices_ = new unsigned int[3*this->faces_.size()];
-  for(int i=0; i < faces_.size(); i++)
+
+  for(unsigned i(0); i < faces_.size(); ++i)
   {
-    for(int j=0;j<3;j++)
+    for(unsigned j(0); j < 3; ++j)
     {
       indices_[i*3+j]=faces_[i].m_VertIndices[j];
       texIndices_[i*3+j]=faces_[i].m_TexIndices[j];
@@ -368,9 +366,9 @@ void Mesh3D::buildIndexArraysN()
 {
   //allocate memory for the index array
   indices_ = new unsigned int[3*this->faces_.size()];
-  for(int i=0; i < faces_.size(); i++)
+  for (unsigned i(0); i < faces_.size(); ++i)
   {
-    for(int j=0;j<3;j++)
+    for (unsigned j(0); j < 3; ++j)
     {
       indices_[i*3+j]=faces_[i].m_VertIndices[j];
       std::cout << "face: " << i << "index: " << faces_[i].m_VertIndices[j] << std::endl;
@@ -382,15 +380,21 @@ void Mesh3D::calcRawVertexNormals()
 {
 
   using namespace std;
+
   //correctely size the vectors
-  vector<int> *pFacesAtVertex = new vector<int>[rawVertices_.size()];
+  vector<vector<int>> pFacesAtVertex;
+  pFacesAtVertex.reserve(rawVertices_.size());
+  for (unsigned i(0); i < rawVertices_.size(); ++i)
+    pFacesAtVertex.push_back(std::vector<int>());
+
   std::vector<Vec3> pNormals;
   std::vector<Vec3> tempNormals;
   pNormals.clear();
   vertexNormals_.clear();
+
   //calculate the face normals in a
   //first loop
-  for(int i = 0; i < (int)faces_.size(); i++)
+  for(unsigned i(0); i < faces_.size(); ++i)
   {
     //get the vertex indices of the face
     int vi0 = faces_[i][0];
@@ -402,28 +406,28 @@ void Mesh3D::calcRawVertexNormals()
     pFacesAtVertex[vi1].push_back(i);
     pFacesAtVertex[vi2].push_back(i);
 
-    VECTOR3 v0 = rawVertices_[vi0];
-    VECTOR3 v1 = rawVertices_[vi1];
-    VECTOR3 v2 = rawVertices_[vi2];
+    Vec3 v0 = rawVertices_[vi0];
+    Vec3 v1 = rawVertices_[vi1];
+    Vec3 v2 = rawVertices_[vi2];
 
     //create 2 vectors, the face normal will be
     //perpendicular to those
-    VECTOR3 vV1 = VECTOR3::createVector(v0, v2);
-    VECTOR3 vV2 = VECTOR3::createVector(v2, v1);
+    Vec3 vV1 = Vec3::createVector(v0, v2);
+    Vec3 vV2 = Vec3::createVector(v2, v1);
 
     ////Calculate and assign the face normal		
-    pNormals.push_back(VECTOR3::Cross(vV1, vV2));
+    pNormals.push_back(Vec3::Cross(vV1, vV2));
 
   }//end for
 
   //in this 2nd loop calculate the vertex normals
-  for(int i = 0; i < (int)rawVertices_.size(); i++)
+  for(int i(0); i < (int)rawVertices_.size(); ++i)
   {
 
-    VECTOR3 vSum(0,0,0);
+    Vec3 vSum(0, 0, 0);
     int count = 0;
 
-    for(int j = 0; j < (int)pFacesAtVertex[i].size(); j++)
+    for(int j(0); j < (int)pFacesAtVertex[i].size(); ++j)
     {
       vSum+=pNormals[pFacesAtVertex[i][j]];
       count++;
@@ -433,21 +437,19 @@ void Mesh3D::calcRawVertexNormals()
     //and normalize
     vSum/=Real(count);
     vSum.Normalize();
-    tempNormals.push_back(-vSum);
+    tempNormals.push_back(vSum);
 
   }//end for
 
   for (auto &f : faces_)
   {
-    int i;
-    for (i = 0; i < 3; ++i)
+    
+    for (int i(0); i < 3; ++i)
     {
       int i_v = f.m_VertIndices[i];
       vertexNormals_.push_back(tempNormals[i_v]);
     } 
   }
-
-  delete[] pFacesAtVertex;
 
 }//end CalcVertexNormals
 

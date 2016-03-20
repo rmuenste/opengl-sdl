@@ -49,12 +49,13 @@ template <class T>
 Vector3<T> Quaternion<T>::convertToEuler()
 {
   Vector3<T> euler;
-  euler.y = atan2(2.0*y*w-2.0*x*z , 1.0 - 2.0*y*y - 2.0*z*z);
-  Real val = 2.0*x*y + 2.0*z*w;
-  if(val > 1.0)val=1.0;
-  if(val < -1.0)val=-1.0;
-  euler.z = asin(val);
-  euler.x = atan2(2.0*x*w-2*y*z , 1.0 - 2.0*x*x - 2.0*z*z);
+  T two_ = T(2.0);
+  euler.y = std::atan2(two_*y*w - two_*x*z, T(1.0) - two_*y*y - two_*z*z);
+  T val = two_*x*y + two_*z*w;
+  if(val > T(1.0))val=T(1.0);
+  if(val < -T(1.0))val=-T(1.0);
+  euler.z = std::asin(val);
+  euler.x = std::atan2(two_*x*w - two_ * y*z, T(1.0) - two_*x*x - two_*z*z);
   return euler;
 }
 

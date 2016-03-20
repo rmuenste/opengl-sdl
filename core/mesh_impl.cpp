@@ -1,10 +1,6 @@
 
 
-  //template<>
-  //void Mesh<array_render>::setTexture(const Texture &t)
-  //{
-  //  hasTexture_ = true;
-  //}
+
 
   template<>
   void Mesh<array_render>::rotate(const Vec3 &v)

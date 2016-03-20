@@ -20,7 +20,7 @@ namespace i3d
 
     };
 
-    void initShader(Mat4 &perspective, Mat4 &cameraTranslation, Mat4 &cameraRotation)
+    void initShader(Vec3 &pos, Mat4 &perspective, Mat4 &cameraTranslation, Mat4 &cameraRotation, PhongMaterial &mat)
     {
 
       BasicShader::initShader();
@@ -35,13 +35,35 @@ namespace i3d
       addUniform(std::string("camera"));
       addUniform(std::string("cameraRotation"));
 
+      addUniform(std::string("specularIntensity"));
+      addUniform(std::string("specularExponent"));
+
+      addUniform(std::string("eyePos"));
+
+      addUniform(std::string("dirLight.diffuseIntensity"));
+      addUniform(std::string("dirLight.dir"));
+      addUniform(std::string("dirLight.color"));
+      addUniform(std::string("dirLight.ambientIntensity"));
+
+      addUniform(std::string("pointLight.color"));
+      addUniform(std::string("pointLight.ambientIntensity"));
+      addUniform(std::string("pointLight.diffuseIntensity"));
+      addUniform(std::string("pointLight.position"));
+
+      addUniform(std::string("pointLight.att.constant"));
+      addUniform(std::string("pointLight.att.linear"));
+      addUniform(std::string("pointLight.att.exp"));
+
+      material_ = &mat;
+
       perspective_ = &perspective;
       cameraTranslation_ = &cameraTranslation;
       cameraRotation_ = &cameraRotation;
+      eyePos_ = &pos;
 
     }
 
-    void updateUniforms();
+    void updateUniforms() override;
 
     virtual ~TextureShader() {};
 

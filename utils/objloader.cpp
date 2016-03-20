@@ -147,7 +147,7 @@ namespace i3d {
     //add a dummy material
     tMaterialInfo info;
     char f[255]="COWLOFTH.bmp";
-    strcpy(info.strFile,f);
+    info.fileName = std::string(f);
     info.texureId = 0;
     pModel->addMaterial(info);
     pModel->meshes_[0].setMaterialId(0);

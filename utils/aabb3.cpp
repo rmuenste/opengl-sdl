@@ -47,6 +47,12 @@ namespace i3d {
         case 7: 
           return getBTL();
           break;		
+        default:
+        {
+           std::cerr << "Error in getVertex(): bad vertex identifier." << std::endl;
+           std::exit(EXIT_FAILURE);
+        }
+          break;
       }
     }
 

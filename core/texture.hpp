@@ -31,7 +31,7 @@ public:
     printf("copy constructor called %s \n",fileName_.c_str());
     pixels_ = new byte_type[copy.size_];
     size_ = copy.size_;
-    for (int i = 0; i < size_; i++)
+    for (unsigned i = 0; i < size_; i++)
       pixels_[i] = copy.pixels_[i];
 
   }

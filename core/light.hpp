@@ -90,32 +90,19 @@ namespace i3d {
 
   };
 
-  //class DirectionalLight
-  //{
-  //  public:
+  struct SpotLight {
 
-  //    Vec3 dir_;
+    Vec3 color_;
+    Vec3 dir;
+    Vec3 position_;
 
-  //    Light light_;
+    float ambientIntensity_;
+    float diffuseIntensity_;
+    float cutoff_;
 
-  //    DirectionalLight(const Vec3 &dir, const Light &light);
+    Attenuation att_;
 
-  //    ~DirectionalLight();
-
-  //    Vec3& getDir()
-  //    {
-  //      return dir_;
-  //    }
-
-  //    void setDir(const Vec3 &dir)
-  //    {
-  //      dir_ = dir;
-  //    }
-
-  //  private:
-
-  //};
-
+  };
 
 
 }

@@ -26,6 +26,7 @@ namespace i3d {
   {
     char  strName[255];						// The texture name
     char  strFile[255];						// The texture file name (If this is set it's a texture map)
+    std::string fileName;
     unsigned char  color[3];				// The color of the object (R, G, B)
     int   texureId;							// the texture ID
     double uTile;							// u tiling of texture  (Currently not used)

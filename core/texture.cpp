@@ -23,7 +23,7 @@ Texture::Texture(std::string name)
   size_ = bytesPerRow * surf->h;
   pixels_ = new byte_type[size_];
 
-  for (unsigned i = 0; i < surf->h; ++i)
+  for (int i = 0; i < surf->h; ++i)
   {
     const byte_type* srcBeg = originalRaw + (bytesPerRow *(surf->h - i - 1));
     const byte_type* srcEnd = srcBeg + bytesPerRow;
@@ -81,7 +81,7 @@ void Texture::createTextureFromImage(std::string fileName)
   size_ = bytesPerRow * surf->h;
   pixels_ = new byte_type[bytesPerRow * surf->h];
 
-  for (unsigned i = 0; i < surf->h; ++i)
+  for (int i = 0; i < surf->h; ++i)
   {
     const byte_type* srcBeg = originalRaw + (bytesPerRow *(surf->h - i - 1));
     const byte_type* srcEnd = srcBeg + bytesPerRow;

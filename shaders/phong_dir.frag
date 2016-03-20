@@ -39,8 +39,6 @@ uniform DirectionalLight dirLight;
 
 uniform PointLight pointLight;
 
-float base_intensity = 0.3;
-
 uniform sampler2D sampler;
 
 vec4 ambientLight = vec4(0.8,0.8,0.8,1);

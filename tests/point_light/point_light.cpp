@@ -40,16 +40,14 @@ namespace i3d {
         perspective_.setPerspectiveTransform(50.0, getWindowWidth(), getWindowHeight(), 1.0, 60.0);
         camera_.initCamera(Vec3(0, 1.8, -6.0), Vec3(1, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, 1));
 
-        //light_ = Light(Vec3(0, 0, -3.0), Vec3(1.0, 1.0, 1.0), 0.5f);
-
-        dLight_.ambientIntensity_ = 0.8;
-        dLight_.diffuseIntensity_ = 0.3;
+        dLight_.ambientIntensity_ = 0.0;
+        dLight_.diffuseIntensity_ = 0.0;
         dLight_.color_ = Vec3(1.0, 1.0, 1.0);
         dLight_.dir_ = Vec3(0.0, 0.0, 1.0);
 
         pLight_.color_    = Vec3(0.8, 0.0, 0.0);
-        pLight_.position_ = Vec3(1.5,1.0,5.0);
-        pLight_.ambientIntensity_ = 0.2;
+        pLight_.position_ = Vec3(1.0,1.0,1.0);
+        pLight_.ambientIntensity_ = 0.0;
         pLight_.diffuseIntensity_ = 0.8;
         pLight_.att_.constant_ = 0.2;
         pLight_.att_.linear_ = 0.2;
@@ -72,7 +70,7 @@ namespace i3d {
         textures_.push_back(std::move(r));
         Texture *t = &textures_[0];
 
-        roomMat_ = PhongMaterial(15.0f, 200.0f, 1.0f, t);
+        roomMat_ = PhongMaterial(0.0f, 200.0f, 1.0f, t);
         room_.setMaterial(&roomMat_);
 
         //renderManager.setupShaders(shaderList,shaderConfigurations,...);
@@ -131,16 +129,17 @@ namespace i3d {
         //shader.setConfiguration(renderManager_.getConfiguration(GameObject* obj,...))
         shader_.setTransform(room_.transform_.getMatrix());
         shader_.material_ = room_.material_;
+        shader_.setViewTransform(camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
         shader_.updateUniforms();
 
         room_.render();
 
-        world_.material_->bindTexture();
-        shader_.setTransform(world_.transform_.getMatrix());
-        shader_.material_ = world_.material_;
-        shader_.updateUniforms();
+        //world_.material_->bindTexture();
+        //shader_.setTransform(world_.transform_.getMatrix());
+        //shader_.material_ = world_.material_;
+        //shader_.updateUniforms();
 
-        world_.render();
+        //world_.render();
 
 #ifndef _MSC_VER
         struct timeval start, end;
@@ -161,7 +160,7 @@ namespace i3d {
         mtime = ((seconds)* 1000 + useconds / 1000.0) + 0.5;
 #endif
         //world_.transform_.translation_.x = 0.9 + std::sin(frame*0.01)*0.5;
-        light_.pos_.x = std::sin(frame*0.01);
+        //light_.pos_.x = std::sin(frame*0.01);
         //room_.rotate(i3d::Vec3(0.0,frame*0.005,0.0));
         frame++;
 
@@ -178,16 +177,22 @@ namespace i3d {
         switch(event.key.keysym.sym) {
 
           case SDLK_RIGHT:
-            camera_.getPos() += speed_ * camera_.getU();
+            camera_.moveU(speed_);
             break;
           case SDLK_LEFT:
-            camera_.getPos() -= speed_ * camera_.getU();
+            camera_.moveU(-speed_);
             break;
           case SDLK_UP:
-            camera_.getPos() += speed_ * camera_.getN();
+            camera_.moveV(speed_);
             break;
           case SDLK_DOWN:
-            camera_.getPos() -= speed_ * camera_.getN();
+            camera_.moveV(-speed_);
+            break;
+          case SDLK_PAGEUP:
+            camera_.moveW(speed_);
+            break;
+          case SDLK_PAGEDOWN:
+            camera_.moveW(-speed_);
             break;
           case SDLK_a:
             camera_.rotateY(-speed_);

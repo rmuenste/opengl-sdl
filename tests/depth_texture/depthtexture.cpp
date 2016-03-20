@@ -16,288 +16,353 @@
 #include <camera.hpp>
 #include <mesh.hpp>
 #include <light.hpp>
-#include <phongshader.hpp>
-#include <material.hpp>
-#include <shadowmapshader.hpp>
+#include <phong_dir.hpp>
 #include <textureshader.hpp>
-
-// TODO: attaching a different shader to each mesh is not the best idea
 
 namespace i3d {
 
-  class ShadowMapTest : public SDL_GL_application
+  class DepthTextureTest : public SDL_GL_application
   {
-    public:
-      ShadowMapTest()
-      {
-        setTitle(std::string("Shadow Mapping Test"));
-        frame=0;
-        time_=0;
-        speed_ = 0.05f; 
-      };
+  public:
+    DepthTextureTest()
+    {
+      setTitle(std::string("Depth texture test"));
+      frame = 0;
+      time_ = 0;
+      speed_ = 0.05f;
+    };
 
-      virtual ~ShadowMapTest(){};
+    virtual ~DepthTextureTest(){};
 
-      void init()
-      {
-        SDL_GL_application::init();
+    void init()
+    {
+      SDL_GL_application::init();
 
-        perspective_.setPerspectiveTransform(50.0, getWindowWidth(), getWindowHeight(), 4.0, 10.0);
-        camera_.initCamera(Vec3(0,1.8,-6.0), Vec3(1,0,0), Vec3(0,1,0), Vec3(0,0,1));
-        //camera_.initCamera(Vec3(0, 0, -3.0), Vec3(1, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, 1));
+      perspective_.setPerspectiveTransform(50.f, static_cast<float>(getWindowWidth()), static_cast<float>(getWindowHeight()), 1.f, 60.f);
+      camera_.initCamera(Vec3(0.f, 1.8f, -6.0f), Vec3(1.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), Vec3(0.f, 0.f, 1.f));
 
-        light_ = Light(Vec3(0, 0, -3.0), Vec3(1.0, 1.0, 1.0), 0.5f);
+      dLight_.ambientIntensity_ = 0.0f;
+      dLight_.diffuseIntensity_ = 0.0f;
+      dLight_.color_ = Vec3(0.0f, 0.0f, 0.0f);
+      dLight_.dir_ = Vec3(0.25f, 0.0f, 1.0f);
 
-        glEnable(GL_TEXTURE_2D);
+      pLight_.color_ = Vec3(0.8f, 0.8f, 0.8f);
+      pLight_.position_ = Vec3(2.5f, 1.0f, 2.0f);
+      pLight_.ambientIntensity_ = 0.0f;
+      pLight_.diffuseIntensity_ = 0.7f;
+      pLight_.att_.constant_ = 0.02f;
+      pLight_.att_.linear_ = 0.02f;
+      pLight_.att_.exp_ = 0.03f;
 
-        shadowCamera_.initCamera(light_.pos_, Vec3(1, 0, 0), Vec3(0, 1, 0), Vec3(0, 0, 1));
-        //earth.createRenderTexture(getWindowWidth(), getWindowHeight());
-        earth.createDepthTexture(getWindowWidth(), getWindowHeight());
-        
-        glGenFramebuffers(1, &fbo);
+      //pLight_.ambientIntensity_ = 0.2;
+      //pLight_.diffuseIntensity_ = 0.8;
+      //pLight_.att_.constant_ = 1.0;
+      //pLight_.att_.linear_ = 0.0;
+      //pLight_.att_.exp_ = 0.0;
 
-        depthTexture_.createDepthTexture(getWindowWidth(), getWindowHeight());
+      glEnable(GL_TEXTURE_2D);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+      renderTex_.createDepthTexture(getWindowWidth(), getWindowHeight());
 
-        glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, earth.id_, 0);
+      glGenRenderbuffers(1, &renderBuffer);
+      glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);
 
-        glEnable(GL_DEPTH_TEST);
+      // the renderbuffer needs also a depth component
+      glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, getWindowWidth(), getWindowHeight());
 
-        GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+      // get a framebuffer object
+      glGenFramebuffers(1, &fbo);
+      glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+      glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, renderTex_.id_, 0);
+      glEnable(GL_DEPTH_TEST);
 
-        if (Status != GL_FRAMEBUFFER_COMPLETE) {
-          printf("FB error, status: 0x%x\n", Status);
-          return;
-        }
+      //room_.loadMesh("../../meshes/room.obj");
+      //room_.loadMesh("../../meshes/suzanne.obj");
+      room_.loadMesh("../../meshes/room.obj");
+      room_.buildFakeVertexNormals();
+      textures_.reserve(10);
 
-        //shadowShader_.initShader(light_.getPos(), perspective_.getPerspectiveTransform(), shadowCamera_.getCameraTranslationTransform(), shadowCamera_.getCameraCoordinateTransform());
+      Texture r;
+      r.createTextureFromImage("../../textures/wall_floor.png");
+      textures_.push_back(std::move(r));
+      Texture *t = &textures_[0];
 
-        room_.loadMesh("../../meshes/room.obj"); 
-        room_.buildFakeVertexNormals(); 
-        room_.loadTexture("../../textures/wall_floor.png");
-        roomMat_ = PhongMaterial(15.0f, 200.0f, 1.0f);
+      roomMat_ = PhongMaterial(0.0f, 100.0f, 1.0f, t);
+      room_.setMaterial(&roomMat_);
 
-        //shader_.initShader(light_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), roomMat_);
-        roomTextureShader_.initShader(perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
-        room_.shader_ = &roomTextureShader_;
+      //renderManager.setupShaders(shaderList,shaderConfigurations,...);
+      shader_.initShader(camera_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), roomMat_);
+      shader_.setDirectionLight(&dLight_);
+      shader_.setPointLight(&pLight_);
+      room_.shader_ = &shader_;
 
-        quad_.loadMesh("../../meshes/quad.obj");
-        quad_.buildFakeVertexNormals();
-        quad_.setTexture(earth);
+      shaderPhong_.initShader(camera_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), roomMat_);
+      shaderPhong_.setDirectionLight(&dLight_);
+      shaderPhong_.setPointLight(&pLight_);
+      room_.shader_ = &shaderPhong_;
 
+      room_.transform_.translation_ = i3d::Vec4(0.f, 0.f, 0.f, 1.f);
+      room_.transform_.setRotationEuler(i3d::Vec3(0.0f, 0.0f, 0.0f));
 
-        shadowShader_.initShader(light_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
-        //quadShader_.initShader(perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
-        quad_.shader_ = &shadowShader_;
+      room_.initRender();
 
-        quad_.transform_.translation_ = i3d::Vec4(0, 1.8, 0.0, 1);
-        quad_.transform_.setRotationEuler(i3d::Vec3(0.0, 0.0, 0.0));
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        quad_.initRender();
+      quad_.loadMesh("../../meshes/quad.obj");
+      quad_.buildSmoothNormals();
 
-        room_.transform_.translation_ = i3d::Vec4(0,0,0.0,1);
-        room_.transform_.setRotationEuler(i3d::Vec3(0.0,0.0,0.0));
+      Texture e;
+      e.createTextureFromImage("../../textures/earth1.png");
+      textures_.push_back(std::move(e));
+      t = &textures_[1];
 
-        room_.initRender();
+      worldMat_ = PhongMaterial(15.0f, 30.0f, 1.0f, t);
+      quad_.setMaterial(&worldMat_);
 
-        world_.loadMesh("../../meshes/world.obj"); 
-        world_.buildSmoothNormals();
-        world_.loadTexture("../../textures/earth1.png");
-        worldMat_ = PhongMaterial(15.0f, 30.0f, 1.0f);
+      quad_.transform_.translation_ = i3d::Vec4(0.f, 1.8f, 0.f, 1.f);
+      quad_.transform_.setRotationEuler(i3d::Vec3(0.0f, 0.0f, 0.0f));
 
-        worldTextureShader_.initShader(perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
-        //worldShader_.initShader(light_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), worldMat_);
-        world_.shader_ = &worldTextureShader_;
+      quad_.initRender();
 
-        world_.transform_.translation_ = i3d::Vec4(0.9, -0.5, 0.0, 1);
-        world_.transform_.setRotationEuler(i3d::Vec3(0.0,0.0,0.0));
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        world_.initRender();
+      monkey_.loadMesh("../../meshes/suzanne.obj");
+      monkey_.buildSmoothNormals();
 
-      }
+      Texture m;
+      m.createTextureFromImage("../../textures/test.png");
+      textures_.push_back(std::move(m));
+      t = &textures_[2];
 
-      void shadowPass()
-      {
+      monkeyMat_ = PhongMaterial(0.0f, 100.0f, 1.0f, t);
+      monkey_.setMaterial(&monkeyMat_);
 
+      //renderManager.setupShaders(shaderList,shaderConfigurations,...);
+      monkey_.shader_ = &shaderPhong_;
 
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        glClear(GL_DEPTH_BUFFER_BIT);
+      monkey_.transform_.translation_ = i3d::Vec4(0.f, 0.f, 0.f, 1.f);
+      monkey_.transform_.setRotationEuler(i3d::Vec3(0.0f, 0.0f, 0.0f));
 
-        roomTextureShader_.bind();
-        room_.render();
+      monkey_.initRender();
 
-        worldTextureShader_.bind();
-        world_.render();
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-      }
+      world_.loadMesh("../../meshes/world.obj");
+      world_.buildSmoothNormals();
 
-      void render()
-      {
+      Texture w;
+      w.createTextureFromImage("../../textures/earth1.png");
+      textures_.push_back(std::move(w));
+      t = &textures_[3];
 
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LEQUAL);
+      worldMat_ = PhongMaterial(5.0f, 30.0f, 1.0f, t);
+      world_.setMaterial(&worldMat_);
 
-        static const GLfloat black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-        static const GLfloat green[] = { 0.0f, 0.8f, 0.0f, 1.0f };
-        static const GLfloat ones[] = { 1.0f };
+      world_.transform_.translation_ = i3d::Vec4(0.9, -0.5, 0.0, 1);
+      world_.transform_.setRotationEuler(i3d::Vec3(0.0, 0.0, 0.0));
 
-        shadowPass();
+      world_.initRender();
 
-        //glClearBufferfv(GL_COLOR, 0, green);
-        //glClearBufferfv(GL_DEPTH, 0, ones);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glClearBufferfv(GL_COLOR, 0, green);
-        
-        glEnable(GL_CULL_FACE);
-        glFrontFace(GL_CCW);
+    }
 
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LEQUAL);
+    void shadowPass()
+    {
 
-        float x = (float)rand()/(float)(RAND_MAX);
+      glClearDepth(1.0f);
+      glClear(GL_DEPTH_BUFFER_BIT);
 
-        const GLfloat col[]={x, 0.f, 0.0f, 1.0f};
+      shaderPhong_.bind();
+      room_.material_->bindTexture();
+      //shader.setConfiguration(renderManager_.getConfiguration(GameObject* obj,...))
+      shaderPhong_.setTransform(room_.transform_.getMatrix());
+      shaderPhong_.material_ = room_.material_;
+      shaderPhong_.setViewTransform(camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
+      shaderPhong_.updateUniforms();
 
-        glPolygonMode(GL_FRONT_AND_BACK,renderMode_);
+      room_.render();
 
-        quad_.shader_->bind();
-        quad_.render();
+      //shaderPhong_.setTransform(monkey_.transform_.getMatrix());
+      //shaderPhong_.material_ = monkey_.material_;
+      //monkey_.material_->bindTexture();
+      //shaderPhong_.setViewTransform(camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
+      //shaderPhong_.updateUniforms();
 
-        //room_.render();
+      //monkey_.render();
 
-        //world_.render();
+      shaderPhong_.setTransform(world_.transform_.getMatrix());
+      shaderPhong_.material_ = world_.material_;
+      world_.material_->bindTexture();
+      shaderPhong_.setViewTransform(camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
+      shaderPhong_.updateUniforms();
+
+      world_.render();
+
+    }
+
+    void render()
+    {
+
+      static const GLfloat black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+      static const GLfloat ones[] = { 1.0f };
+      static const GLfloat green[] = { 0.0f, 0.8f, 0.0f, 1.0f };
+
+      glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+      glClearBufferfv(GL_COLOR, 0, black);
+      glClearBufferfv(GL_DEPTH, 0, ones);
+
+      shadowPass();
+
+      glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+      glClearBufferfv(GL_COLOR, 0, green);
+      glClearBufferfv(GL_DEPTH, 0, ones);
+
+      glEnable(GL_CULL_FACE);
+      glFrontFace(GL_CCW);
+
+      glEnable(GL_DEPTH_TEST);
+      glDepthFunc(GL_LEQUAL);
+
+      float x = (float)rand() / (float)(RAND_MAX);
+
+      const GLfloat col[] = { x, 0.f, 0.0f, 1.0f };
+
+      //glPolygonMode(GL_FRONT_AND_BACK, renderMode_);
+
+      //RenderManager.render();
+      shadowPass();
+      //shader_.bind();
+
+      //renderTex_.bind();
+      ////shader.setConfiguration(renderManager_.getConfiguration(GameObject* obj,...))
+      //shader_.setTransform(quad_.transform_.getMatrix());
+      //shader_.material_ = quad_.material_;
+      //shader_.setViewTransform(camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
+      //shader_.updateUniforms();
+
+      //quad_.render();
 
 #ifndef _MSC_VER
-        struct timeval start, end;
+      struct timeval start, end;
 
-        long mtime, seconds, useconds;
+      long mtime, seconds, useconds;
 
-        gettimeofday(&start, NULL);
+      gettimeofday(&start, NULL);
 #endif
 
-        SDL_GL_SwapWindow(window);
+      SDL_GL_SwapWindow(window);
 
 #ifndef _MSC_VER
-        gettimeofday(&end, NULL);
+      gettimeofday(&end, NULL);
 
-        seconds = end.tv_sec - start.tv_sec;
-        useconds = end.tv_usec - start.tv_usec;
+      seconds = end.tv_sec - start.tv_sec;
+      useconds = end.tv_usec - start.tv_usec;
 
-        mtime = ((seconds)* 1000 + useconds / 1000.0) + 0.5;
+      mtime = ((seconds)* 1000 + useconds / 1000.0) + 0.5;
 #endif
-        world_.transform_.translation_.x = 0.9 + std::sin(frame*0.01)*1.4;
-        light_.pos_.x = std::sin(frame*0.01);
-        //room_.rotate(i3d::Vec3(0.0,frame*0.005,0.0));
-        frame++;
+      //world_.transform_.translation_.x = 0.9 + std::sin(frame*0.01)*0.5;
+      //light_.pos_.x = std::sin(frame*0.01);
+      //room_.rotate(i3d::Vec3(0.0,frame*0.005,0.0));
+      frame++;
 
-      }
+    }
 
-      void handleResizeEvent(SDL_Event &event)
+    void handleResizeEvent(SDL_Event &event)
+    {
+      SDL_GL_application::handleResizeEvent(event);
+      perspective_.setPerspectiveTransform(70.0f, (float)getWindowWidth(), (float)getWindowHeight(), 0.0f, 100.0f);
+    }
+
+    void handleKeyPressEvent(SDL_Event &event)
+    {
+      switch (event.key.keysym.sym) {
+
+      case SDLK_RIGHT:
+        camera_.moveU(speed_);
+        break;
+      case SDLK_LEFT:
+        camera_.moveU(-speed_);
+        break;
+      case SDLK_UP:
+        camera_.moveV(speed_);
+        break;
+      case SDLK_DOWN:
+        camera_.moveV(-speed_);
+        break;
+      case SDLK_PAGEUP:
+        camera_.moveW(speed_);
+        break;
+      case SDLK_PAGEDOWN:
+        camera_.moveW(-speed_);
+        break;
+      case SDLK_a:
+        camera_.rotateY(-speed_);
+        break;
+      case SDLK_d:
+        camera_.rotateY(speed_);
+        break;
+      case SDLK_w:
+        camera_.rotateX(-speed_);
+        std::cout << camera_.getN() << std::endl;
+        break;
+      case SDLK_s:
+        camera_.rotateX(speed_);
+        std::cout << camera_.getN() << std::endl;
+        break;
+      case SDLK_0:
       {
-        SDL_GL_application::handleResizeEvent(event);
-        perspective_.setPerspectiveTransform(70.0, getWindowWidth(), getWindowHeight(), 0.0, 100.0);
-      }
-
-      void handleKeyPressEvent(SDL_Event &event)
-      {
-        switch(event.key.keysym.sym) {
-
-          case SDLK_RIGHT:
-            camera_.getPos() += speed_ * camera_.getU();
-            camera_.getCameraTranslationTransform();
-            break;
-          case SDLK_LEFT:
-            camera_.getPos() -= speed_ * camera_.getU();
-            camera_.getCameraTranslationTransform();
-            break;
-          case SDLK_UP:
-            camera_.getPos() += speed_ * camera_.getN();
-            camera_.getCameraTranslationTransform();
-            break;
-          case SDLK_DOWN:
-            camera_.getPos() -= speed_ * camera_.getN();
-            camera_.getCameraTranslationTransform();
-            break;
-          case SDLK_PAGEUP:
-            camera_.getPos() += speed_ * camera_.getV();
-            camera_.getCameraTranslationTransform();
-            break;
-          case SDLK_PAGEDOWN:
-            camera_.getPos() -= speed_ * camera_.getV();
-            camera_.getCameraTranslationTransform();
-            break;
-          case SDLK_a:
-            camera_.rotateY(-speed_);
-            camera_.getCameraCoordinateTransform();
-            break;
-          case SDLK_d:
-            camera_.rotateY(speed_);
-            camera_.getCameraCoordinateTransform();
-            break;
-          case SDLK_w:
-            camera_.rotateX(-speed_);
-            camera_.getCameraCoordinateTransform();
-            std::cout << camera_.getN() << std::endl;
-            break;
-          case SDLK_s:
-            camera_.rotateX(speed_);
-            camera_.getCameraCoordinateTransform();
-            std::cout << camera_.getN() << std::endl;
-            break;
-          case SDLK_0:
-            {
-              if(renderMode_==GL_FILL)
-              {
-                renderMode_ = GL_LINE;
-              }
-              else
-              {
-                renderMode_ = GL_FILL;
-              }
-            }
-            break;
+        if (renderMode_ == GL_FILL)
+        {
+          renderMode_ = GL_LINE;
+        }
+        else
+        {
+          renderMode_ = GL_FILL;
         }
       }
+        break;
+      }
+    }
 
-    private:
-      /* data */
-      GLuint program;
-      GLuint vao;
-      GLuint fbo;
-      GLuint renderBuffer;
-      GLuint iao;
-      GLuint tiao;
-      GLuint buffers[3];
-      PhongShader shader_;
-      PhongShader worldShader_;
-      TextureShader quadShader_;
-      TextureShader roomTextureShader_;
-      TextureShader worldTextureShader_;
-      ShadowMapShader shadowShader_;
-      Texture earth;
-      int size;
-      int frame;
-      Transform transform_;
-      float time_;
-      PerspectiveTransform perspective_;
-      Camera camera_;
-      Camera shadowCamera_;
-      Mesh<> room_;
-      Mesh<> quad_;
-      Mesh<> world_;
-      float speed_;
-      Light light_;
-      PhongMaterial worldMat_;
-      PhongMaterial roomMat_;
-      Texture depthTexture_;
+  private:
+    /* data */
+    GLuint program;
+    GLuint vao;
+    GLuint iao;
+
+    GLuint fbo;
+    GLuint renderBuffer;
+
+    GLuint tiao;
+    GLuint buffers[3];
+    TextureShader shader_;
+    PhongDir shaderPhong_;
+    Texture renderTex_;
+    std::vector<Texture> textures_;
+    int size;
+    int frame;
+    Transform transform_;
+    float time_;
+    PerspectiveTransform perspective_;
+    Camera camera_;
+    Mesh<> room_;
+    Mesh<> monkey_;
+    Mesh<> quad_;
+    Mesh<> world_;
+    float speed_;
+    Light light_;
+    DirectionalLight dLight_;
+    PointLight pLight_;
+    PhongMaterial worldMat_;
+    PhongMaterial roomMat_;
+    PhongMaterial monkeyMat_;
   };
 }
 int main(int argc, char *argv[])
 {
 
-  i3d::ShadowMapTest app;
+  i3d::DepthTextureTest app;
 
   app.init();
 

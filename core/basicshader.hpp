@@ -19,8 +19,6 @@
 namespace i3d
 {
 
-
-
   class BasicShader
   {
   public:
@@ -37,6 +35,7 @@ namespace i3d
 
     DirectionalLight *dirLight_;
     PointLight *pointLight_;
+    SpotLight *spotLight_;
 
     /* data */
     GLuint program_;
@@ -45,6 +44,11 @@ namespace i3d
     GLuint geometryShader_;
     GLuint tesselationShader_;
     std::unordered_map<std::string, int> uniforms_;
+
+    void setSpotLight(SpotLight *l)
+    {
+      spotLight_ = l;
+    }
 
     void setDirectionLight(DirectionalLight *l)
     {

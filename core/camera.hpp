@@ -32,7 +32,22 @@ namespace i3d {
       // rotate camera to look up/down
       void rotateX(float alpha);
 
-    private:
+      void moveU(float speed)
+      {
+        pos_ += speed * u_;
+      }
+
+      void moveV(float speed)
+      {
+        pos_ += speed * v_;
+      }
+
+      void moveW(float speed)
+      {
+        pos_ += speed * n_;
+      }
+
+  private:
       /* data */
       // u is the 'right' vector
       Vec3 u_;
@@ -51,6 +66,7 @@ namespace i3d {
       
       // camera translation transformation matrix
       Mat4 translationMatrix_;
+
   };
 
 }
