@@ -16,9 +16,13 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 
 find_package(OpenGL)
-message(STATUS "OpenGL lib: ${OPENGL_LIBRARIES}")
+message(STATUS "Operating system: ${CMAKE_SYSTEM_NAME}  OpenGL lib: ${OPENGL_LIBRARIES}")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOMINMAX")
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
 if(NOT EXISTS ${CMAKE_BINARY_DIR}/shaders)
 execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/shaders ${CMAKE_BINARY_DIR}/shaders)
