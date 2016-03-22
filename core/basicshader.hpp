@@ -60,11 +60,6 @@ namespace i3d
       pointLight_ = l;
     }
 
-    void setTransform(const Mat4 &t)
-    {
-      transform_ = t;
-    }
-
     void setMaterial(Material *m)
     {
       material_ = m;
@@ -73,6 +68,11 @@ namespace i3d
     void setShadowMatrix(Mat4 &shadowMatrix)
     {
       shadowMatrix_ = &shadowMatrix;
+    }
+
+    void setTransform(const Mat4 &t)
+    {
+      transform_ = t;
     }
 
     void setViewTransform(Mat4 &cameraTranslation, Mat4 &cameraRotation)
@@ -84,6 +84,26 @@ namespace i3d
     void setPerspectiveTransform(Mat4 &perspective)
     {
       perspective_ = &perspective;
+    }
+
+    void setMatrices(Mat4 &perspective, Mat4 &cameraTranslation, Mat4 &cameraRotation, Mat4 &transform)
+    {
+      perspective_       = &perspective;
+      cameraTranslation_ = &cameraTranslation;
+      cameraRotation_    = &cameraRotation;
+      transform_         = transform;
+    }
+
+    void setMatrices(Mat4 &perspective, Mat4 &cameraTranslation, Mat4 &cameraRotation)
+    {
+      perspective_ = &perspective;
+      cameraTranslation_ = &cameraTranslation;
+      cameraRotation_ = &cameraRotation;
+    }
+
+    virtual void bindMaterial(Material *m)
+    {
+      material_ = m;
     }
 
     BasicShader() :

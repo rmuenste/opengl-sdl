@@ -28,8 +28,9 @@ namespace i3d
       }
     }
 
-    Material();
-    ~Material();
+    Material()=default;
+
+    virtual ~Material();
 
   private:
 
@@ -43,29 +44,44 @@ namespace i3d
     float specularExponent_;
     float diffuseIntensity_;
 
-    PhongMaterial(float si, float se, float di) : specularIntensity_(si), specularExponent_(se), diffuseIntensity_(di)
+    explicit PhongMaterial(float si, float se, float di) : specularIntensity_(si), specularExponent_(se), diffuseIntensity_(di)
     {
 
     }
 
-    PhongMaterial(float si, float se, float di, Texture *tex) : specularIntensity_(si), specularExponent_(se), diffuseIntensity_(di)
+    explicit PhongMaterial(float si, float se, float di, Texture *tex) : specularIntensity_(si), specularExponent_(se), diffuseIntensity_(di)
     {
       textures_.push_back(tex);
     }
 
-    PhongMaterial()
+    PhongMaterial() = default;
+
+    virtual ~PhongMaterial()
     {
     }
 
-    ~PhongMaterial()
+    float getSpecularIntensity() override
     {
+      return specularIntensity_;
     }
 
-    float getSpecularIntensity() override;
+    float getSpecularExponent() override
+    {
+      return specularExponent_;
+    }
 
-    float getSpecularExponent() override;
+    float getDiffuseIntensity() override
+    {
+      return diffuseIntensity_;
+    }
 
-    float getDiffuseIntensity() override;
+    void bindTexture() override
+    {
+      if (!textures_.empty())
+      {
+        textures_.front()->bind();
+      }
+    }
 
   private:
 

@@ -20,6 +20,12 @@ namespace i3d
 
     };
 
+    virtual void bindMaterial(Material *m) override
+    {
+      material_ = m;
+      material_->bindTexture();
+    }
+
     void initShader(Vec3 &pos, Mat4 &perspective, Mat4 &cameraTranslation, Mat4 &cameraRotation, PhongMaterial &mat)
     {
 

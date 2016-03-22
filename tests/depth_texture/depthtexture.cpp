@@ -85,9 +85,8 @@ namespace i3d {
       Texture r;
       r.createTextureFromImage("../../textures/wall_floor.png");
       textures_.push_back(std::move(r));
-      Texture *t = &textures_[0];
 
-      roomMat_ = PhongMaterial(0.0f, 100.0f, 1.0f, t);
+      roomMat_ = PhongMaterial(0.0f, 100.0f, 1.0f, &textures_.back());
       room_.setMaterial(&roomMat_);
 
       //renderManager.setupShaders(shaderList,shaderConfigurations,...);
@@ -114,9 +113,8 @@ namespace i3d {
       Texture e;
       e.createTextureFromImage("../../textures/earth1.png");
       textures_.push_back(std::move(e));
-      t = &textures_[1];
 
-      worldMat_ = PhongMaterial(15.0f, 30.0f, 1.0f, t);
+      worldMat_ = PhongMaterial(15.0f, 30.0f, 1.0f, &textures_.back());
       quad_.setMaterial(&worldMat_);
 
       quad_.transform_.translation_ = i3d::Vec4(0.f, 1.8f, 0.f, 1.f);
@@ -132,9 +130,8 @@ namespace i3d {
       Texture m;
       m.createTextureFromImage("../../textures/test.png");
       textures_.push_back(std::move(m));
-      t = &textures_[2];
 
-      monkeyMat_ = PhongMaterial(0.0f, 100.0f, 1.0f, t);
+      monkeyMat_ = PhongMaterial(0.0f, 100.0f, 1.0f, &textures_.back());
       monkey_.setMaterial(&monkeyMat_);
 
       //renderManager.setupShaders(shaderList,shaderConfigurations,...);
@@ -153,9 +150,8 @@ namespace i3d {
       Texture w;
       w.createTextureFromImage("../../textures/earth1.png");
       textures_.push_back(std::move(w));
-      t = &textures_[3];
 
-      worldMat_ = PhongMaterial(5.0f, 30.0f, 1.0f, t);
+      worldMat_ = PhongMaterial(5.0f, 30.0f, 1.0f, &textures_.back());
       world_.setMaterial(&worldMat_);
 
       world_.transform_.translation_ = i3d::Vec4(0.9, -0.5, 0.0, 1);
@@ -172,29 +168,20 @@ namespace i3d {
       glClear(GL_DEPTH_BUFFER_BIT);
 
       shaderPhong_.bind();
-      room_.material_->bindTexture();
-      //shader.setConfiguration(renderManager_.getConfiguration(GameObject* obj,...))
-      shaderPhong_.setTransform(room_.transform_.getMatrix());
-      shaderPhong_.material_ = room_.material_;
-      shaderPhong_.setViewTransform(camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
-      shaderPhong_.updateUniforms();
+      shaderPhong_.setMatrices(perspective_.getPerspectiveTransform(),
+        camera_.getCameraTranslationTransform(),
+        camera_.getCameraCoordinateTransform()
+        );
 
+      //shader.setConfiguration(renderManager_.getConfiguration(GameObject* obj,...), obj.getMaterial(), obj.getTransform())
+      shaderPhong_.setTransform(room_.transform_.getMatrix());
+      shaderPhong_.bindMaterial(room_.material_);
+      shaderPhong_.updateUniforms();
       room_.render();
 
-      //shaderPhong_.setTransform(monkey_.transform_.getMatrix());
-      //shaderPhong_.material_ = monkey_.material_;
-      //monkey_.material_->bindTexture();
-      //shaderPhong_.setViewTransform(camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
-      //shaderPhong_.updateUniforms();
-
-      //monkey_.render();
-
       shaderPhong_.setTransform(world_.transform_.getMatrix());
-      shaderPhong_.material_ = world_.material_;
-      world_.material_->bindTexture();
-      shaderPhong_.setViewTransform(camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
+      shaderPhong_.bindMaterial(world_.material_);
       shaderPhong_.updateUniforms();
-
       world_.render();
 
     }
@@ -237,7 +224,7 @@ namespace i3d {
       //renderTex_.bind();
       ////shader.setConfiguration(renderManager_.getConfiguration(GameObject* obj,...))
       //shader_.setTransform(quad_.transform_.getMatrix());
-      //shader_.material_ = quad_.material_;
+      //shader.bindMaterial(quad_.material_);
       //shader_.setViewTransform(camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
       //shader_.updateUniforms();
 
