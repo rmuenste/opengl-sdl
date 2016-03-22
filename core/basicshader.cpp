@@ -17,14 +17,14 @@ namespace i3d
     {
       glGetProgramInfoLog(vertexShader_, sizeof(log), &length, log);
       std::cout << "Program linking failed." << std::endl;
-      //    exit(1);
+      std::exit(EXIT_FAILURE);
     }
 
     glGetProgramiv(program_, GL_VALIDATE_STATUS, &status);
     if (status == 0)
     {
       std::cout << "Program validation failed." << std::endl;
-      //    exit(1);
+      std::exit(EXIT_FAILURE);
     }
 
   }
@@ -39,7 +39,7 @@ namespace i3d
     if (vertexShader_ == 0)
     {
       std::cout << "Vertex shader creation failed." << std::endl;
-      exit(1);
+      std::exit(EXIT_FAILURE);
     }
 
     glShaderSource(vertexShader_, 1, loader.getShaderSource(), NULL);
@@ -55,7 +55,7 @@ namespace i3d
       glGetShaderInfoLog(vertexShader_, sizeof(log), &length, log);
       std::cout << "Vertex shader compilation failed." << std::endl;
       std::cout << log << std::endl;
-      exit(1);
+      std::exit(EXIT_FAILURE);
     }
 
     glAttachShader(program_, vertexShader_);
@@ -71,7 +71,7 @@ namespace i3d
     if (fragmentShader_ == 0)
     {
       std::cout << "Fragment shader creation failed." << std::endl;
-      exit(1);
+      std::exit(EXIT_FAILURE);
     }
 
     glShaderSource(fragmentShader_, 1, loader.getShaderSource(), NULL);
@@ -87,7 +87,7 @@ namespace i3d
       glGetShaderInfoLog(fragmentShader_, sizeof(log), &length, log);
       std::cout << "Fragment shader compilation failed." << std::endl;
       std::cout << log << std::endl;
-      exit(1);
+      std::exit(EXIT_FAILURE);
     }
 
     glAttachShader(program_, fragmentShader_);
@@ -102,7 +102,7 @@ namespace i3d
     if (geometryShader_ == 0)
     {
       std::cout << "Geometry shader creation failed." << std::endl;
-      exit(1);
+      std::exit(EXIT_FAILURE);
     }
 
     glShaderSource(geometryShader_, 1, loader.getShaderSource(), NULL);
@@ -117,7 +117,7 @@ namespace i3d
     {
       glGetShaderInfoLog(geometryShader_, sizeof(log), &length, log);
       std::cout << "Geometry shader compilation failed." << std::endl;
-      exit(1);
+      std::exit(EXIT_FAILURE);
     }
 
     glAttachShader(program_, geometryShader_);
@@ -135,7 +135,7 @@ namespace i3d
     if (uniformLoc == -1)
     {
       std::cout << "Error: could not find uniform: " << name << std::endl;
-      exit(1);
+      std::exit(EXIT_FAILURE);
     }
 
     uniforms_.insert({ name, uniformLoc });

@@ -51,21 +51,16 @@ namespace i3d {
   void Model3D::generateBoundingBox()
   {
     int iVertsTotal = 0;
-    for(unsigned int i = 0; i < meshes_.size();i++)
+    for (auto &mesh : meshes_)
     {
-      iVertsTotal+=meshes_[i].getNumVertices();
+      iVertsTotal += mesh.getNumVertices();
     }//end for
 
-    std::vector<VECTOR3> Vec3Array;
+    std::vector<Vec3> Vec3Array;
     int iVert=0;
-    for(unsigned int i = 0; i < meshes_.size();i++)
-    {
-      for(int j=0;j<meshes_[i].getNumVertices();j++)
-      {
-
-        Vec3Array.push_back(meshes_[i].vertices_[j]);
-      }
-    }//end for
+    for (auto &mesh : meshes_)
+      for (auto &v : mesh.vertices_)
+        Vec3Array.push_back(v);
 
     box_.initBox(Vec3Array);
 
@@ -111,52 +106,44 @@ namespace i3d {
   void Model3D::prepareIndexing()
   {
     //loop oover all the meshes and build their subobjects
-    for(unsigned int i = 0; i < meshes_.size();i++)
+    for (auto &mesh : meshes_)
     {
-      if(meshes_[i].isTextured())
-        meshes_[i].prepareIndexArrays();
+      if (mesh.isTextured())
+        mesh.prepareIndexArrays();
 
-      meshes_[i].buildIndexArrays();
-      meshes_[i].calcVertexNormals();
-    }//end for
+      mesh.buildIndexArrays();
+      mesh.calcVertexNormals();
+    }
 
   }
 
   void Model3D::prepareNonIndexedRendering()
   {
     //loop oover all the meshes and build their subobjects
-    for(unsigned int i = 0; i < meshes_.size();i++)
+    for (auto &mesh : meshes_)
     {
-      meshes_[i].prepareNonIndexedRendering();
+      mesh.prepareNonIndexedRendering();
     }//end for
 
   }
 
   void Model3D::buildSmoothNormals()
   {
-    for(unsigned int i = 0; i < meshes_.size();i++)
-    {
-      meshes_[i].calcRawVertexNormals();
-    }//end for
+    for (auto &mesh : meshes_)
+      mesh.calcRawVertexNormals();
   }
 
   void Model3D::buildFakeVertexNormals()
   {
-    for(unsigned int i = 0; i < meshes_.size();i++)
-    {
-      meshes_[i].calcFakeVertexNormals();
-    }//end for
+    for (auto &mesh : meshes_)
+      mesh.calcFakeVertexNormals();
   }
 
   void Model3D::buildVertexArrays(void)
   {
-
     //loop oover all the meshes and build their subobjects
-    for(unsigned int i = 0; i < meshes_.size();i++)
-    {
-      meshes_[i].buildIndexArrays();
-    }//end for
-
+    for (auto &mesh : meshes_)
+      mesh.buildIndexArrays();
   }//end BuildVertexArrays
 
 
@@ -217,7 +204,7 @@ namespace i3d {
       Mesh3D &mesh = *mIter;
       std::vector<TriFace>::iterator faceIter;
 
-      for(faceIter=mesh.faces_.begin();faceIter!=mesh.faces_.end();faceIter++)
+      for (auto &tri : mesh.faces_)
       {
         TriFace tri=*faceIter;
 
