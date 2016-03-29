@@ -41,6 +41,7 @@ uniform DirectionalLight dirLight;
 uniform PointLight pointLight;
 
 uniform sampler2D sampler;
+uniform sampler2D sampler1;
 
 vec4 ambientLight = vec4(0.8,0.8,0.8,1);
 
@@ -99,7 +100,18 @@ void main(void)
   //d = 1.0 - (1.0 - d) * 25.0f;
   d = pow(d,5);
 
-  color = texture2D(sampler, texCoord0.xy) * totalLight * pointLight.ambientIntensity + vec4(d);
+  //color = texture2D(sampler1, texCoord0.xy) + vec4(d)  * totalLight * pointLight.ambientIntensity;
+
+
+  if (worldPos0.x > 0.0f)
+  {
+    color = texture2D(sampler1, texCoord0.xy) * totalLight * pointLight.ambientIntensity +
+            texture2D(sampler1, texCoord0.xy);
+  }
+  else
+  {
+    color = vec4(d);
+  }
 
 }
 

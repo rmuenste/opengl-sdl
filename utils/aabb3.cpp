@@ -358,11 +358,11 @@ namespace i3d {
 
       T MinCenter = std::numeric_limits<T>::max();
 
-      for(int i = 0; i < vTriangles.size(); i++)
+      for(unsigned i(0); i < vTriangles.size(); ++i)
       {
         const Triangle3<T> &tri = vTriangles[i];
 
-        for(int j = 0; j < 3; j++)
+        for(int j(0); j < 3; ++j)
         {
           Vector3<T> Vec3 = tri.Get(j);
           if(Vec3.x < MinX)

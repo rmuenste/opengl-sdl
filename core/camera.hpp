@@ -14,6 +14,8 @@ namespace i3d {
 
       void initCamera(const Vec3 &pos, const Vec3 &u, const Vec3 &v, const Vec3 &n);
 
+      void setLookAt(const Vec3 &pos, const Vec3 &look, const Vec3 &up);
+
       Mat4& getCameraCoordinateTransform();
 
       Mat4& getCameraTranslationTransform();

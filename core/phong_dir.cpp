@@ -35,6 +35,18 @@ namespace i3d
     setUniform(std::string("pointLight.att.linear"), pointLight_->att_.linear_);
     setUniform(std::string("pointLight.att.exp"), pointLight_->att_.exp_);
 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    setUniform(std::string("spotLight.color"), spotLight_->color_);
+    setUniform(std::string("spotLight.dir"), spotLight_->dir_);
+    setUniform(std::string("spotLight.ambientIntensity"), spotLight_->ambientIntensity_);
+    setUniform(std::string("spotLight.diffuseIntensity"), spotLight_->diffuseIntensity_);
+    setUniform(std::string("spotLight.cutoff"), spotLight_->cutoff_);
+    setUniform(std::string("spotLight.position"), spotLight_->position_);
+
+    setUniform(std::string("spotLight.att.constant"), spotLight_->att_.constant_);
+    setUniform(std::string("spotLight.att.linear"), spotLight_->att_.linear_);
+    setUniform(std::string("spotLight.att.exp"), spotLight_->att_.exp_);
+
   }
 
 }

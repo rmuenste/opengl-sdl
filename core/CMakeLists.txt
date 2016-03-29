@@ -13,6 +13,8 @@ texture.hpp
 texture.cpp
 light.hpp
 light.cpp
+gameobject.hpp
+gameobject.cpp
 transform.hpp
 transform.cpp
 phongshader.cpp  

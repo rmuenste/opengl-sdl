@@ -25,8 +25,8 @@ namespace i3d
 
       BasicShader::initShader();
 
-      addVertexShader("../../shaders/texture_shader.vert");
-      addFragmentShader("../../shaders/texture_shader.frag");
+      addVertexShader("../../shaders/texture_shader_v.glsl");
+      addFragmentShader("../../shaders/texture_shader_f.glsl");
 
       linkShader();
 
@@ -54,6 +54,9 @@ namespace i3d
       addUniform(std::string("pointLight.att.linear"));
       addUniform(std::string("pointLight.att.exp"));
 
+      addUniform(std::string("sampler"));
+      addUniform(std::string("sampler1"));
+
       material_ = &mat;
 
       perspective_ = &perspective;
@@ -64,6 +67,18 @@ namespace i3d
     }
 
     void updateUniforms() override;
+
+    void bindMaterial(Material *m) override
+    {
+      material_ = m;
+      glActiveTexture(GL_TEXTURE0);
+      shadowTex_->bind();
+      glBindSampler(0, shadowTex_->id_);
+
+      glActiveTexture(GL_TEXTURE0+2);
+      material_->bindTexture();      
+      glBindSampler(2, material_->textures_.front()->id_);
+    }
 
     virtual ~TextureShader() {};
 

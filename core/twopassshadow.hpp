@@ -20,7 +20,7 @@ namespace i3d
 
     };
 
-    void initShader(Vec3 &lightPos, Mat4 &perspective, Mat4 &cameraTranslation, Mat4 &cameraRotation)
+    void initShader(Vec3 &pos, Mat4 &perspective, Mat4 &cameraTranslation, Mat4 &cameraRotation, PhongMaterial &mat)
     {
 
       BasicShader::initShader();
@@ -34,25 +34,43 @@ namespace i3d
       addUniform(std::string("perspective"));
       addUniform(std::string("camera"));
       addUniform(std::string("cameraRotation"));
-      addUniform(std::string("lightPos"));
-      //addUniform(std::string("shadowMatrix"));
 
-      addUniform(std::string("specularIntensity"));
-      addUniform(std::string("specularExponent"));
-      addUniform(std::string("diffuseIntensity"));
+      addUniform(std::string("sampler"));
+      addUniform(std::string("sampler1"));
+
+      material_ = &mat;
 
       perspective_ = &perspective;
       cameraTranslation_ = &cameraTranslation;
       cameraRotation_ = &cameraRotation;
-      lightPos_ = &lightPos;
+      eyePos_ = &pos;
 
     }
 
-    void updateUniforms();
+    void updateUniforms() override;
 
-    void setMaterial(PhongMaterial &mat)
+    void bindMaterial(Material *m) override
     {
-      material_ = &mat;
+      material_ = m;
+
+      glActiveTexture(GL_TEXTURE0 + 0);
+      shadowTex_->bind();
+      glBindSampler(0, shadowTex_->id_);
+
+      glActiveTexture(GL_TEXTURE0 + 2);
+      material_->bindTexture();
+      glBindSampler(2, material_->textures_.front()->id_);
+
+      //glActiveTexture(GL_TEXTURE0 + 0);
+      //material_->bindTexture();
+      //glBindSampler(0, material_->textures_.front()->id_);
+
+      //glActiveTexture(GL_TEXTURE0 + 2);
+      //shadowTex_->bind();
+      //glBindSampler(2, shadowTex_->id_);
+
+
+
     }
 
     virtual ~TwoPassShadow() {};

@@ -18,6 +18,7 @@
 #include <light.hpp>
 #include <phong_dir.hpp>
 #include <textureshader.hpp>
+#include <shadowmapshader.hpp>
 
 namespace i3d {
 
@@ -46,21 +47,40 @@ namespace i3d {
       dLight_.color_ = Vec3(0.0f, 0.0f, 0.0f);
       dLight_.dir_ = Vec3(0.25f, 0.0f, 1.0f);
 
-      pLight_.color_ = Vec3(0.8f, 0.8f, 0.8f);
+      //pLight_.color_ = Vec3(0.8f, 0.8f, 0.8f);
+      //pLight_.position_ = Vec3(2.5f, 1.0f, 2.0f);
+      //pLight_.ambientIntensity_ = 0.0f;
+      //pLight_.diffuseIntensity_ = 0.5f;
+      //pLight_.att_.constant_ = 0.0f;
+      //pLight_.att_.linear_ = 0.0f;
+      //pLight_.att_.exp_ = 0.0f;
+
+      pLight_.color_ = Vec3(0.0f, 0.0f, 0.0f);
       pLight_.position_ = Vec3(2.5f, 1.0f, 2.0f);
       pLight_.ambientIntensity_ = 0.0f;
-      pLight_.diffuseIntensity_ = 0.7f;
+      pLight_.diffuseIntensity_ = 0.5f;
       pLight_.att_.constant_ = 0.02f;
       pLight_.att_.linear_ = 0.02f;
       pLight_.att_.exp_ = 0.03f;
+
+      sLight_.color_ = Vec3(0.95f, 0.7f, 0.4f);
+      sLight_.position_ = Vec3(0.0f, -0.5f, 2.0f);
+      sLight_.dir_ = Vec3(-0.2f, 0.0f, 1.0f);
+
+      sLight_.ambientIntensity_ = 0.0f;
+      sLight_.diffuseIntensity_ = 1.0f;
+      sLight_.cutoff_ = 0.8f;
+      sLight_.att_.constant_ = 0.02f;
+      sLight_.att_.linear_ = 0.02f;
+      sLight_.att_.exp_ = 0.03f;
+
+      cameraShadow_.setLookAt(Vec3(0.f, 1.0f, -6.0f), Vec3(0.f, 0.f, 1.f), Vec3(0.f, 1.f, 0.f));
 
       //pLight_.ambientIntensity_ = 0.2;
       //pLight_.diffuseIntensity_ = 0.8;
       //pLight_.att_.constant_ = 1.0;
       //pLight_.att_.linear_ = 0.0;
       //pLight_.att_.exp_ = 0.0;
-
-      glEnable(GL_TEXTURE_2D);
 
       renderTex_.createDepthTexture(getWindowWidth(), getWindowHeight());
 
@@ -76,8 +96,6 @@ namespace i3d {
       glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, renderTex_.id_, 0);
       glEnable(GL_DEPTH_TEST);
 
-      //room_.loadMesh("../../meshes/room.obj");
-      //room_.loadMesh("../../meshes/suzanne.obj");
       room_.loadMesh("../../meshes/room.obj");
       room_.buildFakeVertexNormals();
       textures_.reserve(10);
@@ -89,6 +107,12 @@ namespace i3d {
       roomMat_ = PhongMaterial(0.0f, 100.0f, 1.0f, &textures_.back());
       room_.setMaterial(&roomMat_);
 
+      shaderShadow_.initShader(camera_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), roomMat_);
+
+      shaderShadow_.setDirectionLight(&dLight_);
+      shaderShadow_.setPointLight(&pLight_);
+      shaderShadow_.setSpotLight(&sLight_);
+
       //renderManager.setupShaders(shaderList,shaderConfigurations,...);
       shader_.initShader(camera_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), roomMat_);
       shader_.setDirectionLight(&dLight_);
@@ -98,6 +122,7 @@ namespace i3d {
       shaderPhong_.initShader(camera_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), roomMat_);
       shaderPhong_.setDirectionLight(&dLight_);
       shaderPhong_.setPointLight(&pLight_);
+      shaderPhong_.setSpotLight(&sLight_);
       room_.shader_ = &shaderPhong_;
 
       room_.transform_.translation_ = i3d::Vec4(0.f, 0.f, 0.f, 1.f);
@@ -121,26 +146,6 @@ namespace i3d {
       quad_.transform_.setRotationEuler(i3d::Vec3(0.0f, 0.0f, 0.0f));
 
       quad_.initRender();
-
-      ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-      monkey_.loadMesh("../../meshes/suzanne.obj");
-      monkey_.buildSmoothNormals();
-
-      Texture m;
-      m.createTextureFromImage("../../textures/test.png");
-      textures_.push_back(std::move(m));
-
-      monkeyMat_ = PhongMaterial(0.0f, 100.0f, 1.0f, &textures_.back());
-      monkey_.setMaterial(&monkeyMat_);
-
-      //renderManager.setupShaders(shaderList,shaderConfigurations,...);
-      monkey_.shader_ = &shaderPhong_;
-
-      monkey_.transform_.translation_ = i3d::Vec4(0.f, 0.f, 0.f, 1.f);
-      monkey_.transform_.setRotationEuler(i3d::Vec3(0.0f, 0.0f, 0.0f));
-
-      monkey_.initRender();
 
       ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -169,8 +174,8 @@ namespace i3d {
 
       shaderPhong_.bind();
       shaderPhong_.setMatrices(perspective_.getPerspectiveTransform(),
-        camera_.getCameraTranslationTransform(),
-        camera_.getCameraCoordinateTransform()
+        cameraShadow_.getCameraTranslationTransform(),
+        cameraShadow_.getCameraCoordinateTransform()
         );
 
       //shader.setConfiguration(renderManager_.getConfiguration(GameObject* obj,...), obj.getMaterial(), obj.getTransform())
@@ -218,17 +223,53 @@ namespace i3d {
       //glPolygonMode(GL_FRONT_AND_BACK, renderMode_);
 
       //RenderManager.render();
-      shadowPass();
+
+
+      //shadowPass();
+  
+      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+      shaderShadow_.bind();
+      shaderShadow_.shadowTex_ = &renderTex_;
+      shaderShadow_.setMatrices(perspective_.getPerspectiveTransform(),
+        camera_.getCameraTranslationTransform(),
+        camera_.getCameraCoordinateTransform()
+        );
+
+      shaderShadow_.lightMatrix_ = perspective_.getPerspectiveTransform() * cameraShadow_.getCameraCoordinateTransform() * cameraShadow_.getCameraTranslationTransform();
+      //shaderShadow_.lightMatrix_ = perspective_.getPerspectiveTransform() * cameraShadow_.getCameraTranslationTransform() * cameraShadow_.getCameraCoordinateTransform();
+      //shaderShadow_.lightMatrix_.setIdentity();
+
+      shaderShadow_.setTransform(room_.transform_.getMatrix());
+      shaderShadow_.bindMaterial(room_.material_);
+      shaderShadow_.updateUniforms();
+      room_.render();
+
+      shaderShadow_.setTransform(world_.transform_.getMatrix());
+      shaderShadow_.bindMaterial(world_.material_);
+      shaderShadow_.updateUniforms();
+      world_.render();
+
+      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
       //shader_.bind();
+      //shader_.shadowTex_ = &renderTex_;
 
-      //renderTex_.bind();
-      ////shader.setConfiguration(renderManager_.getConfiguration(GameObject* obj,...))
+      //////shader.setConfiguration(renderManager_.getConfiguration(GameObject* obj,...))
+      //////shader.setConfiguration(renderManager_.getConfiguration(GameObject* obj,...), obj.getMaterial(), obj.getTransform())
+
+      //shader_.bindMaterial(quad_.material_);
+      ////shader_.setViewTransform(camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
+
       //shader_.setTransform(quad_.transform_.getMatrix());
-      //shader.bindMaterial(quad_.material_);
-      //shader_.setViewTransform(camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
+      //shader_.setMatrices(perspective_.getPerspectiveTransform(),
+      //  camera_.getCameraTranslationTransform(),
+      //  camera_.getCameraCoordinateTransform()
+      //  );
       //shader_.updateUniforms();
-
       //quad_.render();
+
+      glActiveTexture(GL_TEXTURE0);
 
 #ifndef _MSC_VER
       struct timeval start, end;
@@ -248,9 +289,7 @@ namespace i3d {
 
       mtime = ((seconds)* 1000 + useconds / 1000.0) + 0.5;
 #endif
-      //world_.transform_.translation_.x = 0.9 + std::sin(frame*0.01)*0.5;
-      //light_.pos_.x = std::sin(frame*0.01);
-      //room_.rotate(i3d::Vec3(0.0,frame*0.005,0.0));
+
       frame++;
 
     }
@@ -326,6 +365,7 @@ namespace i3d {
     TextureShader shader_;
     PhongDir shaderPhong_;
     Texture renderTex_;
+    ShadowMapShader shaderShadow_;
     std::vector<Texture> textures_;
     int size;
     int frame;
@@ -333,6 +373,7 @@ namespace i3d {
     float time_;
     PerspectiveTransform perspective_;
     Camera camera_;
+    Camera cameraShadow_;
     Mesh<> room_;
     Mesh<> monkey_;
     Mesh<> quad_;
@@ -341,9 +382,11 @@ namespace i3d {
     Light light_;
     DirectionalLight dLight_;
     PointLight pLight_;
+    SpotLight sLight_;
     PhongMaterial worldMat_;
     PhongMaterial roomMat_;
     PhongMaterial monkeyMat_;
+    
   };
 }
 int main(int argc, char *argv[])

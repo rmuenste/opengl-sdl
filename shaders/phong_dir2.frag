@@ -6,6 +6,7 @@ out vec4 color;
 in vec2 texCoord0;                                                                  
 in vec3 normal0;                                                                    
 in vec3 worldPos0;
+in vec4 lightPos;
 
 struct DirectionalLight
 {
@@ -54,8 +55,24 @@ uniform PointLight pointLight;
 uniform SpotLight spotLight;;
 
 uniform sampler2D sampler;
+uniform sampler2D samplerShadow;
 
 vec4 ambientLight = vec4(0.8,0.8,0.8,1);
+
+float getShadowFactor(vec4 lightSpace)                                                  
+{                                                                                           
+    vec3 proj = lightSpace.xyz / lightSpace.w;                                  
+    vec2 uv;                                                                         
+    uv.x = 0.5 * proj.x + 0.5;                                                  
+    uv.y = 0.5 * proj.y + 0.5;                                                  
+    float z = 0.5 * proj.z + 0.5;                                                     
+    float d = texture(samplerShadow, uv).x;                                          
+    //if (d < z + 0.00001)                                                                 
+    if (d < z - 0.00001)                                                                 
+        return 0.5;                                                                         
+    else                                                                                    
+        return 1.0;                                                                         
+}                                                                                           
 
 vec4 lightKernel(vec3 d, vec3 n, vec3 lightColor, float lightAmbIntensity, float lightDiffIntensity)
 {
@@ -99,6 +116,29 @@ vec4 getPointLight(vec3 normal)
   return color / attenuation;
 }
 
+
+vec4 lightKernelShadow(vec3 d, vec3 n, vec3 lightColor, float lightAmbIntensity, float lightDiffIntensity, float sf)
+{
+  // ambient part
+  vec4 light = vec4( lightAmbIntensity * lightColor, 1.0f);
+
+  vec3 N = normalize(n);
+
+  vec3 L = d;
+
+  vec3 R = normalize(reflect(L,N));
+
+  vec3 V = normalize(eyePos-worldPos0);
+
+  // Diffuse light: calculate the angle between the surface normal and the reversed light vector
+  vec3 diffuse = lightColor * max(dot(N,-L), 0.0) * lightDiffIntensity;
+
+  // Specular light: calculate the angle between the reflected light and eye vector
+  vec3 specular = lightColor * pow(max(dot(R, V), 0.0), specularExponent) * specularIntensity;
+
+  return light + vec4(sf * (diffuse + specular), 1.0f);
+}
+
 vec4 getSpotLight(vec3 normal)
 {
 
@@ -117,17 +157,14 @@ vec4 getSpotLight(vec3 normal)
 
     vec3 n = normalize(normal);
 
-    color = lightKernel(dirLight, n, spotLight.color, spotLight.ambientIntensity, spotLight.diffuseIntensity);
+    float shadow = getShadowFactor(lightPos);
+
+    color = lightKernelShadow(dirLight, n, spotLight.color, spotLight.ambientIntensity, spotLight.diffuseIntensity, shadow);
 
     float attenuation = spotLight.att.constant + spotLight.att.linear * dist + 
       spotLight.att.exp * dist * dist; 
 
-    //color = color / attenuation * (1.0 - (1.0-coneAngle)/(1.0 - spotLight.cutoff));
     color = color / attenuation;// * (1.0 - (1.0-coneAngle)/(1.0 - spotLight.cutoff));
-
-    //color = vec4(1,1,1,1);
-    //color = vec4(spotLight.color,1.0) * spotLight.ambientIntensity * spotLight.diffuseIntensity;
-    //color = color * spotLight.att.constant * spotLight.att.linear * spotLight.att.exp;
   }
 
   return color;

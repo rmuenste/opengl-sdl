@@ -1,5 +1,4 @@
 #version 450 core 
-#pragma optimize (off)
 
 layout (location = 0) in vec3 positions;
 layout (location = 1) in vec2 texCoord;

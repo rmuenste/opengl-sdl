@@ -12,16 +12,13 @@ namespace i3d
   void TwoPassShadow::updateUniforms()
   {
 
+    setUniform(std::string("transform"), transform_);
     setUniform(std::string("perspective"), *perspective_);
     setUniform(std::string("camera"), *cameraTranslation_);
     setUniform(std::string("cameraRotation"), *cameraRotation_);
-    setUniform(std::string("lightPos"), *lightPos_);
 
-    setUniform(std::string("specularIntensity"), material_->getSpecularIntensity());
-    setUniform(std::string("specularExponent"), material_->getSpecularExponent());
-    setUniform(std::string("diffuseIntensity"), material_->getDiffuseIntensity());
-
-    //setUniform(std::string("shadowMatrix"), *shadowMatrix_);
+    setUniform(std::string("sampler"), 0);
+    setUniform(std::string("sampler1"), 2);
 
   }
 

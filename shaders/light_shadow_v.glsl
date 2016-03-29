@@ -10,9 +10,12 @@ uniform mat4 perspective;
 uniform mat4 camera;
 uniform mat4 cameraRotation;
 
+uniform mat4 lightMatrix;
+
 out vec2 texCoord0;                                                                 
 out vec3 normal0;                                                                   
 out vec3 worldPos0; 
+out vec4 lightPos;
 
 void main(void) 
 {
@@ -26,5 +29,7 @@ void main(void)
   texCoord0 = texCoord;
 
   gl_Position = (perspective * cameraRotation * camera * transform * vec4(positions.x, positions.y, positions.z,1.0));
+
+  lightPos = lightMatrix * vec4(positions.x, positions.y, positions.z,1.0);
 
 }

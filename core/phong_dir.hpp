@@ -60,17 +60,17 @@ namespace i3d
       addUniform(std::string("pointLight.att.linear"));
       addUniform(std::string("pointLight.att.exp"));
 
-      //addUniform(std::string("spotLight.color"));
-      //addUniform(std::string("spotLight.position"));
-      //addUniform(std::string("spotLight.dir"));
-      //addUniform(std::string("spotLight.ambientIntensity"));
-      //addUniform(std::string("spotLight.diffuseIntensity"));
-      //addUniform(std::string("spotLight.cutoff"));
-      //                        
-      //                        
-      //addUniform(std::string("spotLight.att.constant"));
-      //addUniform(std::string("spotLight.att.linear"));
-      //addUniform(std::string("spotLight.att.exp"));
+      addUniform(std::string("spotLight.color"));
+      addUniform(std::string("spotLight.position"));
+      addUniform(std::string("spotLight.dir"));
+      addUniform(std::string("spotLight.ambientIntensity"));
+      addUniform(std::string("spotLight.diffuseIntensity"));
+      addUniform(std::string("spotLight.cutoff"));
+                              
+                              
+      addUniform(std::string("spotLight.att.constant"));
+      addUniform(std::string("spotLight.att.linear"));
+      addUniform(std::string("spotLight.att.exp"));
 
       material_ = &mat;
 

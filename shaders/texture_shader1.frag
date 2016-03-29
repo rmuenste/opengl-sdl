@@ -1,5 +1,4 @@
 #version 450 core 
-#pragma optimize (off)
 
 out vec4 color; 
 
@@ -95,11 +94,8 @@ void main(void)
 
   totalLight += getPointLight(normal0);
 
-  float d = texture(sampler,texCoord0.xy).x;
-  //d = 1.0 - (1.0 - d) * 25.0f;
-  d = pow(d,5);
-
-  color = texture2D(sampler, texCoord0.xy) * totalLight * pointLight.ambientIntensity + vec4(d);
+  //color = texture2D(sampler, texCoord0.xy) * totalLight * pointLight.ambientIntensity + vec4(0.f, 0.f, 0.8f, 1.0f);
+  color = texture2D(sampler, texCoord0.xy) * totalLight * pointLight.ambientIntensity + texture2D(sampler, texCoord0.xy);
 
 }
 

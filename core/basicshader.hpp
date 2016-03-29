@@ -12,6 +12,7 @@
 #include <matrix4x4.h>
 #include <light.hpp>
 #include <material.hpp>
+#include <texture.hpp>
 
 //GLuint glCreateShader(GLenum type);
 //GLuint glCreateProgram();
@@ -29,6 +30,7 @@ namespace i3d
     Mat4 *cameraTranslation_;
     Mat4 *cameraRotation_;
     Mat4 transform_;
+    Mat4 lightMatrix_;
 
     Mat4 *shadowMatrix_;
     Material *material_;
@@ -44,6 +46,8 @@ namespace i3d
     GLuint geometryShader_;
     GLuint tesselationShader_;
     std::unordered_map<std::string, int> uniforms_;
+
+    Texture* shadowTex_;
 
     void setSpotLight(SpotLight *l)
     {

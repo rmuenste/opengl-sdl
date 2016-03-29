@@ -93,7 +93,7 @@ namespace i3d {
   struct SpotLight {
 
     Vec3 color_;
-    Vec3 dir;
+    Vec3 dir_;
     Vec3 position_;
 
     float ambientIntensity_;

@@ -14,6 +14,23 @@ namespace i3d {
     n_.normalize();
   }
 
+  /*
+  * Vec3 up tells us where the global 'up' axis is
+  *
+  */
+  void Camera::setLookAt(const Vec3 &pos, const Vec3 &look, const Vec3 &up)
+  {
+    pos_ = pos;
+    n_ = look;
+    n_.normalize();
+
+    // look x up gives us a right vector
+    u_ = Vec3::Cross(n_, up);
+
+    // look x right gives us the camera 'up' vectors
+    v_ = Vec3::Cross(u_, n_);
+  }
+
   Mat4& Camera::getCameraCoordinateTransform()
   {
     matrix_.m_Entries[0]  = u_.x; matrix_.m_Entries[1] = u_.y; matrix_.m_Entries[2]  = u_.z; matrix_.m_Entries[3]  = 0; 

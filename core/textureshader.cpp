@@ -35,6 +35,9 @@ namespace i3d
     setUniform(std::string("pointLight.att.linear"), pointLight_->att_.linear_);
     setUniform(std::string("pointLight.att.exp"), pointLight_->att_.exp_);
 
+    setUniform(std::string("sampler"), 0);
+    setUniform(std::string("sampler1"), 2);
+
   }
 
 }
