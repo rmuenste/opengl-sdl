@@ -43,9 +43,12 @@ namespace i3d {
       camera_.initCamera(Vec3(0.f, 1.8f, -6.0f), Vec3(1.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), Vec3(0.f, 0.f, 1.f));
 
       dLight_.ambientIntensity_ = 0.0f;
-      dLight_.diffuseIntensity_ = 0.0f;
+      dLight_.diffuseIntensity_ = 0.8f;
       dLight_.color_ = Vec3(0.0f, 0.0f, 0.0f);
-      dLight_.dir_ = Vec3(0.25f, 0.0f, 1.0f);
+      //dLight_.color_ = Vec3(0.0f, 0.0f, 0.0f);
+      dLight_.dir_ = Vec3(0.25f, -0.5f, 1.0f);
+      dLight_.dir_ = Vec3(1.0f, -0.75f, 1.0f);
+      dLight_.dir_ = Vec3(-1.0f, 0.0f, 0.0f);
 
       //pLight_.color_ = Vec3(0.8f, 0.8f, 0.8f);
       //pLight_.position_ = Vec3(2.5f, 1.0f, 2.0f);
@@ -55,21 +58,23 @@ namespace i3d {
       //pLight_.att_.linear_ = 0.0f;
       //pLight_.att_.exp_ = 0.0f;
 
-      pLight_.color_ = Vec3(0.0f, 0.0f, 0.0f);
-      pLight_.position_ = Vec3(2.5f, 1.0f, 2.0f);
-      pLight_.ambientIntensity_ = 0.0f;
+      pLight_.color_ = Vec3(0.8f, 0.8f, 0.8f);
+      //pLight_.color_ = Vec3(0.0f, 0.0f, 0.0f);
+      pLight_.position_ = Vec3(0.0f, 2.5f, 0.9f);
+      pLight_.ambientIntensity_ = 0.2f;
       pLight_.diffuseIntensity_ = 0.5f;
-      pLight_.att_.constant_ = 0.02f;
-      pLight_.att_.linear_ = 0.02f;
-      pLight_.att_.exp_ = 0.03f;
+      pLight_.att_.constant_ = 0.2f;
+      pLight_.att_.linear_ = 0.09f;
+      pLight_.att_.exp_ = 0.02f;
 
       sLight_.color_ = Vec3(0.95f, 0.7f, 0.4f);
-      sLight_.position_ = Vec3(0.0f, -0.5f, 2.0f);
-      sLight_.dir_ = Vec3(-0.2f, 0.0f, 1.0f);
+      //sLight_.color_ = Vec3(0.0f, 0.0f, 0.0f);
+      sLight_.position_ = Vec3(0.0f, 1.0f, -2.0f);
+      sLight_.dir_ = Vec3(0.f, 0.0f, 1.0f);
 
       sLight_.ambientIntensity_ = 0.0f;
-      sLight_.diffuseIntensity_ = 1.0f;
-      sLight_.cutoff_ = 0.8f;
+      sLight_.diffuseIntensity_ = 0.7f;
+      sLight_.cutoff_ = 0.925f;
       sLight_.att_.constant_ = 0.02f;
       sLight_.att_.linear_ = 0.02f;
       sLight_.att_.exp_ = 0.03f;
@@ -150,7 +155,9 @@ namespace i3d {
       ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
       world_.loadMesh("../../meshes/world.obj");
+      //world_.loadMesh("../../meshes/sphere0.obj");
       world_.buildSmoothNormals();
+      //world_.buildFakeVertexNormals();
 
       Texture w;
       w.createTextureFromImage("../../textures/earth1.png");
@@ -160,6 +167,7 @@ namespace i3d {
       world_.setMaterial(&worldMat_);
 
       world_.transform_.translation_ = i3d::Vec4(0.9, -0.5, 0.0, 1);
+      //world_.transform_.translation_ = i3d::Vec4(0.0, 1.0, 0.0, 1);
       world_.transform_.setRotationEuler(i3d::Vec3(0.0, 0.0, 0.0));
 
       world_.initRender();
@@ -214,7 +222,7 @@ namespace i3d {
       glFrontFace(GL_CCW);
 
       glEnable(GL_DEPTH_TEST);
-      glDepthFunc(GL_LEQUAL);
+      //glDepthFunc(GL_LEQUAL);
 
       float x = (float)rand() / (float)(RAND_MAX);
 
@@ -231,6 +239,7 @@ namespace i3d {
 
       shaderShadow_.bind();
       shaderShadow_.shadowTex_ = &renderTex_;
+      shaderShadow_.eyePos_ = camera_.getPos();
       shaderShadow_.setMatrices(perspective_.getPerspectiveTransform(),
         camera_.getCameraTranslationTransform(),
         camera_.getCameraCoordinateTransform()

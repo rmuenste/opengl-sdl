@@ -22,9 +22,11 @@ void main(void)
 
   vec4 n4 = vec4(normal.x, normal.y, normal.z,0.0);
 
-  normal0 = (perspective * cameraRotation * camera * transform * n4).xyz;
+  //normal0 = (perspective * cameraRotation * camera * transform * n4).xyz;
+  normal0 = (transform * n4).xyz;
 
-  worldPos0 = (perspective * cameraRotation * camera * transform * vec4(positions.x, positions.y, positions.z,1.0)).xyz;
+  //worldPos0 = (perspective * cameraRotation * camera * transform * vec4(positions.x, positions.y, positions.z,1.0)).xyz;
+  worldPos0 = (transform * vec4(positions.x, positions.y, positions.z,1.0)).xyz;
 
   texCoord0 = texCoord;
 

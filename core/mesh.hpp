@@ -71,6 +71,8 @@ namespace i3d {
 
       void setMaterial(Material *m);
 
+      void renderNormals();
+
       Transform transform_;
 
       BasicShader* shader_;
@@ -85,7 +87,7 @@ namespace i3d {
       /* data */
       GLuint vao;
       GLuint iao;
-      GLuint buffers[3];
+      GLuint buffers[4];
       int drawVertices_;
   };
 

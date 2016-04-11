@@ -264,6 +264,17 @@ void Mesh3D::calcVertexNormals()
 
   }//end for
 
+  for (int i(0); i < (int)vertices_.size(); ++i)
+  {
+    Vec3 vn = vertices_[i];
+    vn.Normalize();
+    if (vn * vertexNormals_[i] < 0)
+    {
+      vertexNormals_[i] = -vertexNormals_[i];
+    }
+  }
+
+
   delete[] pFacesAtVertex;
 
 }//end CalcVertexNormals

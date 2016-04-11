@@ -18,91 +18,57 @@
 #include <light.hpp>
 #include <phong_dir.hpp>
 #include <textureshader.hpp>
-#include <shadowmapshader.hpp>
+#include <simpleshader.hpp>
 #include <twopassshadow.hpp>
+#include <normallines.hpp>
 
 namespace i3d {
 
-  class MultiTextureTest : public SDL_GL_application
+  class ModelTest : public SDL_GL_application
   {
   public:
-    MultiTextureTest()
+    ModelTest()
     {
-      setTitle(std::string("Multi Texture Test"));
+      setTitle(std::string("Normals Test"));
       frame = 0;
       time_ = 0;
       speed_ = 0.05f;
     };
 
-    virtual ~MultiTextureTest() {};
+    virtual ~ModelTest() {};
 
     void init()
     {
       SDL_GL_application::init();
 
       perspective_.setPerspectiveTransform(50.f, static_cast<float>(getWindowWidth()), static_cast<float>(getWindowHeight()), 1.f, 60.f);
-      camera_.initCamera(Vec3(0.f, 1.8f, -6.0f), Vec3(1.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), Vec3(0.f, 0.f, 1.f));
-
-      dLight_.ambientIntensity_ = 0.0f;
-      dLight_.diffuseIntensity_ = 0.0f;
-      dLight_.color_ = Vec3(0.0f, 0.0f, 0.0f);
-      dLight_.dir_ = Vec3(0.25f, 0.0f, 1.0f);
-
-      pLight_.color_ = Vec3(0.0f, 0.0f, 0.0f);
-      pLight_.position_ = Vec3(2.5f, 1.0f, 2.0f);
-      pLight_.ambientIntensity_ = 0.0f;
-      pLight_.diffuseIntensity_ = 0.5f;
-      pLight_.att_.constant_ = 0.02f;
-      pLight_.att_.linear_ = 0.02f;
-      pLight_.att_.exp_ = 0.03f;
-
-      sLight_.color_ = Vec3(0.95f, 0.7f, 0.4f);
-      sLight_.position_ = Vec3(0.0f, -0.5f, 2.0f);
-      sLight_.dir_ = Vec3(-0.2f, 0.0f, 1.0f);
-
-      sLight_.ambientIntensity_ = 0.0f;
-      sLight_.diffuseIntensity_ = 1.0f;
-      sLight_.cutoff_ = 0.8f;
-      sLight_.att_.constant_ = 0.02f;
-      sLight_.att_.linear_ = 0.02f;
-      sLight_.att_.exp_ = 0.03f;
-
-      cameraShadow_.initCamera(Vec3(0.f, 1.1f, -6.0f), Vec3(1.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), Vec3(0.f, 0.f, 1.f));
-
-      renderTex_.createDepthTexture(getWindowWidth(), getWindowHeight());
+      camera_.initCamera(Vec3(0.f, 0.0f, -6.0f), Vec3(1.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), Vec3(0.f, 0.f, 1.f));
 
       glEnable(GL_DEPTH_TEST);
 
       textures_.reserve(10);
 
-      Texture r;
-      r.createTextureFromImage("../../textures/wall_floor.png");
-      textures_.push_back(std::move(r));
+      shader_.initShader(camera_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
 
-      roomMat_ = PhongMaterial(15.0f, 30.0f, 1.0f, &textures_.back());
-
-      Texture e;
-      e.createTextureFromImage("../../textures/earth1.png");
-      textures_.push_back(std::move(e));
-
-      worldMat_ = PhongMaterial(15.0f, 30.0f, 1.0f, &textures_.back());
-
-      //renderManager.setupShaders(shaderList,shaderConfigurations,...);
-      shader_.initShader(camera_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), worldMat_);
-      shader_.setDirectionLight(&dLight_);
-      shader_.setPointLight(&pLight_);
+      normalShader_.initShader(camera_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
 
       ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
       quad_.loadMesh("../../meshes/quad.obj");
       quad_.buildSmoothNormals();
 
-      quad_.setMaterial(&worldMat_);
-
       quad_.transform_.translation_ = i3d::Vec4(0.f, 1.8f, 0.f, 1.f);
       quad_.transform_.setRotationEuler(i3d::Vec3(0.0f, 0.0f, 0.0f));
 
       quad_.initRender();
+
+      world_.loadMesh("../../meshes/sphere0.obj");
+      world_.buildSmoothNormals();
+
+      world_.transform_.translation_ = i3d::Vec4(0.0, 0.0, 0.0, 1);
+      world_.transform_.setRotationEuler(i3d::Vec3(0.0, 0.0, 0.0));
+
+      world_.initRender();
 
     }
 
@@ -132,21 +98,44 @@ namespace i3d {
       const GLfloat col[] = { x, 0.f, 0.0f, 1.0f };
 
       shader_.bind();
-      shader_.shadowTex_ = roomMat_.textures_.front();
-      shader_.shadowTex_ = quad_.material_->textures_.front();
 
-      //shader_.bindMaterial(quad_.material_);
-      shader_.bindMaterial(&roomMat_);
-
-      shader_.setTransform(quad_.transform_.getMatrix());
+      world_.transform_.scale_.x = 1.0;
+      world_.transform_.scale_.y = 1.0;
+      world_.transform_.scale_.z = 1.0;
+      shader_.setTransform(world_.transform_.getMatrix());
       shader_.setMatrices(perspective_.getPerspectiveTransform(),
         camera_.getCameraTranslationTransform(),
         camera_.getCameraCoordinateTransform()
-        );
-      shader_.updateUniforms();
-      quad_.render();
+      );
 
-      glActiveTexture(GL_TEXTURE0);
+      shader_.eyePos_ = Vec3(0.8f, 0.0f, 0.0f);
+      shader_.updateUniforms();
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      world_.render();
+
+
+      world_.transform_.scale_.x = 1.01;
+      world_.transform_.scale_.y = 1.01;
+      world_.transform_.scale_.z = 1.01;
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      shader_.setTransform(world_.transform_.getMatrix());
+      shader_.eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
+      shader_.updateUniforms();
+      world_.render();
+
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+      normalShader_.bind();
+      normalShader_.setTransform(world_.transform_.getMatrix());
+      normalShader_.setMatrices(perspective_.getPerspectiveTransform(),
+        camera_.getCameraTranslationTransform(),
+        camera_.getCameraCoordinateTransform()
+        );
+
+      normalShader_.eyePos_ = Vec3(0.0f, 1.0f, 1.0f);
+      normalShader_.updateUniforms();
+      world_.renderNormals();
+
 
 #ifndef _MSC_VER
       struct timeval start, end;
@@ -239,14 +228,14 @@ namespace i3d {
 
     GLuint tiao;
     GLuint buffers[3];
-    TwoPassShadow shader_;
+    SimpleShader shader_;
+    NormalShader normalShader_;
 
     //TextureShader shader_;
     PhongDir shaderPhong_;
     Texture renderTex_;
     Texture *floor_;
     
-    ShadowMapShader shaderShadow_;
     std::vector<Texture> textures_;
     int size;
     int frame;
@@ -261,19 +250,13 @@ namespace i3d {
     Mesh<> world_;
     float speed_;
     Light light_;
-    DirectionalLight dLight_;
-    PointLight pLight_;
-    SpotLight sLight_;
-    PhongMaterial worldMat_;
-    PhongMaterial roomMat_;
-    PhongMaterial monkeyMat_;
 
   };
 }
 int main(int argc, char *argv[])
 {
 
-  i3d::MultiTextureTest app;
+  i3d::ModelTest app;
 
   app.init();
 

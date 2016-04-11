@@ -19,7 +19,7 @@ namespace i3d
 
     setUniform(std::string("lightMatrix"), lightMatrix_);
 
-    setUniform(std::string("eyePos"), *eyePos_);
+    setUniform(std::string("eyePos"), eyePos_);
 
     setUniform(std::string("specularIntensity"), material_->getSpecularIntensity());
     setUniform(std::string("specularExponent"), material_->getSpecularExponent());

@@ -321,6 +321,8 @@ class Mesh3D
      */
     std::vector<Vec3> vertexNormals_;
 
+    std::vector<Vec3> normalLines_;
+
     std::vector<Vec3> rawVertices_ ;
 
     /** \brief The array of faces.

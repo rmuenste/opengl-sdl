@@ -49,6 +49,7 @@ uniform float specularIntensity;
 uniform float specularExponent;
 
 uniform vec3 eyePos;
+
 uniform DirectionalLight dirLight;
 
 uniform PointLight pointLight;
@@ -82,7 +83,7 @@ vec4 lightKernel(vec3 d, vec3 n, vec3 lightColor, float lightAmbIntensity, float
 
   vec3 N = normalize(n);
 
-  vec3 L = d;
+  vec3 L = normalize(d);
 
   vec3 R = normalize(reflect(L,N));
 
@@ -97,10 +98,6 @@ vec4 lightKernel(vec3 d, vec3 n, vec3 lightColor, float lightAmbIntensity, float
   return light + vec4(diffuse,1.0f) + vec4(specular,1.0f);
 }
 
-vec4 getDirectionalLight(vec3 normal)
-{
-  return lightKernel(dirLight.dir, normal, dirLight.color, dirLight.ambientIntensity, dirLight.diffuseIntensity);
-}
 
 vec4 getPointLight(vec3 normal)
 {
@@ -125,19 +122,38 @@ vec4 lightKernelShadow(vec3 d, vec3 n, vec3 lightColor, float lightAmbIntensity,
 
   vec3 N = normalize(n);
 
-  vec3 L = d;
+  vec3 L = normalize(d);
 
-  vec3 R = normalize(reflect(L,N));
+  float angle_nl = dot(N,-L);
 
-  vec3 V = normalize(eyePos-worldPos0);
+  if(angle_nl > 0.0)
+  {
+    // Diffuse light: calculate the angle between the surface normal and the reversed light vector
+    vec3 diffuse = lightColor * angle_nl * lightDiffIntensity;
 
-  // Diffuse light: calculate the angle between the surface normal and the reversed light vector
-  vec3 diffuse = lightColor * max(dot(N,-L), 0.0) * lightDiffIntensity;
+    vec3 R = normalize(reflect(L,N));
 
-  // Specular light: calculate the angle between the reflected light and eye vector
-  vec3 specular = lightColor * pow(max(dot(R, V), 0.0), specularExponent) * specularIntensity;
+    vec3 V = normalize(eyePos-worldPos0);
 
-  return light + vec4(sf * (diffuse + specular), 1.0f);
+    // Specular light: calculate the angle between the reflected light and eye vector
+    vec3 specular = lightColor * pow(max(dot(R, V), 0.0), specularExponent) * specularIntensity;
+
+    return light + vec4(sf * (diffuse + specular), 1.0f);
+  }
+  else
+    return light;
+
+}
+
+vec4 getDirectionalLight(vec3 normal)
+{
+  vec4 color = vec4(0,0,0,0);
+
+  float shadow = getShadowFactor(lightPos);
+
+  color = lightKernelShadow(dirLight.dir, normal, dirLight.color, dirLight.ambientIntensity, dirLight.diffuseIntensity, shadow);
+
+  return color;
 }
 
 vec4 getSpotLight(vec3 normal)
@@ -165,7 +181,7 @@ vec4 getSpotLight(vec3 normal)
     float attenuation = spotLight.att.constant + spotLight.att.linear * dist + 
       spotLight.att.exp * dist * dist; 
 
-    color = color / attenuation;// * (1.0 - (1.0-coneAngle)/(1.0 - spotLight.cutoff));
+    color = color / attenuation * (1.0 - (1.0-coneAngle)/(1.0 - spotLight.cutoff));
   }
 
   return color;

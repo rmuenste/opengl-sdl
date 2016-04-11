@@ -62,7 +62,7 @@
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
-    glGenBuffers(3, &buffers[0]);
+    glGenBuffers(4, &buffers[0]);
     glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
     glBufferData(GL_ARRAY_BUFFER, model_.meshes_[0].vertices_.size() * 3 * sizeof(float),
       model_.meshes_.front().vertices_.data(), GL_STATIC_DRAW);
@@ -83,6 +83,23 @@
       model_.meshes_.front().vertexNormals_.data(), GL_STATIC_DRAW);
 
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    for (unsigned i=0; i < model_.meshes_.front().vertices_.size(); ++i)
+    {
+
+      model_.meshes_.front().normalLines_.push_back(model_.meshes_.front().vertices_[i]);
+
+      model_.meshes_.front().normalLines_.push_back(model_.meshes_.front().vertices_[i] +
+                                                    model_.meshes_.front().vertexNormals_[i]);
+
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+    glBindBuffer(GL_ARRAY_BUFFER, buffers[3]);
+    glBufferData(GL_ARRAY_BUFFER, model_.meshes_[0].normalLines_.size() * 3 * sizeof(float),
+      model_.meshes_.front().normalLines_.data(), GL_STATIC_DRAW);
+
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
   }
 
@@ -307,5 +324,38 @@
     }
 
     glDisableVertexAttribArray(2);
+
+  }
+
+  template<>
+  void Mesh<array_render>::renderNormals()
+  {
+
+    glBindVertexArray(vao);
+
+    glEnableVertexAttribArray(0);
+
+    if (hasTexture_)
+    {
+
+      glEnableVertexAttribArray(1);
+    }
+
+    glEnableVertexAttribArray(2);
+
+    glEnableVertexAttribArray(3);
+
+    glDrawArrays(GL_LINES, 0, model_.meshes_[0].normalLines_.size());
+
+    glDisableVertexAttribArray(0);
+
+    if (hasTexture_)
+    {
+      glDisableVertexAttribArray(1);
+    }
+
+    glDisableVertexAttribArray(2);
+
+    glDisableVertexAttribArray(3);
 
   }

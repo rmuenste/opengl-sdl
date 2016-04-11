@@ -20,7 +20,7 @@ namespace i3d {
 
       Mat4& getCameraTranslationTransform();
 
-      Vec3& getPos(){return pos_;}
+      Vec3 getPos(){return pos_;}
 
       Vec3 getU(){return u_;}
 

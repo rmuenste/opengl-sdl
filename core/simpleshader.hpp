@@ -1,5 +1,5 @@
-#ifndef TWOPASSSHADOW_HPP_DFQJYGHL
-#define TWOPASSSHADOW_HPP_DFQJYGHL
+#ifndef SIMPLESHADER_HPP_8CERZIYR
+#define SIMPLESHADER_HPP_8CERZIYR
 
 #include <stdlib.h>
 #include <iostream>
@@ -11,22 +11,22 @@
 
 namespace i3d
 {
-  class TwoPassShadow : public BasicShader
+  class SimpleShader : public BasicShader
   {
   public:
 
-    TwoPassShadow() : BasicShader()
+    SimpleShader() : BasicShader()
     {
 
     };
 
-    void initShader(Vec3 &pos, Mat4 &perspective, Mat4 &cameraTranslation, Mat4 &cameraRotation, PhongMaterial &mat)
+    void initShader(Vec3 &pos, Mat4 &perspective, Mat4 &cameraTranslation, Mat4 &cameraRotation)
     {
 
       BasicShader::initShader();
 
-      addVertexShader("../../shaders/two_pass_shadow.vert");
-      addFragmentShader("../../shaders/two_pass_shadow.frag");
+      addVertexShader("../../shaders/simple_v.glsl");
+      addFragmentShader("../../shaders/simple_f.glsl");
 
       linkShader();
 
@@ -35,10 +35,7 @@ namespace i3d
       addUniform(std::string("camera"));
       addUniform(std::string("cameraRotation"));
 
-      addUniform(std::string("sampler"));
-      addUniform(std::string("sampler1"));
-
-      material_ = &mat;
+      addUniform(std::string("model_col"));
 
       perspective_ = &perspective;
       cameraTranslation_ = &cameraTranslation;
@@ -73,10 +70,10 @@ namespace i3d
 
     }
 
-    virtual ~TwoPassShadow() {};
+    virtual ~SimpleShader() {};
 
   };
 
 }
 
-#endif /* end of include guard: TWOPASSSHADOW_HPP_DFQJYGHL */
+#endif /* end of include guard: SIMPLESHADER_HPP_8CERZIYR */

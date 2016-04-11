@@ -75,7 +75,7 @@ namespace i3d
       perspective_ = &perspective;
       cameraTranslation_ = &cameraTranslation;
       cameraRotation_ = &cameraRotation;
-      eyePos_ = &pos;
+      eyePos_ = pos;
 
     }
 

@@ -7,6 +7,8 @@ sdl_gl_application.cpp
 sdl_gl_application.hpp
 shaderloader.cpp
 shaderloader.hpp
+simpleshader.cpp
+simpleshader.hpp
 textureloader.cpp
 textureloader.hpp
 texture.hpp
@@ -25,6 +27,8 @@ phong.cpp
 phong.hpp  
 shadowmapshader.cpp  
 shadowmapshader.hpp  
+normallines.cpp  
+normallines.hpp  
 textureshader.cpp  
 textureshader.hpp  
 twopassshadow.cpp  
