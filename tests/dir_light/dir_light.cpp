@@ -82,9 +82,6 @@ namespace i3d {
         worldMat_ = PhongMaterial(15.0f, 30.0f, 1.0f, t);
         world_.setMaterial(&worldMat_);
 
-        //worldShader_.initShader(light_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), worldMat_);
-        //world_.shader_ = &worldShader_;
-
         world_.transform_.translation_ = i3d::Vec4(0.9, -1.0, 0.0, 1);
         world_.transform_.setRotationEuler(i3d::Vec3(0.0, 0.0, 0.0));
 

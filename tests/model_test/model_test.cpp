@@ -62,7 +62,7 @@ namespace i3d {
 
       quad_.initRender();
 
-      world_.loadMesh("../../meshes/sphere0.obj");
+      world_.loadMesh("../../meshes/sphere.obj");
       world_.buildSmoothNormals();
 
       world_.transform_.translation_ = i3d::Vec4(0.0, 0.0, 0.0, 1);
