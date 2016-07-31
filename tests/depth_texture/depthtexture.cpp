@@ -39,7 +39,7 @@ namespace i3d {
     {
       SDL_GL_application::init();
 
-      perspective_.setPerspectiveTransform(50.f, static_cast<float>(getWindowWidth()), static_cast<float>(getWindowHeight()), 1.f, 60.f);
+      perspective_.setPerspectiveTransform(70.f, static_cast<float>(getWindowWidth()), static_cast<float>(getWindowHeight()), 1.f, 60.f);
       camera_.initCamera(Vec3(0.f, 1.8f, -6.0f), Vec3(1.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), Vec3(0.f, 0.f, 1.f));
 
       dLight_.ambientIntensity_ = 0.0f;
@@ -60,8 +60,8 @@ namespace i3d {
 
       pLight_.color_ = Vec3(0.8f, 0.8f, 0.8f);
       //pLight_.color_ = Vec3(0.0f, 0.0f, 0.0f);
-      pLight_.position_ = Vec3(0.0f, 2.5f, 0.9f);
-      pLight_.ambientIntensity_ = 0.2f;
+      pLight_.position_ = Vec3(0.0f, 2.5f, 1.0f);
+      pLight_.ambientIntensity_ = 0.3f;
       pLight_.diffuseIntensity_ = 0.5f;
       pLight_.att_.constant_ = 0.2f;
       pLight_.att_.linear_ = 0.09f;
@@ -101,12 +101,12 @@ namespace i3d {
       glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, renderTex_.id_, 0);
       glEnable(GL_DEPTH_TEST);
 
-      room_.loadMesh("../../meshes/room.obj");
+      room_.loadMesh("../../meshes/big_room.obj");
       room_.buildFakeVertexNormals();
       textures_.reserve(10);
 
       Texture r;
-      r.createTextureFromImage("../../textures/wall_floor.png");
+      r.createTextureFromImage("../../textures/wall_floor2.png");
       textures_.push_back(std::move(r));
 
       roomMat_ = PhongMaterial(0.0f, 100.0f, 1.0f, &textures_.back());
@@ -319,31 +319,35 @@ namespace i3d {
       case SDLK_LEFT:
         camera_.moveU(-speed_);
         break;
-      case SDLK_UP:
-        camera_.moveV(speed_);
-        break;
-      case SDLK_DOWN:
-        camera_.moveV(-speed_);
-        break;
+      //case SDLK_UP:
+      //  camera_.moveV(speed_);
+      //  break;
+      //case SDLK_DOWN:
+      //  camera_.moveV(-speed_);
+      //  break;
       case SDLK_PAGEUP:
-        camera_.moveW(speed_);
+        camera_.moveN(speed_);
         break;
       case SDLK_PAGEDOWN:
-        camera_.moveW(-speed_);
+        camera_.moveN(-speed_);
         break;
       case SDLK_a:
         camera_.rotateY(-speed_);
+        camera_.outputCameraConfig();
         break;
       case SDLK_d:
         camera_.rotateY(speed_);
+        camera_.outputCameraConfig();
         break;
       case SDLK_w:
-        camera_.rotateX(-speed_);
-        std::cout << camera_.getN() << std::endl;
+        //camera_.rotateX(-speed_);
+        camera_.moveN(speed_);
+        camera_.outputCameraConfig();
         break;
       case SDLK_s:
-        camera_.rotateX(speed_);
-        std::cout << camera_.getN() << std::endl;
+        //camera_.rotateX(speed_);
+        camera_.moveN(-speed_);
+        camera_.outputCameraConfig();
         break;
       case SDLK_0:
       {

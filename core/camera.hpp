@@ -34,6 +34,18 @@ namespace i3d {
       // rotate camera to look up/down
       void rotateX(float alpha);
 
+      // rotate camera around the global 'up' axis
+      inline void rotateHorizontal(float alpha)
+      {
+        rotateX(alpha);
+      }
+
+      // rotate camera to look up/down
+      inline void rotateVertical(float alpha)
+      {
+        rotateY(alpha);
+      }
+
       void moveU(float speed)
       {
         pos_ += speed * u_;
@@ -44,9 +56,22 @@ namespace i3d {
         pos_ += speed * v_;
       }
 
-      void moveW(float speed)
+      void moveN(float speed)
       {
         pos_ += speed * n_;
+      }
+
+      void outputCameraConfig()
+      {
+        std::cout << "---Camera UVN---" << std::endl;
+        std::cout << "U(right): " << u_;
+        std::cout << "U(norm): " << u_.mag() << std::endl;
+        std::cout << "V(up): " << v_;
+        std::cout << "V(norm): " << v_.mag() << std::endl;
+        std::cout << "N(look): " << n_;
+        std::cout << "N(norm): " << n_.mag() << std::endl;
+        std::cout << "----------------" << std::endl;
+        std::cout << std::endl;
       }
 
   private:

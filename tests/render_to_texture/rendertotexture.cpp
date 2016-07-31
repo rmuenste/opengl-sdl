@@ -233,10 +233,10 @@ namespace i3d {
             camera_.moveV(-speed_);
             break;
           case SDLK_PAGEUP:
-            camera_.moveW(speed_);
+            camera_.moveN(speed_);
             break;
           case SDLK_PAGEDOWN:
-            camera_.moveW(-speed_);
+            camera_.moveN(-speed_);
             break;
           case SDLK_a:
             camera_.rotateY(-speed_);

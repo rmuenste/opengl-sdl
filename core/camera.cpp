@@ -58,9 +58,11 @@ namespace i3d {
     n_.normalize();
 
     u_ = Vec3::Cross(axis,n_);
+    u_.normalize();
 
   }
 
+  
   void Camera::rotateX(float alpha)
   {
 
@@ -68,6 +70,7 @@ namespace i3d {
     n_.normalize();
 
     v_ = Vec3::Cross(n_,u_);
+    v_.normalize();
 
   }
 

@@ -106,7 +106,7 @@ void Texture::createTextureFromImage(std::string fileName)
   }
 
   glTexImage2D(GL_TEXTURE_2D, 0, mode, surf->w, surf->h,
-      0, GL_RGBA, GL_UNSIGNED_BYTE, pixels_);
+      0, mode, GL_UNSIGNED_BYTE, pixels_);
 
 }
 

@@ -117,20 +117,17 @@ static GL3WglProc get_proc(const char *proc)
 static struct {
 	int major, minor;
 } version;
-#include <stdio.h>
+
 static int parse_version(void)
 {
 	if (!glGetIntegerv)
-        {
-        	return -2;
-        }
+		return -1;
 
 	glGetIntegerv(GL_MAJOR_VERSION, &version.major);
 	glGetIntegerv(GL_MINOR_VERSION, &version.minor);
-        printf("Version: %i\n",version.major );
 
 	if (version.major < 3)
-		return -3;
+		return -1;
 	return 0;
 }
 

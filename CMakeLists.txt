@@ -34,4 +34,5 @@ add_subdirectory(utils)
 add_subdirectory(gl3w)
 add_subdirectory(core)
 add_subdirectory(tests)
+#add_subdirectory(assimp)
 
