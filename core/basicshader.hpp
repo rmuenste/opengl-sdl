@@ -14,9 +14,6 @@
 #include <material.hpp>
 #include <texture.hpp>
 
-//GLuint glCreateShader(GLenum type);
-//GLuint glCreateProgram();
-
 namespace i3d
 {
 

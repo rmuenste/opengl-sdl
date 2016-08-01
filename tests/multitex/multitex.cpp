@@ -88,7 +88,8 @@ namespace i3d {
       worldMat_ = PhongMaterial(15.0f, 30.0f, 1.0f, &textures_.back());
 
       //renderManager.setupShaders(shaderList,shaderConfigurations,...);
-      shader_.initShader(camera_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), worldMat_);
+      shader_.initShader(*camera_.getPosPointer(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), worldMat_);
+
       shader_.setDirectionLight(&dLight_);
       shader_.setPointLight(&pLight_);
 

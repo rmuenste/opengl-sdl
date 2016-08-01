@@ -206,8 +206,6 @@ namespace i3d {
 
       for (auto &tri : mesh.faces_)
       {
-        TriFace tri=*faceIter;
-
         //We loop through all triangular faces of the
         // model. This variable will hold the current face
         Triangle3r tri3(mesh.getVertices()[tri[0]],mesh.getVertices()[tri[1]],mesh.getVertices()[tri[2]]);

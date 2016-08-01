@@ -112,19 +112,19 @@ namespace i3d {
       roomMat_ = PhongMaterial(0.0f, 100.0f, 1.0f, &textures_.back());
       room_.setMaterial(&roomMat_);
 
-      shaderShadow_.initShader(camera_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), roomMat_);
+      shaderShadow_.initShader(*camera_.getPosPointer(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), roomMat_);
 
       shaderShadow_.setDirectionLight(&dLight_);
       shaderShadow_.setPointLight(&pLight_);
       shaderShadow_.setSpotLight(&sLight_);
 
       //renderManager.setupShaders(shaderList,shaderConfigurations,...);
-      shader_.initShader(camera_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), roomMat_);
+      shader_.initShader(*camera_.getPosPointer(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), roomMat_);
       shader_.setDirectionLight(&dLight_);
       shader_.setPointLight(&pLight_);
       room_.shader_ = &shader_;
 
-      shaderPhong_.initShader(camera_.getPos(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), roomMat_);
+      shaderPhong_.initShader(*camera_.getPosPointer(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform(), roomMat_);
       shaderPhong_.setDirectionLight(&dLight_);
       shaderPhong_.setPointLight(&pLight_);
       shaderPhong_.setSpotLight(&sLight_);
