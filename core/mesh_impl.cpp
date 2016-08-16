@@ -62,6 +62,8 @@
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
+    std::cout << "render: " << model_.meshes_[0].vertices_.size() << std::endl; 
+
     glGenBuffers(4, &buffers[0]);
     glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
     glBufferData(GL_ARRAY_BUFFER, model_.meshes_[0].vertices_.size() * 3 * sizeof(float),
@@ -90,7 +92,7 @@
       model_.meshes_.front().normalLines_.push_back(model_.meshes_.front().vertices_[i]);
 
       model_.meshes_.front().normalLines_.push_back(model_.meshes_.front().vertices_[i] +
-                                                    model_.meshes_.front().vertexNormals_[i]);
+                                                    0.125f * model_.meshes_.front().vertexNormals_[i]);
 
     }
 

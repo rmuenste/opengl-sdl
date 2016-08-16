@@ -48,6 +48,12 @@ flags = [
 '/usr/include/GL',
 '-isystem',
 '/usr/include/SDL2',
+'-I',
+'./core',
+'-I',
+'./utils',
+'-I',
+'./assimp/include',
 ]
 
 

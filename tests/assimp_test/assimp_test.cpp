@@ -20,6 +20,9 @@
 #include <phong_dir.hpp>
 #include <textureshader.hpp>
 #include <shadowmapshader.hpp>
+#include <simpleshader.hpp>
+#include <twopassshadow.hpp>
+#include <normallines.hpp>
 
 #include <assimp/Importer.hpp>	//OO version Header!
 #include <assimp/postprocess.h>
@@ -42,7 +45,38 @@ namespace i3d {
     void init()
     {
       SDL_GL_application::init();
-      import3DFromFile( std::string("../../meshes/big_room.obj") );
+      //import3DFromFile( std::string("../../meshes/big_room.obj") );
+
+      perspective_.setPerspectiveTransform(50.f, static_cast<float>(getWindowWidth()), static_cast<float>(getWindowHeight()), 1.f, 60.f);
+      camera_.initCamera(Vec3(0.f, 0.0f, -6.0f), Vec3(1.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), Vec3(0.f, 0.f, 1.f));
+
+      glEnable(GL_DEPTH_TEST);
+
+      textures_.reserve(10);
+
+      shader_.initShader(*camera_.getPosPointer(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
+
+      normalShader_.initShader(*camera_.getPosPointer(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
+
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+      quad_.loadMesh("../../meshes/quad.obj");
+      quad_.buildSmoothNormals();
+      import3DFromFile( std::string("../../meshes/sphere.obj") );
+
+      quad_.transform_.translation_ = i3d::Vec4(0.f, 1.8f, 0.f, 1.f);
+      quad_.transform_.translation_ = i3d::Vec4(0.f, 0.0f, 0.f, 0.f);
+      quad_.transform_.setRotationEuler(i3d::Vec3(0.0f, 0.0f, 0.0f));
+
+      quad_.initRender();
+
+      world_.loadMesh("../../meshes/sphere.obj");
+      world_.buildSmoothNormals();
+
+      world_.transform_.translation_ = i3d::Vec4(0.0, 0.0, 0.0, 1);
+      world_.transform_.setRotationEuler(i3d::Vec3(0.0, 0.0, 0.0));
+
+      world_.initRender();
     }
 
     bool import3DFromFile( const std::string& pFile)
@@ -66,6 +100,95 @@ namespace i3d {
         return false;
       }
 
+      std::cout << "Assimp meshes: " << scene->mNumMeshes << std::endl; 
+      std::cout << "Assimp vertices: " << scene->mMeshes[0]->mNumVertices << std::endl; 
+      std::cout << "Assimp faces: " << scene->mMeshes[0]->mNumFaces << std::endl; 
+      std::cout << "Assimp tcoords: " << scene->mMeshes[0]->mTextureCoords << std::endl; 
+
+      std::cout << "Number of vertices: " << quad_.model_.meshes_.front().vertices_.size() << std::endl; 
+      std::cout << "Number of faces: " << scene->mMeshes[0]->mNumFaces << std::endl; 
+      std::cout << "Number of tcoords: " << quad_.model_.meshes_.front().orderedTexCoords_.size() << std::endl; 
+
+      Mesh3D *mesh = &(quad_.model_.meshes_.front());
+      mesh->vertices_.clear();
+      mesh->vertexNormals_.clear();
+      mesh->orderedTexCoords_.clear();
+
+      unsigned numVerts = scene->mMeshes[0]->mNumFaces * 3;
+
+      for(unsigned i(0); i < scene->mMeshes[0]->mNumFaces; ++i)
+      {
+
+        const aiFace &face = scene->mMeshes[0]->mFaces[i]; 
+
+        for(unsigned j(0); j < 3; ++j)
+        {
+          aiVector3D p = scene->mMeshes[0]->mVertices[face.mIndices[j]];
+          aiVector3D n = scene->mMeshes[0]->mNormals[face.mIndices[j]];
+          aiVector3D t = scene->mMeshes[0]->mTextureCoords[0][face.mIndices[j]];
+
+          mesh->vertices_.push_back(Vec3(p.x,p.y,p.z));
+          mesh->vertexNormals_.push_back(Vec3(n.x,n.y,n.z));
+          mesh->texCoords_.push_back(Vec2(t.x,t.y));
+          
+        }
+
+      }
+
+//      for(unsigned i(0); i < scene->mMeshes[0]->mNumVertices; ++i)
+//      {
+//
+//        Vec3 v(scene->mMeshes[0]->mNormals[i].x,
+//               scene->mMeshes[0]->mNormals[i].z,
+//               scene->mMeshes[0]->mNormals[i].y
+//              );
+//
+//        std::cout << "Normal a: " << v << std::endl; 
+//        std::cout << "Normal b: " << quad_.model_.meshes_.front().getNormals()[i] << std::endl; 
+//        std::cout << " " << scene->mMeshes[0]->mTextureCoords[0][i].x << " " <<
+//        scene->mMeshes[0]->mTextureCoords[0][i].y << std::endl; 
+//
+//      }
+//
+//      for(unsigned i(0); i < scene->mMeshes[0]->mNumVertices; ++i)
+//      {
+//        Vec3 v(scene->mMeshes[0]->mVertices[i].x,
+//               scene->mMeshes[0]->mVertices[i].z,
+//               scene->mMeshes[0]->mVertices[i].y
+//              );
+//        std::cout << "Vertex a: " << quad_.model_.meshes_.front().vertices_[i] << std::endl; 
+//        std::cout << "Vertex b: " << v << std::endl; 
+//        quad_.model_.meshes_.front().vertices_[i] = v;
+//      }
+//
+//      for(unsigned i(0); i < scene->mMeshes[0]->mNumFaces; ++i)
+//      {
+//        std::cout << "Face : " << i << std::endl; 
+//        for(unsigned j(0); j < scene->mMeshes[0]->mFaces[i].mNumIndices; ++j)
+//        {
+//          std::cout << " " << scene->mMeshes[0]->mFaces[i].mIndices[j] << " "; 
+//        }
+//        std::cout << std::endl; 
+//        
+//        for(unsigned j(0); j < 3; ++j)
+//        {
+//          std::cout << " " << quad_.model_.meshes_.front().faces_[i].m_VertIndices[j] << " "; 
+//          quad_.model_.meshes_.front().faces_[i].m_VertIndices[j] = 
+//          scene->mMeshes[0]->mFaces[i].mIndices[j];
+//        }
+//        std::cout << std::endl; 
+//
+////        for(unsigned j(0); j < 3; ++j)
+////        {
+////          std::cout << " " << scene->mMeshes[0]->mTextureCoords[i][j].x; 
+////          std::cout << " " << scene->mMeshes[0]->mTextureCoords[i][j].y << std::endl; 
+////        }
+////        std::cout << std::endl; 
+//
+//        //std::cout << "uv a: " << quad_.model_.meshes_.front().texCoords_[i] << std::endl; 
+//
+//      }
+
       // We're done. Everything will be cleaned up by the importer destructor
       return true;
     }
@@ -73,17 +196,149 @@ namespace i3d {
     void render()
     {
 
+      static const GLfloat black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+      static const GLfloat ones[] = { 1.0f };
+      static const GLfloat green[] = { 0.0f, 0.8f, 0.0f, 1.0f };
+
+      glClearBufferfv(GL_COLOR, 0, black);
+      glClearBufferfv(GL_DEPTH, 0, ones);
+
+      glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+      glClearBufferfv(GL_COLOR, 0, green);
+      glClearBufferfv(GL_DEPTH, 0, ones);
+
+      glEnable(GL_CULL_FACE);
+      glFrontFace(GL_CCW);
+
+      glEnable(GL_DEPTH_TEST);
+      glDepthFunc(GL_LEQUAL);
+
+      float x = (float)rand() / (float)(RAND_MAX);
+
+      const GLfloat col[] = { x, 0.f, 0.0f, 1.0f };
+
+      shader_.bind();
+
+      world_.transform_.scale_.x = 1.0;
+      world_.transform_.scale_.y = 1.0;
+      world_.transform_.scale_.z = 1.0;
+      shader_.setTransform(world_.transform_.getMatrix());
+      shader_.setMatrices(perspective_.getPerspectiveTransform(),
+        camera_.getCameraTranslationTransform(),
+        camera_.getCameraCoordinateTransform()
+      );
+
+      shader_.eyePos_ = Vec3(0.8f, 0.0f, 0.0f);
+      shader_.updateUniforms();
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      world_.render();
+
+      world_.transform_.scale_.x = 1.01;
+      world_.transform_.scale_.y = 1.01;
+      world_.transform_.scale_.z = 1.01;
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      shader_.setTransform(world_.transform_.getMatrix());
+      shader_.eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
+      shader_.updateUniforms();
+      world_.render();
+
+      shader_.setTransform(world_.transform_.getMatrix());
+      shader_.eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
+      shader_.updateUniforms();
+      quad_.render();
+
+
+      normalShader_.bind();
+      normalShader_.setTransform(world_.transform_.getMatrix());
+      normalShader_.setMatrices(perspective_.getPerspectiveTransform(),
+      camera_.getCameraTranslationTransform(),
+      camera_.getCameraCoordinateTransform()
+      );
+
+      normalShader_.eyePos_ = Vec3(0.0f, 1.0f, 1.0f);
+      normalShader_.updateUniforms();
+      world_.renderNormals();
+
+
+#ifndef _MSC_VER
+      struct timeval start, end;
+
+      long mtime, seconds, useconds;
+
+      gettimeofday(&start, NULL);
+#endif
+
+      SDL_GL_SwapWindow(window);
+
+#ifndef _MSC_VER
+      gettimeofday(&end, NULL);
+
+      seconds = end.tv_sec - start.tv_sec;
+      useconds = end.tv_usec - start.tv_usec;
+
+      mtime = ((seconds)* 1000 + useconds / 1000.0) + 0.5;
+#endif
+
+      frame++;
 
     }
 
     void handleResizeEvent(SDL_Event &event)
     {
-
+      SDL_GL_application::handleResizeEvent(event);
+      perspective_.setPerspectiveTransform(70.0f, (float)getWindowWidth(), (float)getWindowHeight(), 0.0f, 100.0f);
     }
 
     void handleKeyPressEvent(SDL_Event &event)
     {
+      switch (event.key.keysym.sym) {
 
+      case SDLK_RIGHT:
+        camera_.moveU(speed_);
+        break;
+      case SDLK_LEFT:
+        camera_.moveU(-speed_);
+        break;
+      case SDLK_UP:
+        camera_.moveV(speed_);
+        break;
+      case SDLK_DOWN:
+        camera_.moveV(-speed_);
+        break;
+      case SDLK_PAGEUP:
+        camera_.moveN(speed_);
+        break;
+      case SDLK_PAGEDOWN:
+        camera_.moveN(-speed_);
+        break;
+      case SDLK_a:
+        camera_.rotateY(-speed_);
+        break;
+      case SDLK_d:
+        camera_.rotateY(speed_);
+        break;
+      case SDLK_w:
+        camera_.rotateX(-speed_);
+        std::cout << camera_.getN() << std::endl;
+        break;
+      case SDLK_s:
+        camera_.rotateX(speed_);
+        std::cout << camera_.getN() << std::endl;
+        break;
+      case SDLK_0:
+      {
+        if (renderMode_ == GL_FILL)
+        {
+          renderMode_ = GL_LINE;
+        }
+        else
+        {
+          renderMode_ = GL_FILL;
+        }
+      }
+      break;
+      }
     }
 
   private:
@@ -92,8 +347,37 @@ namespace i3d {
     Assimp::Importer importer;
     const aiScene* scene = nullptr;
 
+    /* data */
+    GLuint program;
+    GLuint vao;
+    GLuint iao;
+
+    GLuint fbo;
+    GLuint renderBuffer;
+
+    GLuint tiao;
+    GLuint buffers[3];
+    SimpleShader shader_;
+    NormalShader normalShader_;
+
+    //TextureShader shader_;
+    PhongDir shaderPhong_;
+    
+    std::vector<Texture> textures_;
+    int size;
+    int frame;
+    Transform transform_;
+    float time_;
+    PerspectiveTransform perspective_;
+    Camera camera_;
+    Mesh<> quad_;
+    Mesh<> world_;
+    float speed_;
+    Light light_;
+
   };
 }
+
 int main(int argc, char *argv[])
 {
 
