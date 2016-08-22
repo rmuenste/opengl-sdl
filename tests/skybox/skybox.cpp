@@ -405,11 +405,11 @@ namespace i3d {
     PerspectiveTransform perspective_;
     Camera camera_;
     Camera cameraShadow_;
-    Mesh<> room_;
-    Mesh<> monkey_;
-    Mesh<> quad_;
-    Mesh<> wall_;
-    Mesh<> wall2_;
+    Mesh room_;
+    Mesh monkey_;
+    Mesh quad_;
+    Mesh wall_;
+    Mesh wall2_;
     float speed_;
     Light light_;
     DirectionalLight dLight_;

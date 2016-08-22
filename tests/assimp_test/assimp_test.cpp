@@ -29,6 +29,9 @@
 #include <assimp/scene.h>
 #include <assimp/DefaultLogger.hpp>
 #include <assimp/LogStream.hpp>
+#include <assimp/cimport.h>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 namespace i3d {
 
@@ -45,7 +48,6 @@ namespace i3d {
     void init()
     {
       SDL_GL_application::init();
-      //import3DFromFile( std::string("../../meshes/big_room.obj") );
 
       perspective_.setPerspectiveTransform(50.f, static_cast<float>(getWindowWidth()), static_cast<float>(getWindowHeight()), 1.f, 60.f);
       camera_.initCamera(Vec3(0.f, 0.0f, -6.0f), Vec3(1.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), Vec3(0.f, 0.f, 1.f));
@@ -67,15 +69,12 @@ namespace i3d {
       quad_.transform_.translation_ = i3d::Vec4(0.f, 1.8f, 0.f, 1.f);
       quad_.transform_.translation_ = i3d::Vec4(0.f, 0.0f, 0.f, 0.f);
       quad_.transform_.setRotationEuler(i3d::Vec3(0.0f, 0.0f, 0.0f));
-
       quad_.initRender();
 
       world_.loadMesh("../../meshes/sphere.obj");
       world_.buildSmoothNormals();
-
       world_.transform_.translation_ = i3d::Vec4(0.0, 0.0, 0.0, 1);
       world_.transform_.setRotationEuler(i3d::Vec3(0.0, 0.0, 0.0));
-
       world_.initRender();
     }
 
@@ -135,60 +134,6 @@ namespace i3d {
 
       }
 
-//      for(unsigned i(0); i < scene->mMeshes[0]->mNumVertices; ++i)
-//      {
-//
-//        Vec3 v(scene->mMeshes[0]->mNormals[i].x,
-//               scene->mMeshes[0]->mNormals[i].z,
-//               scene->mMeshes[0]->mNormals[i].y
-//              );
-//
-//        std::cout << "Normal a: " << v << std::endl; 
-//        std::cout << "Normal b: " << quad_.model_.meshes_.front().getNormals()[i] << std::endl; 
-//        std::cout << " " << scene->mMeshes[0]->mTextureCoords[0][i].x << " " <<
-//        scene->mMeshes[0]->mTextureCoords[0][i].y << std::endl; 
-//
-//      }
-//
-//      for(unsigned i(0); i < scene->mMeshes[0]->mNumVertices; ++i)
-//      {
-//        Vec3 v(scene->mMeshes[0]->mVertices[i].x,
-//               scene->mMeshes[0]->mVertices[i].z,
-//               scene->mMeshes[0]->mVertices[i].y
-//              );
-//        std::cout << "Vertex a: " << quad_.model_.meshes_.front().vertices_[i] << std::endl; 
-//        std::cout << "Vertex b: " << v << std::endl; 
-//        quad_.model_.meshes_.front().vertices_[i] = v;
-//      }
-//
-//      for(unsigned i(0); i < scene->mMeshes[0]->mNumFaces; ++i)
-//      {
-//        std::cout << "Face : " << i << std::endl; 
-//        for(unsigned j(0); j < scene->mMeshes[0]->mFaces[i].mNumIndices; ++j)
-//        {
-//          std::cout << " " << scene->mMeshes[0]->mFaces[i].mIndices[j] << " "; 
-//        }
-//        std::cout << std::endl; 
-//        
-//        for(unsigned j(0); j < 3; ++j)
-//        {
-//          std::cout << " " << quad_.model_.meshes_.front().faces_[i].m_VertIndices[j] << " "; 
-//          quad_.model_.meshes_.front().faces_[i].m_VertIndices[j] = 
-//          scene->mMeshes[0]->mFaces[i].mIndices[j];
-//        }
-//        std::cout << std::endl; 
-//
-////        for(unsigned j(0); j < 3; ++j)
-////        {
-////          std::cout << " " << scene->mMeshes[0]->mTextureCoords[i][j].x; 
-////          std::cout << " " << scene->mMeshes[0]->mTextureCoords[i][j].y << std::endl; 
-////        }
-////        std::cout << std::endl; 
-//
-//        //std::cout << "uv a: " << quad_.model_.meshes_.front().texCoords_[i] << std::endl; 
-//
-//      }
-
       // We're done. Everything will be cleaned up by the importer destructor
       return true;
     }
@@ -228,6 +173,9 @@ namespace i3d {
         camera_.getCameraTranslationTransform(),
         camera_.getCameraCoordinateTransform()
       );
+      std::cout << "ptransform: " << perspective_.getPerspectiveTransform() << std::endl; 
+      std::cout << "ctransformT: " << camera_.getCameraTranslationTransform() << std::endl; 
+      std::cout << "ctransformT: " << camera_.getCameraCoordinateTransform() << std::endl; 
 
       shader_.eyePos_ = Vec3(0.8f, 0.0f, 0.0f);
       shader_.updateUniforms();
@@ -237,28 +185,28 @@ namespace i3d {
       world_.transform_.scale_.x = 1.01;
       world_.transform_.scale_.y = 1.01;
       world_.transform_.scale_.z = 1.01;
-      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      shader_.setTransform(world_.transform_.getMatrix());
-      shader_.eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
-      shader_.updateUniforms();
-      world_.render();
-
-      shader_.setTransform(world_.transform_.getMatrix());
-      shader_.eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
-      shader_.updateUniforms();
-      quad_.render();
-
-
-      normalShader_.bind();
-      normalShader_.setTransform(world_.transform_.getMatrix());
-      normalShader_.setMatrices(perspective_.getPerspectiveTransform(),
-      camera_.getCameraTranslationTransform(),
-      camera_.getCameraCoordinateTransform()
-      );
-
-      normalShader_.eyePos_ = Vec3(0.0f, 1.0f, 1.0f);
-      normalShader_.updateUniforms();
-      world_.renderNormals();
+//      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//      shader_.setTransform(world_.transform_.getMatrix());
+//      shader_.eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
+//      shader_.updateUniforms();
+//      world_.render();
+//
+//      shader_.setTransform(world_.transform_.getMatrix());
+//      shader_.eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
+//      shader_.updateUniforms();
+//      quad_.render();
+//
+//
+//      normalShader_.bind();
+//      normalShader_.setTransform(world_.transform_.getMatrix());
+//      normalShader_.setMatrices(perspective_.getPerspectiveTransform(),
+//      camera_.getCameraTranslationTransform(),
+//      camera_.getCameraCoordinateTransform()
+//      );
+//
+//      normalShader_.eyePos_ = Vec3(0.0f, 1.0f, 1.0f);
+//      normalShader_.updateUniforms();
+//      world_.renderNormals();
 
 
 #ifndef _MSC_VER
@@ -281,7 +229,7 @@ namespace i3d {
 #endif
 
       frame++;
-
+      std::exit(0);
     }
 
     void handleResizeEvent(SDL_Event &event)
@@ -370,8 +318,8 @@ namespace i3d {
     float time_;
     PerspectiveTransform perspective_;
     Camera camera_;
-    Mesh<> quad_;
-    Mesh<> world_;
+    Mesh quad_;
+    Mesh world_;
     float speed_;
     Light light_;
 

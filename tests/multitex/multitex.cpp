@@ -256,10 +256,10 @@ namespace i3d {
     PerspectiveTransform perspective_;
     Camera camera_;
     Camera cameraShadow_;
-    Mesh<> room_;
-    Mesh<> monkey_;
-    Mesh<> quad_;
-    Mesh<> world_;
+    Mesh room_;
+    Mesh monkey_;
+    Mesh quad_;
+    Mesh world_;
     float speed_;
     Light light_;
     DirectionalLight dLight_;

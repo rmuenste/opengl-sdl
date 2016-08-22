@@ -1,4 +1,4 @@
-include_directories(. ${CMAKE_SOURCE_DIR}/core ${CMAKE_SOURCE_DIR}/utils ${CMAKE_SOURCE_DIR}/gl3w/include  ${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE_DIR})
+include_directories(. ${CMAKE_SOURCE_DIR}/core ${CMAKE_SOURCE_DIR}/utils ${CMAKE_SOURCE_DIR}/gl3w/include  ${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/assimp/include)
 
 set(src_core 
 basicshader.cpp  
@@ -45,12 +45,14 @@ camera.hpp
 camera.cpp
 mesh.cpp
 mesh.hpp
+resourcemanager.hpp
+resourcemanager.cpp
 )
 
 add_library(core ${src_core})
 
 #if(NOT WIN32)
-target_link_libraries(core Utility)
+target_link_libraries(core Utility assimp)
 #else(NOT WIN32)  
 #  target_link_libraries(core gl3w ${OPENGL_LIBRARIES} ${SDL2_LIBRARY})
 #endif(NOT WIN32)

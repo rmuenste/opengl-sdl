@@ -205,8 +205,8 @@ namespace i3d {
       float time_;
       PerspectiveTransform perspective_;
       Camera camera_;
-      Mesh<> room_;
-      Mesh<> world_;
+      Mesh room_;
+      Mesh world_;
       float speed_;
       Light light_;
       PhongMaterial worldMat_;

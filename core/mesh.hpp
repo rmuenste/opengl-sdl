@@ -27,7 +27,6 @@ namespace i3d {
   // export from blender
   // Z up, Y forward -> Cull counter-clockwise
   // load obj: swap y with z
-  template<int rendermode = array_render>
   class Mesh
   {
     public:
@@ -35,6 +34,7 @@ namespace i3d {
       {
         this->shader_ = nullptr;
         hasTexture_ = false;
+        material_ = nullptr;
       };
 
       virtual ~Mesh (){};
@@ -90,8 +90,6 @@ namespace i3d {
       GLuint buffers[4];
       int drawVertices_;
   };
-
-#include <mesh_impl.cpp>
 
 }
 
