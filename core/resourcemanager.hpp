@@ -15,6 +15,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <simpleshader.hpp>
+#include <gameobject.hpp>
 
 namespace i3d {
 
@@ -22,6 +23,7 @@ namespace i3d {
 
     public:
 
+      std::vector<GameObject> gameObjects_;
       std::vector<Mesh> meshObjects_;
       std::vector<Texture> textures_;
       std::vector<PhongMaterial> materials_;

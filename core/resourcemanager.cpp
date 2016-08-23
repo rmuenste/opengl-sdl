@@ -16,6 +16,7 @@ namespace i3d {
 
   bool ResourceManager::import3DFromFile(const std::string fileName, Mesh &meshObject)
   {
+    
     // Check if file exists
     std::ifstream fin(fileName.c_str());
     if(!fin.fail())
@@ -56,7 +57,10 @@ namespace i3d {
 
       unsigned numVerts = scene->mMeshes[k]->mNumFaces * 3;
       mesh.vertices_.reserve(numVerts);
-      mesh.vertexNormals_.reserve(numVerts);
+
+      if(scene->mMeshes[k]->HasNormals())
+        mesh.vertexNormals_.reserve(numVerts);
+
       mesh.texCoords_.reserve(numVerts);
 
       unsigned count = 0;
@@ -72,8 +76,11 @@ namespace i3d {
           aiVector3D n = scene->mMeshes[k]->mNormals[face.mIndices[j]];
           aiVector3D t = scene->mMeshes[k]->mTextureCoords[0][face.mIndices[j]];
 
-          mesh.vertices_.push_back(Vec3(p.x,p.y,p.z));
-          mesh.vertexNormals_.push_back(Vec3(n.x,n.y,n.z));
+          mesh.vertices_.push_back(Vec3(p.x,p.z,p.y));
+
+          if(scene->mMeshes[k]->HasNormals())
+            mesh.vertexNormals_.push_back(Vec3(n.x,n.z,n.y));
+          
           mesh.texCoords_.push_back(Vec2(t.x,t.y));
           vi[j] = count;
           ti[j] = count;

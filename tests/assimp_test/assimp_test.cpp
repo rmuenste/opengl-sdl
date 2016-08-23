@@ -84,8 +84,6 @@ namespace i3d {
     {
       SDL_GL_application::init();
 
-      rm.loadAssets();
-
       perspective_.setPerspectiveTransform(50.f, static_cast<float>(getWindowWidth()), static_cast<float>(getWindowHeight()), 1.f, 60.f);
       camera_.initCamera(Vec3(0.f, 0.0f, -6.0f), Vec3(1.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), Vec3(0.f, 0.f, 1.f));
 
@@ -206,10 +204,6 @@ namespace i3d {
       world_.transform_.scale_.y = 1.0;
       world_.transform_.scale_.z = 1.0;
 
-      rm.meshObjects_[1].transform_.scale_.x = 1.0;
-      rm.meshObjects_[1].transform_.scale_.y = 1.0;
-      rm.meshObjects_[1].transform_.scale_.z = 1.0;
-
       shader_.setTransform(world_.transform_.getMatrix());
       shader_.setMatrices(perspective_.getPerspectiveTransform(),
         camera_.getCameraTranslationTransform(),
@@ -219,8 +213,7 @@ namespace i3d {
       shader_.eyePos_ = Vec3(0.8f, 0.0f, 0.0f);
       shader_.updateUniforms();
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-      //world_.render();
-      //rm.meshObjects_[1].render();
+      world_.render();
 
       world_.transform_.scale_.x = 1.01;
       world_.transform_.scale_.y = 1.01;
@@ -229,7 +222,6 @@ namespace i3d {
       shader_.setTransform(world_.transform_.getMatrix());
       shader_.eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
       shader_.updateUniforms();
-      //rm.meshObjects_[1].render();
       world_.render();
 
 //      shader_.setTransform(world_.transform_.getMatrix());
@@ -362,7 +354,6 @@ namespace i3d {
     Mesh world_;
     float speed_;
     Light light_;
-    MyResourceManager rm;
 
   };
 }

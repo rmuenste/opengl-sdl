@@ -12,6 +12,11 @@ namespace i3d
   {
 
   }
+
+  void GameObject::render()
+  {
+    meshObject_->render();
+  }
   
 } /* i3d */ 
 

@@ -43,10 +43,9 @@ namespace i3d {
       virtual void loadAssets()
       {
         textures_.reserve(10);
-        meshObjects_.reserve(10);
-        phongDirShaders_.resize(10);
-
+        gameObjects_.push_back(GameObject());
         meshObjects_.push_back(Mesh());
+
         if(!import3DFromFile("../../meshes/quad.obj", meshObjects_[0]))
         {
           std::cout << "Assimp import failed." << std::endl; 
@@ -57,7 +56,10 @@ namespace i3d {
         meshObjects_[0].transform_.translation_ = i3d::Vec4(0.f, 0.0f, 0.f, 0.f);
         meshObjects_[0].transform_.setRotationEuler(i3d::Vec3(0.0f, 0.0f, 0.0f));
         meshObjects_[0].initRender();
+        gameObjects_[0].meshObject_ = &meshObjects_[0];
 
+
+        gameObjects_.push_back(GameObject());
         meshObjects_.push_back(Mesh());
         if(!import3DFromFile("../../meshes/sphere.obj", meshObjects_[1]))
         {
@@ -66,6 +68,7 @@ namespace i3d {
         meshObjects_[1].transform_.translation_ = i3d::Vec4(0.0, 0.0, 0.0, 1);
         meshObjects_[1].transform_.setRotationEuler(i3d::Vec3(0.0, 0.0, 0.0));
         meshObjects_[1].initRender();
+        gameObjects_[1].meshObject_ = &meshObjects_[1];
       }
 
   };
@@ -92,7 +95,7 @@ namespace i3d {
       rm.phongDirShaders_.push_back(SimpleShader());
       rm.phongDirShaders_[0].initShader(*camera_.getPosPointer(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
 
-      shader_.initShader(*camera_.getPosPointer(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
+      rm.gameObjects_[1].shader_ = &rm.phongDirShaders_[0];
 
       glEnable(GL_DEPTH_TEST);
 
@@ -123,21 +126,21 @@ namespace i3d {
 
       const GLfloat col[] = { x, 0.f, 0.0f, 1.0f };
 
-      rm.phongDirShaders_[0].bind();
+      rm.gameObjects_[1].shader_->bind();
 
-      rm.meshObjects_[1].transform_.scale_.x = 1.0;
-      rm.meshObjects_[1].transform_.scale_.y = 1.0;
-      rm.meshObjects_[1].transform_.scale_.z = 1.0;
+      rm.gameObjects_[1].meshObject_->transform_.scale_.x = 1.0;
+      rm.gameObjects_[1].meshObject_->transform_.scale_.y = 1.0;
+      rm.gameObjects_[1].meshObject_->transform_.scale_.z = 1.0;
 
 
-      rm.phongDirShaders_[0].setTransform(rm.meshObjects_[1].transform_.getMatrix());
-      rm.phongDirShaders_[0].setMatrices(perspective_.getPerspectiveTransform(),
+      rm.gameObjects_[1].shader_->setTransform(rm.meshObjects_[1].transform_.getMatrix());
+      rm.gameObjects_[1].shader_->setMatrices(perspective_.getPerspectiveTransform(),
         camera_.getCameraTranslationTransform(),
         camera_.getCameraCoordinateTransform()
       );
 
-      rm.phongDirShaders_[0].eyePos_ = Vec3(0.8f, 0.0f, 0.0f);
-      rm.phongDirShaders_[0].updateUniforms();
+      rm.gameObjects_[1].shader_->eyePos_ = Vec3(0.8f, 0.0f, 0.0f);
+      rm.gameObjects_[1].shader_->updateUniforms();
 
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       rm.meshObjects_[1].render();
@@ -146,9 +149,9 @@ namespace i3d {
       rm.meshObjects_[1].transform_.scale_.y = 1.01;
       rm.meshObjects_[1].transform_.scale_.z = 1.01;
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      rm.phongDirShaders_[0].setTransform(rm.meshObjects_[1].transform_.getMatrix());
-      rm.phongDirShaders_[0].eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
-      rm.phongDirShaders_[0].updateUniforms();
+      rm.gameObjects_[1].shader_->setTransform(rm.meshObjects_[1].transform_.getMatrix());
+      rm.gameObjects_[1].shader_->eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
+      rm.gameObjects_[1].shader_->updateUniforms();
       rm.meshObjects_[1].render();
 
 #ifndef _MSC_VER
@@ -254,7 +257,6 @@ namespace i3d {
     float time_;
     float speed_;
     MyResourceManager rm;
-    SimpleShader shader_;
 
   };
 
