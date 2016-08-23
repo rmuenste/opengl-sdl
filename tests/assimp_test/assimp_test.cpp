@@ -32,8 +32,43 @@
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <resourcemanager.hpp>
 
 namespace i3d {
+
+  class MyResourceManager : public ResourceManager {
+
+    public:
+
+      virtual void loadAssets()
+      {
+        textures_.reserve(10);
+        meshObjects_.reserve(10);
+        phongDirShaders_.resize(10);
+
+        meshObjects_.push_back(Mesh());
+        if(!import3DFromFile("../../meshes/quad.obj", meshObjects_[0]))
+        {
+          std::cout << "Assimp import failed." << std::endl; 
+        }
+        std::cout << "render verts: " << meshObjects_[0].model_.meshes_[0].vertices_.size() << std::endl; 
+
+        meshObjects_[0].transform_.translation_ = i3d::Vec4(0.f, 1.8f, 0.f, 1.f);
+        meshObjects_[0].transform_.translation_ = i3d::Vec4(0.f, 0.0f, 0.f, 0.f);
+        meshObjects_[0].transform_.setRotationEuler(i3d::Vec3(0.0f, 0.0f, 0.0f));
+        meshObjects_[0].initRender();
+
+        meshObjects_.push_back(Mesh());
+        if(!import3DFromFile("../../meshes/sphere.obj", meshObjects_[1]))
+        {
+          std::cout << "Assimp import failed." << std::endl; 
+        }
+        meshObjects_[1].transform_.translation_ = i3d::Vec4(0.0, 0.0, 0.0, 1);
+        meshObjects_[1].transform_.setRotationEuler(i3d::Vec3(0.0, 0.0, 0.0));
+        meshObjects_[1].initRender();
+      }
+
+  };
 
   class AssimpTest : public SDL_GL_application
   {
@@ -48,6 +83,8 @@ namespace i3d {
     void init()
     {
       SDL_GL_application::init();
+
+      rm.loadAssets();
 
       perspective_.setPerspectiveTransform(50.f, static_cast<float>(getWindowWidth()), static_cast<float>(getWindowHeight()), 1.f, 60.f);
       camera_.initCamera(Vec3(0.f, 0.0f, -6.0f), Vec3(1.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), Vec3(0.f, 0.f, 1.f));
@@ -168,29 +205,33 @@ namespace i3d {
       world_.transform_.scale_.x = 1.0;
       world_.transform_.scale_.y = 1.0;
       world_.transform_.scale_.z = 1.0;
+
+      rm.meshObjects_[1].transform_.scale_.x = 1.0;
+      rm.meshObjects_[1].transform_.scale_.y = 1.0;
+      rm.meshObjects_[1].transform_.scale_.z = 1.0;
+
       shader_.setTransform(world_.transform_.getMatrix());
       shader_.setMatrices(perspective_.getPerspectiveTransform(),
         camera_.getCameraTranslationTransform(),
         camera_.getCameraCoordinateTransform()
       );
-      std::cout << "ptransform: " << perspective_.getPerspectiveTransform() << std::endl; 
-      std::cout << "ctransformT: " << camera_.getCameraTranslationTransform() << std::endl; 
-      std::cout << "ctransformT: " << camera_.getCameraCoordinateTransform() << std::endl; 
 
       shader_.eyePos_ = Vec3(0.8f, 0.0f, 0.0f);
       shader_.updateUniforms();
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-      world_.render();
+      //world_.render();
+      //rm.meshObjects_[1].render();
 
       world_.transform_.scale_.x = 1.01;
       world_.transform_.scale_.y = 1.01;
       world_.transform_.scale_.z = 1.01;
-//      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-//      shader_.setTransform(world_.transform_.getMatrix());
-//      shader_.eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
-//      shader_.updateUniforms();
-//      world_.render();
-//
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      shader_.setTransform(world_.transform_.getMatrix());
+      shader_.eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
+      shader_.updateUniforms();
+      //rm.meshObjects_[1].render();
+      world_.render();
+
 //      shader_.setTransform(world_.transform_.getMatrix());
 //      shader_.eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
 //      shader_.updateUniforms();
@@ -229,7 +270,6 @@ namespace i3d {
 #endif
 
       frame++;
-      std::exit(0);
     }
 
     void handleResizeEvent(SDL_Event &event)
@@ -322,6 +362,7 @@ namespace i3d {
     Mesh world_;
     float speed_;
     Light light_;
+    MyResourceManager rm;
 
   };
 }

@@ -64,6 +64,8 @@ namespace i3d {
       {
 
         const aiFace &face = scene->mMeshes[k]->mFaces[i]; 
+        int vi[3];
+        int ti[3];
         for(unsigned j(0); j < 3; ++j)
         {
           aiVector3D p = scene->mMeshes[k]->mVertices[face.mIndices[j]];
@@ -73,8 +75,11 @@ namespace i3d {
           mesh.vertices_.push_back(Vec3(p.x,p.y,p.z));
           mesh.vertexNormals_.push_back(Vec3(n.x,n.y,n.z));
           mesh.texCoords_.push_back(Vec2(t.x,t.y));
+          vi[j] = count;
+          ti[j] = count;
           count++;
         }
+        mesh.faces_.push_back(TriFace(vi, ti));
       }
     }
     // We're done. Everything will be cleaned up by the importer destructor

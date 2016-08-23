@@ -123,51 +123,33 @@ namespace i3d {
 
       const GLfloat col[] = { x, 0.f, 0.0f, 1.0f };
 
-      //rm.phongDirShaders_[0].bind();
-      shader_.bind();
+      rm.phongDirShaders_[0].bind();
 
       rm.meshObjects_[1].transform_.scale_.x = 1.0;
       rm.meshObjects_[1].transform_.scale_.y = 1.0;
       rm.meshObjects_[1].transform_.scale_.z = 1.0;
 
 
-//      rm.phongDirShaders_[0].setTransform(rm.meshObjects_[1].transform_.getMatrix());
-//      rm.phongDirShaders_[0].setMatrices(perspective_.getPerspectiveTransform(),
-//        camera_.getCameraTranslationTransform(),
-//        camera_.getCameraCoordinateTransform()
-//      );
-
-//      std::cout << "transform: " << rm.meshObjects_[1].transform_.getMatrix() << std::endl; 
-//      std::cout << "transform: " << rm.meshObjects_[1].transform_.getMatrix() << std::endl; 
-//      std::cout << "transform: " << rm.meshObjects_[1].transform_.getMatrix() << std::endl; 
-
-      shader_.setTransform(rm.meshObjects_[1].transform_.getMatrix());
-      shader_.setMatrices(perspective_.getPerspectiveTransform(),
+      rm.phongDirShaders_[0].setTransform(rm.meshObjects_[1].transform_.getMatrix());
+      rm.phongDirShaders_[0].setMatrices(perspective_.getPerspectiveTransform(),
         camera_.getCameraTranslationTransform(),
         camera_.getCameraCoordinateTransform()
       );
 
-//      std::cout << "ptransform: " << perspective_.getPerspectiveTransform() << std::endl; 
-//      std::cout << "ctransformT: " << camera_.getCameraTranslationTransform() << std::endl; 
-//      std::cout << "ctransformT: " << camera_.getCameraCoordinateTransform() << std::endl; 
-
-//      rm.phongDirShaders_[0].eyePos_ = Vec3(0.8f, 0.0f, 0.0f);
-//      rm.phongDirShaders_[0].updateUniforms();
-
-      shader_.eyePos_ = Vec3(0.8f, 0.0f, 0.0f);
-      shader_.updateUniforms();
+      rm.phongDirShaders_[0].eyePos_ = Vec3(0.8f, 0.0f, 0.0f);
+      rm.phongDirShaders_[0].updateUniforms();
 
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       rm.meshObjects_[1].render();
 
-//      rm.meshObjects_[1].transform_.scale_.x = 1.01;
-//      rm.meshObjects_[1].transform_.scale_.y = 1.01;
-//      rm.meshObjects_[1].transform_.scale_.z = 1.01;
-//      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-//      rm.phongDirShaders_[0].setTransform(rm.meshObjects_[1].transform_.getMatrix());
-//      rm.phongDirShaders_[0].eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
-//      rm.phongDirShaders_[0].updateUniforms();
-//      rm.meshObjects_[1].render();
+      rm.meshObjects_[1].transform_.scale_.x = 1.01;
+      rm.meshObjects_[1].transform_.scale_.y = 1.01;
+      rm.meshObjects_[1].transform_.scale_.z = 1.01;
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      rm.phongDirShaders_[0].setTransform(rm.meshObjects_[1].transform_.getMatrix());
+      rm.phongDirShaders_[0].eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
+      rm.phongDirShaders_[0].updateUniforms();
+      rm.meshObjects_[1].render();
 
 #ifndef _MSC_VER
       struct timeval start, end;
@@ -189,8 +171,6 @@ namespace i3d {
 #endif
 
       frame++;
-      std::exit(0);
-
     }
 
     void handleResizeEvent(SDL_Event &event)
