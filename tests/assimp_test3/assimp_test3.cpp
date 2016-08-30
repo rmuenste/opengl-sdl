@@ -44,9 +44,10 @@ namespace i3d {
       {
         textures_.reserve(10);
         gameObjects_.push_back(GameObject());
+
         meshObjects_.push_back(Mesh());
 
-        if(!import3DFromFile("../../meshes/quad.obj", meshObjects_[0]))
+        if(!import3DFromFile("../../meshes/tquad.obj", meshObjects_[0]))
         {
           std::cout << "Assimp import failed." << std::endl; 
         }
@@ -73,15 +74,15 @@ namespace i3d {
 
   };
 
-  class AssimpTest2 : public SDL_GL_application
+  class AssimpTest3 : public SDL_GL_application
   {
   public:
-    AssimpTest2()
+    AssimpTest3()
     {
-      setTitle(std::string("Assimp Test"));
+      setTitle(std::string("Assimp Texture"));
     };
 
-    virtual ~AssimpTest2(){};
+    virtual ~AssimpTest3(){};
 
     void init()
     {
@@ -95,6 +96,7 @@ namespace i3d {
       rm.phongDirShaders_.push_back(SimpleShader());
       rm.phongDirShaders_[0].initShader(*camera_.getPosPointer(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
 
+      rm.gameObjects_[0].shader_ = &rm.phongDirShaders_[0];
       rm.gameObjects_[1].shader_ = &rm.phongDirShaders_[0];
 
       glEnable(GL_DEPTH_TEST);
@@ -126,7 +128,7 @@ namespace i3d {
 
       const GLfloat col[] = { x, 0.f, 0.0f, 1.0f };
 
-      rm.gameObjects_[1].shader_->bind();
+      rm.gameObjects_[0].shader_->bind();
 
       rm.gameObjects_[1].meshObject_->transform_.scale_.x = 1.0;
       rm.gameObjects_[1].meshObject_->transform_.scale_.y = 1.0;
@@ -140,23 +142,17 @@ namespace i3d {
       );
 
       rm.gameObjects_[1].shader_->eyePos_ = Vec3(0.8f, 0.0f, 0.0f);
-      rm.gameObjects_[1].shader_->updateUniforms();
-
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-      rm.meshObjects_[1].render();
 
-      rm.meshObjects_[1].transform_.scale_.x = 1.01;
-      rm.meshObjects_[1].transform_.scale_.y = 1.01;
-      rm.meshObjects_[1].transform_.scale_.z = 1.01;
+      rm.gameObjects_[0].shader_->setTransform(rm.meshObjects_[0].transform_.getMatrix());
+      rm.gameObjects_[0].shader_->updateUniforms();
+      rm.meshObjects_[0].render();
+
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       rm.gameObjects_[1].shader_->setTransform(rm.meshObjects_[1].transform_.getMatrix());
       rm.gameObjects_[1].shader_->eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
       rm.gameObjects_[1].shader_->updateUniforms();
       rm.meshObjects_[1].render();
-
-      rm.gameObjects_[1].shader_->setTransform(rm.meshObjects_[0].transform_.getMatrix());
-      rm.gameObjects_[1].shader_->updateUniforms();
-      rm.meshObjects_[0].render();
 
 #ifndef _MSC_VER
       struct timeval start, end;
@@ -269,7 +265,7 @@ namespace i3d {
 int main(int argc, char *argv[])
 {
 
-  i3d::AssimpTest2 app;
+  i3d::AssimpTest3 app;
 
   app.init();
 

@@ -47,6 +47,8 @@ namespace i3d {
     std::cout << "Assimp faces: " << scene->mMeshes[0]->mNumFaces << std::endl; 
     std::cout << "Assimp tcoords: " << scene->mMeshes[0]->mTextureCoords << std::endl; 
 
+    std::cout << "Material index: " << scene->mMeshes[0]->mMaterialIndex << std::endl; 
+
     meshObject.model_.meshes_.reserve(scene->mNumMeshes);
 
     for(unsigned k(0); k < scene->mNumMeshes; ++k)
