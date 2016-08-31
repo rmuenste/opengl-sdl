@@ -56,6 +56,7 @@ namespace i3d {
         meshObjects_[0].transform_.translation_ = i3d::Vec4(0.f, 1.8f, 0.f, 1.f);
         meshObjects_[0].transform_.translation_ = i3d::Vec4(0.f, 0.0f, 0.f, 0.f);
         meshObjects_[0].transform_.setRotationEuler(i3d::Vec3(0.0f, 0.0f, 0.0f));
+        meshObjects_[0].hasTexture_=true;
         meshObjects_[0].initRender();
         gameObjects_[0].meshObject_ = &meshObjects_[0];
 
@@ -87,6 +88,8 @@ namespace i3d {
     void init()
     {
       SDL_GL_application::init();
+      
+      glEnable(GL_TEXTURE_2D);
 
       rm.loadAssets();
 
@@ -98,6 +101,7 @@ namespace i3d {
 
       rm.gameObjects_[0].shader_ = &rm.phongDirShaders_[0];
       rm.gameObjects_[1].shader_ = &rm.phongDirShaders_[0];
+      renderTex_.createTextureFromImage("../../textures/earth.png");
 
       glEnable(GL_DEPTH_TEST);
 
@@ -143,16 +147,21 @@ namespace i3d {
 
       rm.gameObjects_[1].shader_->eyePos_ = Vec3(0.8f, 0.0f, 0.0f);
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      glEnable(GL_TEXTURE_2D);
+
+      //rm.materials_[0].bindTexture();
+      renderTex_.bind();
+
 
       rm.gameObjects_[0].shader_->setTransform(rm.meshObjects_[0].transform_.getMatrix());
       rm.gameObjects_[0].shader_->updateUniforms();
       rm.meshObjects_[0].render();
 
-      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      rm.gameObjects_[1].shader_->setTransform(rm.meshObjects_[1].transform_.getMatrix());
-      rm.gameObjects_[1].shader_->eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
-      rm.gameObjects_[1].shader_->updateUniforms();
-      rm.meshObjects_[1].render();
+//      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//      rm.gameObjects_[1].shader_->setTransform(rm.meshObjects_[1].transform_.getMatrix());
+//      rm.gameObjects_[1].shader_->eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
+//      rm.gameObjects_[1].shader_->updateUniforms();
+//      rm.meshObjects_[1].render();
 
 #ifndef _MSC_VER
       struct timeval start, end;
@@ -257,6 +266,7 @@ namespace i3d {
     float time_;
     float speed_;
     MyResourceManager rm;
+    Texture renderTex_;
 
   };
 

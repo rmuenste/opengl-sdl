@@ -4,12 +4,12 @@
 #include <vector3.h>
 #include <matrix4x4.h>
 #include <light.hpp>
-#include <simpleshader.hpp>
+#include <materialshader.hpp>
 
 namespace i3d
 {
 
-  void SimpleShader::updateUniforms()
+  void MaterialShader::updateUniforms()
   {
 
     setUniform(std::string("transform"), transform_);
@@ -17,7 +17,7 @@ namespace i3d
     setUniform(std::string("camera"), *cameraTranslation_);
     setUniform(std::string("cameraRotation"), *cameraRotation_);
 
-    //setUniform(std::string("model_col"), eyePos_);
+    setUniform(std::string("model_col"), eyePos_);
 
   }
 

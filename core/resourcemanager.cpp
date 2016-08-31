@@ -36,18 +36,58 @@ namespace i3d {
     {
       std::cout << "Scene import failed." << std::endl; 
       return false;
-    }
-
-    std::cout << "Assimp meshes: " << scene->mNumMeshes << std::endl; 
-    std::cout << "Assimp vertices: " << scene->mMeshes[0]->mNumVertices << std::endl; 
-
-    if(scene->mMeshes[0]->HasNormals())
-      std::cout << "Assimp normals present" << std::endl; 
-    
-    std::cout << "Assimp faces: " << scene->mMeshes[0]->mNumFaces << std::endl; 
-    std::cout << "Assimp tcoords: " << scene->mMeshes[0]->mTextureCoords << std::endl; 
-
+    } std::cout << "Assimp meshes: " << scene->mNumMeshes << std::endl; std::cout << "Assimp vertices: " << scene->mMeshes[0]->mNumVertices << std::endl; if(scene->mMeshes[0]->HasNormals()) std::cout << "Assimp normals present" << std::endl; std::cout << "Assimp faces: " << scene->mMeshes[0]->mNumFaces << std::endl; std::cout << "Assimp tcoords: " << scene->mMeshes[0]->mTextureCoords << std::endl; 
     std::cout << "Material index: " << scene->mMeshes[0]->mMaterialIndex << std::endl; 
+    std::cout << "Number of materials: " << scene->mNumMaterials << std::endl; 
+
+    for(unsigned k(0); k < scene->mNumMaterials; ++k)
+    {
+      aiMaterial *mat = scene->mMaterials[k]; 
+      aiString name;
+      mat->Get(AI_MATKEY_NAME,name);
+      std::cout << "Material name: " << name.C_Str() << std::endl; 
+      std::cout << "Number of textures: " << mat->GetTextureCount(aiTextureType_DIFFUSE) << std::endl; 
+      aiString path;
+      if(mat->GetTexture(aiTextureType_DIFFUSE, 0, &path, nullptr, nullptr, nullptr, nullptr, nullptr) == AI_SUCCESS)
+      {
+        std::cout << "Texture path: " << path.C_Str() << std::endl; 
+        std::string fileName(path.C_Str());
+        Texture tex;
+        tex.createTextureFromImage(i3dTexType::i3d_tex_diffuse_map, fileName);
+        textures_.push_back(std::move(tex));
+
+      }
+      else
+      {
+        std::cout << "Default Texture path: " << std::endl; 
+        std::string fileName("../../textures/earth1.png");
+        Texture tex;
+        tex.createTextureFromImage(i3dTexType::i3d_tex_diffuse_map, fileName);
+        textures_.push_back(std::move(tex));
+      }
+      float specularExponent;
+      if(mat->Get(AI_MATKEY_SHININESS, specularExponent) == AI_SUCCESS)
+        std::cout << "Specular Exponent: " << specularExponent << std::endl; 
+      else
+      {
+        specularExponent = 20.0f;
+        std::cout << "Specular Exponent: " << specularExponent << std::endl; 
+      }
+      float specularIntensity;
+      if(mat->Get(AI_MATKEY_SHININESS_STRENGTH, specularIntensity) == AI_SUCCESS)
+        std::cout << "Specular Intensity: " << specularIntensity << std::endl; 
+      else
+      {
+        specularIntensity = 0.8f;
+        std::cout << "Specular Intensity: " << specularIntensity << std::endl; 
+      }
+      PhongMaterial phong;
+      phong.specularIntensity_ = specularIntensity;
+      phong.specularExponent_ = specularExponent;
+      phong.diffuseIntensity_ = 0.8f;
+      phong.textures_.push_back(&(textures_.back()));
+      materials_.push_back(phong);
+    }
 
     meshObject.model_.meshes_.reserve(scene->mNumMeshes);
 

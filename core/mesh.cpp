@@ -64,8 +64,8 @@ namespace i3d {
     if (hasTexture_)
     {
       glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-      glBufferData(GL_ARRAY_BUFFER, model_.meshes_.front().orderedTexCoords_.size() * 2 * sizeof(float),
-        model_.meshes_.front().orderedTexCoords_.data(), GL_STATIC_DRAW);
+      glBufferData(GL_ARRAY_BUFFER, model_.meshes_.front().texCoords_.size() * 2 * sizeof(float),
+        model_.meshes_.front().texCoords_.data(), GL_STATIC_DRAW);
 
       glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
     }
@@ -293,7 +293,6 @@ namespace i3d {
 
     if(hasTexture_)
     {
-
       glEnableVertexAttribArray(1);
     }
 

@@ -35,7 +35,6 @@ namespace i3d {
       ~ResourceManager(){};
 
       virtual void loadAssets();
-
       virtual void loadScene();
 
       bool import3DFromFile(const std::string fileName, Mesh &meshObject);

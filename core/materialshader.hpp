@@ -11,11 +11,11 @@
 
 namespace i3d
 {
-  class SimpleShader : public BasicShader
+  class MaterialShader : public BasicShader
   {
   public:
 
-    SimpleShader() : BasicShader()
+    MaterialShader() : BasicShader()
     {
 
     };
@@ -35,7 +35,7 @@ namespace i3d
       addUniform(std::string("camera"));
       addUniform(std::string("cameraRotation"));
 
-      //addUniform(std::string("model_col"));
+      addUniform(std::string("model_col"));
 
       perspective_ = &perspective;
       cameraTranslation_ = &cameraTranslation;
@@ -70,7 +70,7 @@ namespace i3d
 
     }
 
-    virtual ~SimpleShader() {};
+    virtual ~MaterialShader() {};
 
   };
 

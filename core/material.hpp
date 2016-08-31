@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <texture.hpp>
 #include <vector>
+#include <iostream>
 
 namespace i3d
 {
@@ -80,6 +81,11 @@ namespace i3d
       if (!textures_.empty())
       {
         textures_.front()->bind();
+        //std::cout <<textures_.front()->fileName_  << std::endl;
+      }
+      else
+      {
+        std::cout << "Trying to bind texture, but there are not textures." << std::endl;
       }
     }
 

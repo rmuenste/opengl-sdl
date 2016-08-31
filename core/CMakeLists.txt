@@ -9,6 +9,8 @@ shaderloader.cpp
 shaderloader.hpp
 simpleshader.cpp
 simpleshader.hpp
+materialshader.cpp
+materialshader.hpp
 textureloader.cpp
 textureloader.hpp
 texture.hpp

@@ -1,5 +1,7 @@
 #include <texture.hpp>
+#include <iostream>
 
+namespace i3d {
 
 Texture::Texture()
 {
@@ -62,13 +64,27 @@ Texture::~Texture()
 
 }
 
+void Texture::createTextureFromImage(i3dTexType type, std::string fileName)
+{
+
+  if(type == i3dTexType::i3d_tex_diffuse_map)
+  {
+    createTextureFromImage(fileName);
+  }
+  else
+  {
+    std::cerr << "Texture type loading not yet implemented." << std::endl;
+  }
+
+}
+
 void Texture::createTextureFromImage(std::string fileName)
 {
 
   TextureLoader tLoader;
   if(!tLoader.loadTexture(fileName))
   {
-    exit(1);
+    std::exit(1);
   }
 
   fileName_ = fileName;
@@ -182,4 +198,4 @@ void Texture::createDepthTexture(unsigned w, unsigned h)
 //
 //}
 
-
+};

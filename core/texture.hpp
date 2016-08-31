@@ -5,7 +5,17 @@
 #include <string>
 #include <textureloader.hpp>
 
+namespace i3d {
+
 typedef uint8_t byte_type;
+
+enum class i3dTexType {
+
+  i3d_tex_diffuse_map,
+  i3d_tex_normal_map,
+  i3d_tex_shadow_map
+
+};
 
 class Texture
 {
@@ -48,6 +58,8 @@ public:
 
   void createTextureFromImage(std::string fileName);
 
+  void createTextureFromImage(i3dTexType type, std::string fileName);
+
   void createDepthTexture(unsigned w, unsigned h);
 
   void createRenderTexture(unsigned w, unsigned h);
@@ -74,6 +86,8 @@ public:
 
   std::string fileName_;
 
+  i3dTexType texType_;
+
 private:
   /* data */
 
@@ -85,5 +99,5 @@ private:
 
 };
 
-
+};
 #endif /* end of include guard: TEXTURE_HPP_XJ2A6HC5 */
