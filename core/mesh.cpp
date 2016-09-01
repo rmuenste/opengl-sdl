@@ -52,20 +52,51 @@ namespace i3d {
 
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
-
     glGenBuffers(4, &buffers[0]);
-    glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-    glBufferData(GL_ARRAY_BUFFER, model_.meshes_[0].vertices_.size() * 3 * sizeof(float),
-      model_.meshes_.front().vertices_.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    if(primitiveMode_ == GL_TRIANGLES)
+    {
+      std::cout << "Rendering with triangles..." << std::endl;
+      glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
+      glBufferData(GL_ARRAY_BUFFER, model_.meshes_[0].vertices_.size() * 3 * sizeof(float),
+        model_.meshes_.front().vertices_.data(), GL_STATIC_DRAW);
+
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    }
+    else if(primitiveMode_ == GL_LINES)
+    {
+      std::cout << "Rendering with lines" << std::endl;
+      glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
+      glBufferData(GL_ARRAY_BUFFER, model_.meshes_[0].vertices_.size() * 3 * sizeof(float),
+        model_.meshes_.front().vertices_.data(), GL_STATIC_DRAW);
+
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    }
+    else if(primitiveMode_ == GL_QUADS)
+    {
+
+    }
+    else
+    {
+      std::cout << "Unknown rendering mode..." << std::endl;
+    }
 
     if (hasTexture_)
     {
-      glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-      glBufferData(GL_ARRAY_BUFFER, model_.meshes_.front().texCoords_.size() * 2 * sizeof(float),
-        model_.meshes_.front().texCoords_.data(), GL_STATIC_DRAW);
+      if(texFormat_ == tCoordFormat::i3d_format_assimp)
+      {
 
+        glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
+        glBufferData(GL_ARRAY_BUFFER, model_.meshes_.front().texCoords_.size() * 2 * sizeof(float),
+          model_.meshes_.front().texCoords_.data(), GL_STATIC_DRAW);
+
+      }
+      else
+      {
+        glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
+        glBufferData(GL_ARRAY_BUFFER, model_.meshes_.front().orderedTexCoords_.size() * 2 * sizeof(float),
+          model_.meshes_.front().orderedTexCoords_.data(), GL_STATIC_DRAW);
+      }
       glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
     }
 
@@ -298,7 +329,18 @@ namespace i3d {
 
     glEnableVertexAttribArray(2);
 
-    glDrawArrays(GL_TRIANGLES, 0, drawVertices_);
+    if(primitiveMode_ == GL_TRIANGLES)
+    {
+      glDrawArrays(GL_TRIANGLES, 0, drawVertices_);
+    }
+    else if(primitiveMode_ == GL_LINES)
+    {
+      glDrawArrays(GL_LINES, 0, drawVertices_);
+    }
+    else
+    {
+      std::cout << "Unknown rendering mode..." << std::endl;
+    }
 
     glDisableVertexAttribArray(0);
 

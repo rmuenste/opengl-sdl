@@ -44,7 +44,6 @@ namespace i3d {
       {
         textures_.reserve(10);
         gameObjects_.push_back(GameObject());
-
         meshObjects_.push_back(Mesh());
 
         if(!import3DFromFile("../../meshes/tquad.obj", meshObjects_[0]))
@@ -59,7 +58,6 @@ namespace i3d {
         meshObjects_[0].initRender();
         gameObjects_[0].meshObject_ = &meshObjects_[0];
 
-
         gameObjects_.push_back(GameObject());
         meshObjects_.push_back(Mesh());
         if(!import3DFromFile("../../meshes/sphere.obj", meshObjects_[1]))
@@ -70,6 +68,47 @@ namespace i3d {
         meshObjects_[1].transform_.setRotationEuler(i3d::Vec3(0.0, 0.0, 0.0));
         meshObjects_[1].initRender();
         gameObjects_[1].meshObject_ = &meshObjects_[1];
+
+        gameObjects_.push_back(GameObject());
+        meshObjects_.push_back(Mesh());
+
+        if(!import3DFromFile("../../meshes/quad_faces.obj", meshObjects_[2]))
+        {
+          std::cout << "Assimp import failed." << std::endl; 
+        }
+        meshObjects_[2].transform_.translation_ = i3d::Vec4(0.0, 0.0, 0.0, 1);
+        meshObjects_[2].transform_.setRotationEuler(i3d::Vec3(0.0, 0.0, 0.0));
+        meshObjects_[2].initRender();
+        gameObjects_[2].meshObject_ = &meshObjects_[2];
+
+//        gameObjects_.push_back(GameObject());
+//        meshObjects_.push_back(Mesh());
+//
+//        gameObjects_[2].meshObject_ = &meshObjects_[2];
+//        Mesh &m = meshObjects_.back();
+//
+//
+//        m.model_.meshes_.push_back(Mesh3D());
+//        Mesh3D &mesh3d = m.model_.meshes_.back();
+//
+//        Vec3 v(-2,-2,0);
+//        float length=4.0f;
+//        int divs = 20;
+//        float gridSize=length/float(divs);
+//        for(unsigned y(0); y <= divs; ++y)
+//        {
+//          mesh3d.vertices_.push_back(Vec3(v.x,v.y+y*gridSize,0));
+//          mesh3d.vertices_.push_back(Vec3(v.x+length,v.y+y*gridSize,0));
+//        }
+//        for(unsigned x(0); x <= divs; ++x)
+//        {
+//          mesh3d.vertices_.push_back(Vec3(v.x+x*gridSize,v.y,0));
+//          mesh3d.vertices_.push_back(Vec3(v.x+x*gridSize,v.y+length,0));
+//        }
+//
+//        m.hasTexture_=false;
+//        m.primitiveMode_=GL_LINES;
+        
       }
 
   };
@@ -93,13 +132,15 @@ namespace i3d {
       rm.loadAssets();
 
       perspective_.setPerspectiveTransform(50.f, static_cast<float>(getWindowWidth()), static_cast<float>(getWindowHeight()), 1.f, 60.f);
-      camera_.initCamera(Vec3(0.f, 0.0f, -6.0f), Vec3(1.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), Vec3(0.f, 0.f, 1.f));
 
+      camera_.initCamera(Vec3(0.f, 1.0f, -6.0f), Vec3(1.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), Vec3(0.f, 0.f, 1.f));
+      
       rm.phongDirShaders_.push_back(SimpleShader());
       rm.phongDirShaders_[0].initShader(*camera_.getPosPointer(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
 
       rm.gameObjects_[0].shader_ = &rm.phongDirShaders_[0];
       rm.gameObjects_[1].shader_ = &rm.phongDirShaders_[0];
+      rm.gameObjects_[2].shader_ = &rm.phongDirShaders_[0];
 
       glEnable(GL_DEPTH_TEST);
 
@@ -159,6 +200,11 @@ namespace i3d {
       rm.gameObjects_[1].shader_->eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
       rm.gameObjects_[1].shader_->updateUniforms();
       rm.meshObjects_[1].render();
+
+      rm.gameObjects_[2].shader_->setTransform(rm.meshObjects_[2].transform_.getMatrix());
+      rm.gameObjects_[2].shader_->eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
+      rm.gameObjects_[2].shader_->updateUniforms();
+      rm.meshObjects_[2].render();
 
 #ifndef _MSC_VER
       struct timeval start, end;

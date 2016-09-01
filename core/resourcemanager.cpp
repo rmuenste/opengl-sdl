@@ -93,6 +93,7 @@ namespace i3d {
 
     meshObject.model_.meshes_.reserve(scene->mNumMeshes);
     meshObject.polygonMode_ = GL_FILL; 
+    meshObject.texFormat_ = tCoordFormat::i3d_format_assimp; 
 
     for(unsigned k(0); k < scene->mNumMeshes; ++k)
     {
@@ -109,9 +110,16 @@ namespace i3d {
       mesh.texCoords_.reserve(numVerts);
 
       unsigned count = 0;
+
+      if(scene->mMeshes[k]->mFaces[0].mNumIndices > 3)
+      {
+        std::cerr << "Cannot handle faces with more than 3 vertices: file: " << __FILE__ <<
+          " line: " << __LINE__ << std::endl;
+        std::exit(EXIT_FAILURE);
+      }
+
       for(unsigned i(0); i < scene->mMeshes[k]->mNumFaces; ++i)
       {
-
         const aiFace &face = scene->mMeshes[k]->mFaces[i]; 
         int vi[3];
         int ti[3];

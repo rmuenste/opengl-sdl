@@ -24,6 +24,11 @@ namespace i3d {
     array_render 
   };
 
+  enum class tCoordFormat {
+    i3d_format_default,
+    i3d_format_assimp
+  };
+
   // export from blender
   // Z up, Y forward -> Cull counter-clockwise
   // load obj: swap y with z
@@ -36,6 +41,7 @@ namespace i3d {
         hasTexture_ = false;
         material_ = nullptr;
         primitiveMode_ = GL_TRIANGLES;
+        texFormat_ = tCoordFormat::i3d_format_default;
       };
 
       virtual ~Mesh (){};
@@ -87,6 +93,8 @@ namespace i3d {
       GLenum polygonMode_;
 
       GLenum primitiveMode_;
+
+      tCoordFormat texFormat_;
 
     private:
       /* data */
