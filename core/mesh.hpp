@@ -35,6 +35,7 @@ namespace i3d {
         this->shader_ = nullptr;
         hasTexture_ = false;
         material_ = nullptr;
+        primitiveMode_ = GL_TRIANGLES;
       };
 
       virtual ~Mesh (){};
@@ -82,6 +83,10 @@ namespace i3d {
       bool hasTexture_;
 
       Material *material_;
+
+      GLenum polygonMode_;
+
+      GLenum primitiveMode_;
 
     private:
       /* data */

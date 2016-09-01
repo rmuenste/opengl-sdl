@@ -1,6 +1,5 @@
 #include <mesh.hpp>
 
-
 namespace i3d {
 
   void Mesh::rotate(const Vec3 &v)
@@ -182,6 +181,7 @@ namespace i3d {
     shader_->setUniform(std::string("cameraRotation"), cameraCoord);
 
     glDrawArrays(GL_TRIANGLES, 0, drawVertices_);
+    //glDrawArrays(primitiveMode_, 0, drawVertices_);
 
     glDisableVertexAttribArray(0);
 

@@ -55,6 +55,7 @@ namespace i3d {
         Texture tex;
         tex.createTextureFromImage(i3dTexType::i3d_tex_diffuse_map, fileName);
         textures_.push_back(std::move(tex));
+        meshObject.hasTexture_=true;
 
       }
       else
@@ -64,6 +65,7 @@ namespace i3d {
         Texture tex;
         tex.createTextureFromImage(i3dTexType::i3d_tex_diffuse_map, fileName);
         textures_.push_back(std::move(tex));
+        meshObject.hasTexture_=true;
       }
       float specularExponent;
       if(mat->Get(AI_MATKEY_SHININESS, specularExponent) == AI_SUCCESS)
@@ -90,6 +92,7 @@ namespace i3d {
     }
 
     meshObject.model_.meshes_.reserve(scene->mNumMeshes);
+    meshObject.polygonMode_ = GL_FILL; 
 
     for(unsigned k(0); k < scene->mNumMeshes; ++k)
     {
