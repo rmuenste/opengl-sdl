@@ -119,6 +119,7 @@ namespace i3d {
     AssimpTest3()
     {
       setTitle(std::string("Assimp Texture"));
+      speed_ = 0.05f;
     };
 
     virtual ~AssimpTest3(){};
@@ -152,13 +153,14 @@ namespace i3d {
       static const GLfloat black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
       static const GLfloat ones[] = { 1.0f };
       static const GLfloat green[] = { 0.0f, 0.8f, 0.0f, 1.0f };
+      static const GLfloat grey[] = { 0.4f, 0.4f, 0.4f, 1.0f };
 
       glClearBufferfv(GL_COLOR, 0, black);
       glClearBufferfv(GL_DEPTH, 0, ones);
 
       glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-      glClearBufferfv(GL_COLOR, 0, green);
+      glClearBufferfv(GL_COLOR, 0, grey);
       glClearBufferfv(GL_DEPTH, 0, ones);
 
       glEnable(GL_CULL_FACE);
@@ -169,7 +171,7 @@ namespace i3d {
 
       float x = (float)rand() / (float)(RAND_MAX);
 
-      const GLfloat col[] = { x, 0.f, 0.0f, 1.0f };
+      const GLfloat col[] = { x, 0.3f, 0.3f, 0.3f };
 
       rm.gameObjects_[0].shader_->bind();
 
@@ -244,12 +246,12 @@ namespace i3d {
       case SDLK_LEFT:
         camera_.moveU(-speed_);
         break;
-      case SDLK_UP:
-        camera_.moveV(speed_);
-        break;
-      case SDLK_DOWN:
-        camera_.moveV(-speed_);
-        break;
+//      case SDLK_UP:
+//        camera_.moveV(speed_);
+//        break;
+//      case SDLK_DOWN:
+//        camera_.moveV(-speed_);
+//        break;
       case SDLK_PAGEUP:
         camera_.moveN(speed_);
         break;
@@ -258,17 +260,21 @@ namespace i3d {
         break;
       case SDLK_a:
         camera_.rotateY(-speed_);
+        camera_.outputCameraConfig();
         break;
       case SDLK_d:
         camera_.rotateY(speed_);
+        camera_.outputCameraConfig();
         break;
       case SDLK_w:
-        camera_.rotateX(-speed_);
-        std::cout << camera_.getN() << std::endl;
+        //camera_.rotateX(-speed_);
+        camera_.moveN(speed_);
+        camera_.outputCameraConfig();
         break;
       case SDLK_s:
-        camera_.rotateX(speed_);
-        std::cout << camera_.getN() << std::endl;
+        //camera_.rotateX(speed_);
+        camera_.moveN(-speed_);
+        camera_.outputCameraConfig();
         break;
       case SDLK_0:
       {

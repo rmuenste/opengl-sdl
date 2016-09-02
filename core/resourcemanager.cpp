@@ -69,7 +69,10 @@ namespace i3d {
       }
       float specularExponent;
       if(mat->Get(AI_MATKEY_SHININESS, specularExponent) == AI_SUCCESS)
+      {
+        specularExponent = 40.0f;
         std::cout << "Specular Exponent: " << specularExponent << std::endl; 
+      }
       else
       {
         specularExponent = 20.0f;
@@ -83,6 +86,19 @@ namespace i3d {
         specularIntensity = 0.8f;
         std::cout << "Specular Intensity: " << specularIntensity << std::endl; 
       }
+      aiVector3D col_diffuse;
+      float diffuseIntensity(0.0f);
+      if(mat->Get(AI_MATKEY_COLOR_DIFFUSE, col_diffuse) == AI_SUCCESS)
+      {
+        std::cout << "Diffuse color: " << col_diffuse.x << std::endl; 
+      }
+      else
+      {
+          diffuseIntensity = 1.0f;
+//        specularExponent = 20.0f;
+//        std::cout << "Specular Exponent: " << specularExponent << std::endl; 
+      }
+
       PhongMaterial phong;
       phong.specularIntensity_ = specularIntensity;
       phong.specularExponent_ = specularExponent;
