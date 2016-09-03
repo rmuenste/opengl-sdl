@@ -2,6 +2,20 @@
 #include <fstream>
 #include <mesh.hpp>
 
+#define i3dProcessPreset_TargetRealtime_Quality ( \
+  aiProcess_CalcTangentSpace | \
+  aiProcess_GenSmoothNormals | \
+  aiProcess_JoinIdenticalVertices | \
+  aiProcess_ImproveCacheLocality | \
+  aiProcess_LimitBoneWeights | \
+  aiProcess_RemoveRedundantMaterials | \
+  aiProcess_SplitLargeMeshes | \
+  aiProcess_GenUVCoords | \
+  aiProcess_SortByPType | \
+  aiProcess_FindDegenerates | \
+  aiProcess_FindInvalidData | \
+  0)
+
 namespace i3d {
 
   void ResourceManager::loadAssets()
@@ -29,7 +43,7 @@ namespace i3d {
       return false;
     }
 
-    scene = importer.ReadFile( fileName, aiProcessPreset_TargetRealtime_Quality);
+    scene = importer.ReadFile(fileName, i3dProcessPreset_TargetRealtime_Quality);
 
     // If the import failed, report it
     if( !scene)
@@ -70,8 +84,8 @@ namespace i3d {
       float specularExponent;
       if(mat->Get(AI_MATKEY_SHININESS, specularExponent) == AI_SUCCESS)
       {
-        specularExponent = 40.0f;
         std::cout << "Specular Exponent: " << specularExponent << std::endl; 
+        specularExponent = 40.0f;
       }
       else
       {
@@ -97,6 +111,17 @@ namespace i3d {
           diffuseIntensity = 1.0f;
 //        specularExponent = 20.0f;
 //        std::cout << "Specular Exponent: " << specularExponent << std::endl; 
+      }
+      aiVector3D col_specular;
+      if (mat->Get(AI_MATKEY_COLOR_SPECULAR, col_specular) == AI_SUCCESS)
+      {
+        std::cout << "Diffuse color: " << col_specular.x << std::endl;
+      }
+      else
+      {
+        specularIntensity = 1.0f;
+        //        specularExponent = 20.0f;
+        //        std::cout << "Specular Exponent: " << specularExponent << std::endl; 
       }
 
       PhongMaterial phong;
@@ -127,38 +152,84 @@ namespace i3d {
 
       unsigned count = 0;
 
-      if(scene->mMeshes[k]->mFaces[0].mNumIndices > 3)
+      if (scene->mMeshes[k]->mFaces[0].mNumIndices == 3)
       {
-        std::cerr << "Cannot handle faces with more than 3 vertices: file: " << __FILE__ <<
+        cpTriFaces((*scene->mMeshes[k]), mesh);
+        meshObject.primitiveMode_ = GL_TRIANGLES;
+
+      }
+      else if(scene->mMeshes[k]->mFaces[0].mNumIndices == 4)
+      {
+        std::cerr << "Cannot handle faces with 4 vertices: file: " << __FILE__ <<
+          " line: " << __LINE__ << std::endl;
+        std::exit(EXIT_FAILURE);
+      }
+      else
+      {
+        std::cerr << "Cannot handle faces with " << scene->mMeshes[k]->mFaces[0].mNumIndices << " vertices: file: " << __FILE__ <<
           " line: " << __LINE__ << std::endl;
         std::exit(EXIT_FAILURE);
       }
 
-      for(unsigned i(0); i < scene->mMeshes[k]->mNumFaces; ++i)
-      {
-        const aiFace &face = scene->mMeshes[k]->mFaces[i]; 
-        int vi[3];
-        int ti[3];
-        for(unsigned j(0); j < 3; ++j)
-        {
-          aiVector3D p = scene->mMeshes[k]->mVertices[face.mIndices[j]];
-          aiVector3D n = scene->mMeshes[k]->mNormals[face.mIndices[j]];
-          aiVector3D t = scene->mMeshes[k]->mTextureCoords[0][face.mIndices[j]];
-
-          mesh.vertices_.push_back(Vec3(p.x,p.z,p.y));
-
-          if(scene->mMeshes[k]->HasNormals())
-            mesh.vertexNormals_.push_back(Vec3(n.x,n.z,n.y));
-          
-          mesh.texCoords_.push_back(Vec2(t.x,t.y));
-          vi[j] = count;
-          ti[j] = count;
-          count++;
-        }
-        mesh.faces_.push_back(TriFace(vi, ti));
-      }
     }
     // We're done. Everything will be cleaned up by the importer destructor
     return true;
   }
+
+  void ResourceManager::cpTriFaces(const aiMesh &aimesh, Mesh3D &mesh)
+  {
+    unsigned count = 0;
+    for (unsigned i(0); i < aimesh.mNumFaces; ++i)
+    {
+      const aiFace &face = aimesh.mFaces[i];
+      int vi[3];
+      int ti[3];
+      for (unsigned j(0); j < 3; ++j)
+      {
+        aiVector3D p = aimesh.mVertices[face.mIndices[j]];
+        aiVector3D n = aimesh.mNormals[face.mIndices[j]];
+        aiVector3D t = aimesh.mTextureCoords[0][face.mIndices[j]];
+
+        mesh.vertices_.push_back(Vec3(p.x, p.z, p.y));
+
+        if (aimesh.HasNormals())
+          mesh.vertexNormals_.push_back(Vec3(n.x, n.z, n.y));
+
+        mesh.texCoords_.push_back(Vec2(t.x, t.y));
+        vi[j] = count;
+        ti[j] = count;
+        count++;
+      }
+      mesh.faces_.push_back(TriFace(vi, ti));
+    }
+  }
+
+  void ResourceManager::cpQuadFaces(const aiMesh &aimesh, Mesh3D &mesh)
+  {
+    unsigned count = 0;
+    for (unsigned i(0); i < aimesh.mNumFaces; ++i)
+    {
+      const aiFace &face = aimesh.mFaces[i];
+      int vi[4];
+      int ti[4];
+      for (unsigned j(0); j < 4; ++j)
+      {
+        aiVector3D p = aimesh.mVertices[face.mIndices[j]];
+        aiVector3D n = aimesh.mNormals[face.mIndices[j]];
+        aiVector3D t = aimesh.mTextureCoords[0][face.mIndices[j]];
+
+        mesh.vertices_.push_back(Vec3(p.x, p.z, p.y));
+
+        if (aimesh.HasNormals())
+          mesh.vertexNormals_.push_back(Vec3(n.x, n.z, n.y));
+
+        mesh.texCoords_.push_back(Vec2(t.x, t.y));
+        vi[j] = count;
+        ti[j] = count;
+        count++;
+      }
+      mesh.faces_.push_back(TriFace(vi, ti));
+    }
+  }
+
 }

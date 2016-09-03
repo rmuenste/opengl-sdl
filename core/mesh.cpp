@@ -12,6 +12,7 @@ namespace i3d {
     ObjLoader loader;
     loader.readModelFromFile(&model_, fileName.c_str());
     model_.prepareNonIndexedRendering();
+    primitiveMode_ = GL_TRIANGLES;
   }
 
   void Mesh::buildSmoothNormals()
@@ -65,16 +66,22 @@ namespace i3d {
     }
     else if(primitiveMode_ == GL_LINES)
     {
-      std::cout << "Rendering with lines" << std::endl;
+      std::cout << "Rendering with lines " << model_.meshes_[0].vertices_.size() << " vertices." << std::endl;
+      drawVertices_ = model_.meshes_[0].vertices_.size();
       glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
       glBufferData(GL_ARRAY_BUFFER, model_.meshes_[0].vertices_.size() * 3 * sizeof(float),
-        model_.meshes_.front().vertices_.data(), GL_STATIC_DRAW);
+        model_.meshes_[0].vertices_.data(), GL_STATIC_DRAW);
 
       glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
     }
     else if(primitiveMode_ == GL_QUADS)
     {
+      drawVertices_ = model_.meshes_[0].vertices_.size();
+      glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
+      glBufferData(GL_ARRAY_BUFFER, model_.meshes_[0].vertices_.size() * 3 * sizeof(float),
+        model_.meshes_.front().vertices_.data(), GL_STATIC_DRAW);
 
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
     }
     else
     {
@@ -111,8 +118,8 @@ namespace i3d {
 
       model_.meshes_.front().normalLines_.push_back(model_.meshes_.front().vertices_[i]);
 
-      model_.meshes_.front().normalLines_.push_back(model_.meshes_.front().vertices_[i] +
-                                                    0.125f * model_.meshes_.front().vertexNormals_[i]);
+      //model_.meshes_.front().normalLines_.push_back(model_.meshes_.front().vertices_[i] +
+      //                                              0.125f * model_.meshes_.front().vertexNormals_[i]);
 
     }
 
@@ -336,6 +343,10 @@ namespace i3d {
     else if(primitiveMode_ == GL_LINES)
     {
       glDrawArrays(GL_LINES, 0, drawVertices_);
+    }
+    else if (primitiveMode_ == GL_QUADS)
+    {
+      glDrawArrays(GL_QUADS, 0, drawVertices_);
     }
     else
     {

@@ -15,6 +15,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <simpleshader.hpp>
+#include <basicshader.hpp>
 #include <gameobject.hpp>
 
 namespace i3d {
@@ -38,6 +39,10 @@ namespace i3d {
       virtual void loadScene();
 
       bool import3DFromFile(const std::string fileName, Mesh &meshObject);
+
+  protected:
+    void cpTriFaces(const aiMesh &aimesh, Mesh3D &mesh);
+    void cpQuadFaces(const aiMesh &aimesh, Mesh3D &mesh);
 
   };
 
