@@ -17,6 +17,7 @@
 #include <simpleshader.hpp>
 #include <basicshader.hpp>
 #include <gameobject.hpp>
+#include <memory>
 
 namespace i3d {
 
@@ -29,6 +30,8 @@ namespace i3d {
       std::vector<Texture> textures_;
       std::vector<PhongMaterial> materials_;
       std::vector<SimpleShader> phongDirShaders_;
+      std::vector<std::shared_ptr<BasicShader>> shaders_;
+
       Assimp::Importer importer;
       const aiScene* scene = nullptr;
 

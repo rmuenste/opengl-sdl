@@ -4,6 +4,7 @@
 #include <material.hpp>
 #include <mesh.hpp>
 #include <simpleshader.hpp>
+#include <memory>
 
 namespace i3d {
 
@@ -17,6 +18,8 @@ namespace i3d {
       Material *material_;
 
       SimpleShader *shader_;
+
+      std::shared_ptr<BasicShader> bshader_;
 
       GameObject (void);
 

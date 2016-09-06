@@ -145,11 +145,24 @@ namespace i3d {
       
       rm.phongDirShaders_.push_back(SimpleShader());
       rm.phongDirShaders_[0].initShader(*camera_.getPosPointer(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
-      normalShader_.initShader(*camera_.getPosPointer(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
 
-      rm.gameObjects_[0].shader_ = &rm.phongDirShaders_[0];
-      rm.gameObjects_[1].shader_ = &rm.phongDirShaders_[0];
-      rm.gameObjects_[2].shader_ = &rm.phongDirShaders_[0];
+      std::shared_ptr<SimpleShader> sshader = std::make_shared<SimpleShader>();
+      sshader->initShader(*camera_.getPosPointer(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
+
+      std::shared_ptr<BasicShader> bshader(sshader);
+      rm.shaders_.push_back(bshader);
+
+      //------------------------------------------------------------------------------------------
+
+      std::shared_ptr<NormalShader> normShader = std::make_shared<NormalShader>();
+      normShader->initShader(*camera_.getPosPointer(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
+
+      std::shared_ptr<BasicShader> bshader2(normShader);
+      rm.shaders_.push_back(bshader2);
+
+      rm.gameObjects_[0].bshader_ = rm.shaders_[0];
+      rm.gameObjects_[1].bshader_ = rm.shaders_[0];
+      rm.gameObjects_[2].bshader_ = rm.shaders_[0];
 
       glEnable(GL_DEPTH_TEST);
 
@@ -181,52 +194,48 @@ namespace i3d {
 
       const GLfloat col[] = { x, 0.3f, 0.3f, 0.3f };
 
-      rm.gameObjects_[0].shader_->bind();
+      rm.gameObjects_[0].bshader_->bind();
 
       rm.gameObjects_[1].meshObject_->transform_.scale_.x = 1.0;
       rm.gameObjects_[1].meshObject_->transform_.scale_.y = 1.0;
       rm.gameObjects_[1].meshObject_->transform_.scale_.z = 1.0;
 
 
-      rm.gameObjects_[1].shader_->setTransform(rm.meshObjects_[1].transform_.getMatrix());
-      rm.gameObjects_[1].shader_->setMatrices(perspective_.getPerspectiveTransform(),
+      rm.gameObjects_[1].bshader_->setTransform(rm.meshObjects_[1].transform_.getMatrix());
+      rm.gameObjects_[1].bshader_->setMatrices(perspective_.getPerspectiveTransform(),
         camera_.getCameraTranslationTransform(),
         camera_.getCameraCoordinateTransform()
       );
 
-      rm.gameObjects_[1].shader_->eyePos_ = Vec3(0.8f, 0.0f, 0.0f);
+      rm.gameObjects_[1].bshader_->eyePos_ = Vec3(0.8f, 0.0f, 0.0f);
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       glEnable(GL_TEXTURE_2D);
 
       rm.materials_[0].bindTexture();
 
-      rm.gameObjects_[0].shader_->setTransform(rm.meshObjects_[0].transform_.getMatrix());
-      rm.gameObjects_[0].shader_->updateUniforms();
+      rm.gameObjects_[0].bshader_->setTransform(rm.meshObjects_[0].transform_.getMatrix());
+      rm.gameObjects_[0].bshader_->updateUniforms();
       rm.meshObjects_[0].render();
       
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-      rm.gameObjects_[1].shader_->setTransform(rm.meshObjects_[1].transform_.getMatrix());
-      rm.gameObjects_[1].shader_->eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
-      rm.gameObjects_[1].shader_->updateUniforms();
+      rm.shaders_[0]->bind();
+      rm.shaders_[0]->setTransform(rm.meshObjects_[1].transform_.getMatrix());
+      rm.shaders_[0]->eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
+      rm.shaders_[0]->updateUniforms();
       rm.meshObjects_[1].render();
 
-      normalShader_.bind();
-      normalShader_.setTransform(rm.meshObjects_[2].transform_.getMatrix());
-      normalShader_.setMatrices(perspective_.getPerspectiveTransform(),
-        camera_.getCameraTranslationTransform(),
-        camera_.getCameraCoordinateTransform()
+      rm.shaders_[1]->bind();
+      rm.shaders_[1]->bind();
+      rm.shaders_[1]->setTransform(rm.meshObjects_[2].transform_.getMatrix());
+      rm.shaders_[1]->setMatrices(perspective_.getPerspectiveTransform(),
+                                  camera_.getCameraTranslationTransform(),
+                                  camera_.getCameraCoordinateTransform()
       );
 
-      normalShader_.eyePos_ = Vec3(0.6f, 0.6f, 0.6f);
-      normalShader_.updateUniforms();
+      rm.shaders_[1]->eyePos_ = Vec3(0.6f, 0.6f, 0.6f);
+      rm.shaders_[1]->updateUniforms();
       rm.gameObjects_[2].render();
-
-      //rm.materials_[2].bindTexture();
-      //rm.gameObjects_[2].shader_->setTransform(rm.meshObjects_[2].transform_.getMatrix());
-      //rm.gameObjects_[2].shader_->eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
-      //rm.gameObjects_[2].shader_->updateUniforms();
-      //rm.meshObjects_[2].render();
 
 #ifndef _MSC_VER
       struct timeval start, end;
@@ -335,7 +344,6 @@ namespace i3d {
     float time_;
     float speed_;
     MyResourceManager rm;
-    NormalShader normalShader_;
 
   };
 

@@ -66,8 +66,6 @@ namespace i3d
       //shadowTex_->bind();
       //glBindSampler(2, shadowTex_->id_);
 
-
-
     }
 
     virtual ~NormalShader() {};
