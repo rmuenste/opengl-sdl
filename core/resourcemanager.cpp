@@ -356,6 +356,8 @@ bool ResourceManager::import3DFromFile(const std::string fileName, Mesh &meshObj
       mesh.faces_.push_back(TriFace(vi, ti));
     }
   }
+  // We're done. Everything will be cleaned up by the importer destructor
+  return true;
 }
 
   void ResourceManager::cpTriFaces(const aiMesh &aimesh, Mesh3D &mesh)
