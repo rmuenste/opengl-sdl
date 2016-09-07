@@ -42,33 +42,13 @@ namespace i3d {
 
       virtual void loadAssets()
       {
-        textures_.reserve(10);
-        gameObjects_.push_back(GameObject());
-        meshObjects_.push_back(Mesh());
 
-        if(!import3DFromFile("../../meshes/quad.obj", meshObjects_[0]))
+        if(!ResourceManager::loadScene("../../meshes/test_scene.dae"))
         {
-          std::cout << "Assimp import failed." << std::endl; 
+          std::cerr << "Loading Scene failed..." << std::endl;
+          std::exit(EXIT_FAILURE);
         }
-        std::cout << "render verts: " << meshObjects_[0].model_.meshes_[0].vertices_.size() << std::endl; 
 
-        meshObjects_[0].transform_.translation_ = i3d::Vec4(0.f, 1.8f, 0.f, 1.f);
-        meshObjects_[0].transform_.translation_ = i3d::Vec4(0.f, 0.0f, 0.f, 0.f);
-        meshObjects_[0].transform_.setRotationEuler(i3d::Vec3(0.0f, 0.0f, 0.0f));
-        meshObjects_[0].initRender();
-        gameObjects_[0].meshObject_ = &meshObjects_[0];
-
-
-        gameObjects_.push_back(GameObject());
-        meshObjects_.push_back(Mesh());
-        if(!import3DFromFile("../../meshes/sphere.obj", meshObjects_[1]))
-        {
-          std::cout << "Assimp import failed." << std::endl; 
-        }
-        meshObjects_[1].transform_.translation_ = i3d::Vec4(0.0, 0.0, 0.0, 1);
-        meshObjects_[1].transform_.setRotationEuler(i3d::Vec3(0.0, 0.0, 0.0));
-        meshObjects_[1].initRender();
-        gameObjects_[1].meshObject_ = &meshObjects_[1];
       }
 
   };
@@ -79,6 +59,8 @@ namespace i3d {
     AssimpTest2()
     {
       setTitle(std::string("Assimp Test"));
+      speed_ = 0.05f;
+      time_ = 0;
     };
 
     virtual ~AssimpTest2(){};
@@ -89,13 +71,16 @@ namespace i3d {
 
       rm.loadAssets();
 
-      perspective_.setPerspectiveTransform(50.f, static_cast<float>(getWindowWidth()), static_cast<float>(getWindowHeight()), 1.f, 60.f);
-      camera_.initCamera(Vec3(0.f, 0.0f, -6.0f), Vec3(1.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), Vec3(0.f, 0.f, 1.f));
+      perspective_.setPerspectiveTransform(70.f, static_cast<float>(getWindowWidth()), static_cast<float>(getWindowHeight()), 1.f, 60.f);
+      camera_.initCamera(Vec3(0.f, 1.8f, -6.0f), Vec3(1.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), Vec3(0.f, 0.f, 1.f));
 
       rm.phongDirShaders_.push_back(SimpleShader());
       rm.phongDirShaders_[0].initShader(*camera_.getPosPointer(), perspective_.getPerspectiveTransform(), camera_.getCameraTranslationTransform(), camera_.getCameraCoordinateTransform());
 
-      rm.gameObjects_[1].shader_ = &rm.phongDirShaders_[0];
+      for(auto &go : rm.gameObjects_)
+      {
+        go.shader_ = &rm.phongDirShaders_[0];
+      }
 
       glEnable(GL_DEPTH_TEST);
 
@@ -126,37 +111,22 @@ namespace i3d {
 
       const GLfloat col[] = { x, 0.f, 0.0f, 1.0f };
 
-      rm.gameObjects_[1].shader_->bind();
+      rm.gameObjects_[0].shader_->bind();
+      for(auto &go : rm.gameObjects_)
+      {
+        go.material_->bindTexture();
+        go.shader_->setTransform(go.meshObject_->transform_.getMatrix());
+        go.shader_->setMatrices(perspective_.getPerspectiveTransform(),
+          camera_.getCameraTranslationTransform(),
+          camera_.getCameraCoordinateTransform()
+        );
 
-      rm.gameObjects_[1].meshObject_->transform_.scale_.x = 1.0;
-      rm.gameObjects_[1].meshObject_->transform_.scale_.y = 1.0;
-      rm.gameObjects_[1].meshObject_->transform_.scale_.z = 1.0;
+        go.shader_->eyePos_ = Vec3(0.8f, 0.0f, 0.0f);
+        go.shader_->updateUniforms();
+        go.render();
+      }
 
 
-      rm.gameObjects_[1].shader_->setTransform(rm.meshObjects_[1].transform_.getMatrix());
-      rm.gameObjects_[1].shader_->setMatrices(perspective_.getPerspectiveTransform(),
-        camera_.getCameraTranslationTransform(),
-        camera_.getCameraCoordinateTransform()
-      );
-
-      rm.gameObjects_[1].shader_->eyePos_ = Vec3(0.8f, 0.0f, 0.0f);
-      rm.gameObjects_[1].shader_->updateUniforms();
-
-      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-      rm.meshObjects_[1].render();
-
-      rm.meshObjects_[1].transform_.scale_.x = 1.01;
-      rm.meshObjects_[1].transform_.scale_.y = 1.01;
-      rm.meshObjects_[1].transform_.scale_.z = 1.01;
-      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      rm.gameObjects_[1].shader_->setTransform(rm.meshObjects_[1].transform_.getMatrix());
-      rm.gameObjects_[1].shader_->eyePos_ = Vec3(0.0f, 0.0f, 0.8f);
-      rm.gameObjects_[1].shader_->updateUniforms();
-      rm.meshObjects_[1].render();
-
-      rm.gameObjects_[1].shader_->setTransform(rm.meshObjects_[0].transform_.getMatrix());
-      rm.gameObjects_[1].shader_->updateUniforms();
-      rm.meshObjects_[0].render();
 
 #ifndef _MSC_VER
       struct timeval start, end;
@@ -196,12 +166,12 @@ namespace i3d {
       case SDLK_LEFT:
         camera_.moveU(-speed_);
         break;
-      case SDLK_UP:
-        camera_.moveV(speed_);
-        break;
-      case SDLK_DOWN:
-        camera_.moveV(-speed_);
-        break;
+      //case SDLK_UP:
+      //  camera_.moveV(speed_);
+      //  break;
+      //case SDLK_DOWN:
+      //  camera_.moveV(-speed_);
+      //  break;
       case SDLK_PAGEUP:
         camera_.moveN(speed_);
         break;
@@ -210,17 +180,21 @@ namespace i3d {
         break;
       case SDLK_a:
         camera_.rotateY(-speed_);
+        camera_.outputCameraConfig();
         break;
       case SDLK_d:
         camera_.rotateY(speed_);
+        camera_.outputCameraConfig();
         break;
       case SDLK_w:
-        camera_.rotateX(-speed_);
-        std::cout << camera_.getN() << std::endl;
+        //camera_.rotateX(-speed_);
+        camera_.moveN(speed_);
+        camera_.outputCameraConfig();
         break;
       case SDLK_s:
-        camera_.rotateX(speed_);
-        std::cout << camera_.getN() << std::endl;
+        //camera_.rotateX(speed_);
+        camera_.moveN(-speed_);
+        camera_.outputCameraConfig();
         break;
       case SDLK_0:
       {
@@ -233,7 +207,7 @@ namespace i3d {
           renderMode_ = GL_FILL;
         }
       }
-      break;
+        break;
       }
     }
 
