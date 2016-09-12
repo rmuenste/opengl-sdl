@@ -22,6 +22,47 @@
 
 namespace i3d {
 
+  struct MeshTraits {
+    std::vector<Vec3> v;
+    std::vector<Vec3> f;
+  };
+
+  struct ConstraintSpring {
+    int p1, p2;
+    float rest_length;
+    float Ks, Kd;
+    int type;
+  };
+
+  int numX = 17, numY = 17;
+
+  const int STRUCTURAL_SPRING = 0;
+  const int SHEAR_SPRING = 1;
+  const int BEND_SPRING = 2;
+  int spring_count = 0;
+
+  const float DEFAULT_DAMPING = -0.0125f;
+  float	KsStruct = 0.5f, KdStruct = -0.25f;
+  float	KsShear = 0.5f, KdShear = -0.25f;
+  float	KsBend = 0.85f, KdBend = -0.25f;
+  Vec3 gravity(0.0f, -0.00981f, 0.0f);
+  float mass = 0.5f;
+
+  std::vector<ConstraintSpring> springs;
+  MeshTraits traits_;
+
+  void AddSpring(int a, int b, float ks, float kd, int type) {
+    ConstraintSpring spring;
+    spring.p1 = a;
+    spring.p2 = b;
+    spring.Ks = ks;
+    spring.Kd = kd;
+    spring.type = type;
+    //glm::vec3 deltaP = X[a] - X[b];
+    //spring.rest_length = sqrt(glm::dot(deltaP, deltaP));
+    springs.push_back(spring);
+  }
+
   class SkyBoxTest : public SDL_GL_application
   {
   public:
@@ -34,6 +75,58 @@ namespace i3d {
     };
 
     virtual ~SkyBoxTest(){};
+
+    void ComputeForces() {
+      size_t i = 0;
+
+      for (i = 0; i<springs.size(); i++) {
+        traits_.f[i] = Vec3(0,0,0);
+
+        //add gravity force only for non-fixed points
+        if (i != 0 && i != numX)
+          traits_.f[i] += gravity;
+
+        //add force due to damping of velocity
+        traits_.f[i] += DEFAULT_DAMPING*traits_.v[i];
+      }
+
+      //add spring forces
+      for (i = 0; i<springs.size(); i++) {
+        Vec3 p1 = quad_.model_.meshes_.front().vertices_[springs[i].p1];
+        Vec3 p2 = quad_.model_.meshes_.front().vertices_[springs[i].p2];
+        Vec3 v1 = traits_.v[springs[i].p1];
+        Vec3 v2 = traits_.v[springs[i].p2];
+        Vec3 deltaP = p1 - p2;
+        Vec3 deltaV = v1 - v2;
+        float dist = deltaP.mag();
+
+        float leftTerm = -springs[i].Ks * (dist - springs[i].rest_length);
+        float rightTerm = springs[i].Kd * (deltaV * deltaP) * (1.0/ dist);
+        deltaP.normalize();
+        Vec3 springForce = (leftTerm + rightTerm)*deltaP;
+
+        if (springs[i].p1 != 0 && springs[i].p1 != numX)
+          traits_.f[springs[i].p1] += springForce;
+        if (springs[i].p2 != 0 && springs[i].p2 != numX)
+          traits_.f[springs[i].p2] -= springForce;
+      }
+    }
+
+
+    void IntegrateEuler(float deltaTime) {
+      float deltaTimeMass = deltaTime / mass;
+      size_t i = 0;
+
+      for (i = 0; i<quad_.model_.meshes_.front().vertices_.size(); i++) {
+        Vec3 oldV = traits_.v[i];
+        traits_.v[i] += (traits_.v[i] * deltaTimeMass);
+        quad_.model_.meshes_.front().vertices_[i] += deltaTime*oldV;
+
+        //if (X[i].y <0) {
+        //  X[i].y = 0;
+        //}
+      }
+    }
 
     void init()
     {
@@ -123,7 +216,7 @@ namespace i3d {
 
       ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      quad_.loadMesh("../../meshes/ground.obj");
+      quad_.loadMesh("../../meshes/cloth1.obj");
       quad_.buildSmoothNormals();
 
       Texture e;
@@ -171,6 +264,52 @@ namespace i3d {
       wall2_.transform_.setRotationEuler(i3d::Vec3(0.0, 0.0, 0.0));
 
       wall2_.initRender();
+
+      //setup springs
+      // Horizontal
+      int l1, l2;
+      int u = 17;
+      int v = 17;
+      for (l1 = 0; l1 < v; ++l1)	// v
+        for (l2 = 0; l2 < (u - 1); ++l2) {
+          AddSpring((l1 * u) + l2, (l1 * u) + l2 + 1, KsStruct, KdStruct, STRUCTURAL_SPRING);
+        }
+
+      // Vertical
+      for (l1 = 0; l1 < (u); l1++)
+      for (l2 = 0; l2 < (v - 1); l2++) {
+        AddSpring((l2 * u) + l1, ((l2 + 1) * u) + l1, KsStruct, KdStruct, STRUCTURAL_SPRING);
+      }
+      // Shearing Springs
+      for (l1 = 0; l1 < (v - 1); l1++)
+      for (l2 = 0; l2 < (u - 1); l2++) {
+        AddSpring((l1 * u) + l2, ((l1 + 1) * u) + l2 + 1, KsShear, KdShear, SHEAR_SPRING);
+        AddSpring(((l1 + 1) * u) + l2, (l1 * u) + l2 + 1, KsShear, KdShear, SHEAR_SPRING);
+      }
+
+
+      // Bend Springs
+      for (l1 = 0; l1 < (v); l1++) {
+        for (l2 = 0; l2 < (u - 2); l2++) {
+          AddSpring((l1 * u) + l2, (l1 * u) + l2 + 2, KsBend, KdBend, BEND_SPRING);
+        }
+        AddSpring((l1 * u) + (u - 3), (l1 * u) + (u - 1), KsBend, KdBend, BEND_SPRING);
+      }
+      for (l1 = 0; l1 < (u); l1++) {
+        for (l2 = 0; l2 < (v - 2); l2++) {
+          AddSpring((l2 * u) + l1, ((l2 + 2) * u) + l1, KsBend, KdBend, BEND_SPRING);
+        }
+        AddSpring(((v - 3) * u) + l1, ((v - 1) * u) + l1, KsBend, KdBend, BEND_SPRING);
+      }
+
+      int s = quad_.model_.meshes_.front().vertices_.size();
+      traits_.v.reserve(s);
+      traits_.f.reserve(s);
+      for (unsigned i(0); i < s; ++i)
+      {
+        traits_.v.push_back(Vec3(0, 0, 0));
+        traits_.f.push_back(Vec3(0, 0, 0));
+      }
 
     }
 
@@ -264,15 +403,15 @@ namespace i3d {
       //shaderShadow_.updateUniforms();
       //room_.render();
 
-      shaderShadow_.setTransform(wall_.transform_.getMatrix());
-      shaderShadow_.bindMaterial(wall_.material_);
-      shaderShadow_.updateUniforms();
-      wall_.render();
+      //shaderShadow_.setTransform(wall_.transform_.getMatrix());
+      //shaderShadow_.bindMaterial(wall_.material_);
+      //shaderShadow_.updateUniforms();
+      //wall_.render();
 
-      shaderShadow_.setTransform(wall2_.transform_.getMatrix());
-      shaderShadow_.bindMaterial(wall2_.material_);
-      shaderShadow_.updateUniforms();
-      wall2_.render();
+      //shaderShadow_.setTransform(wall2_.transform_.getMatrix());
+      //shaderShadow_.bindMaterial(wall2_.material_);
+      //shaderShadow_.updateUniforms();
+      //wall2_.render();
 
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

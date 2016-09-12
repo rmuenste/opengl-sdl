@@ -366,10 +366,10 @@ void Mesh3D::buildIndexArraysUV()
     {
       indices_[i*3+j]=faces_[i].m_VertIndices[j];
       texIndices_[i*3+j]=faces_[i].m_TexIndices[j];
-      std::cout << "face: " << i << " index: " << faces_[i].m_VertIndices[j] << std::endl;
-      std::cout << "texFace: " << i << " index: " << faces_[i].m_TexIndices[j] << std::endl;
+      //std::cout << "face: " << i << " index: " << faces_[i].m_VertIndices[j] << std::endl;
+      //std::cout << "texFace: " << i << " index: " << faces_[i].m_TexIndices[j] << std::endl;
     }//end for
-    std::cout << "-----------" << std::endl;
+    //std::cout << "-----------" << std::endl;
   }//end for
 }
 
@@ -382,7 +382,7 @@ void Mesh3D::buildIndexArraysN()
     for (unsigned j(0); j < 3; ++j)
     {
       indices_[i*3+j]=faces_[i].m_VertIndices[j];
-      std::cout << "face: " << i << "index: " << faces_[i].m_VertIndices[j] << std::endl;
+      //std::cout << "face: " << i << "index: " << faces_[i].m_VertIndices[j] << std::endl;
     }//end for
   }//end for
 }
@@ -477,7 +477,8 @@ void Mesh3D::prepareNonIndexedRendering()
       int i_v = f.m_VertIndices[i];
       temp.push_back(vertices_[i_v]);
       orderedTexCoords_.push_back(texCoords_[i_t]);
-    } 
+    }
+    //std::cout << f.m_VertIndices[0] << " " << f.m_VertIndices[1] << " " << f.m_VertIndices[2] << std::endl;
   }
   rawVertices_ = vertices_;
   vertices_ = temp;
@@ -501,7 +502,7 @@ void Mesh3D::prepareIndexArrays()
         int i_v = f.m_VertIndices[i];
 
         orderedTexCoords_[i_v] = texCoords_[i_t]; 
-      } 
+      }
     }
   }
   else

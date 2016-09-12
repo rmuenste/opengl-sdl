@@ -164,7 +164,6 @@ namespace i3d {
       mesh.texCoords_.reserve(numVerts);
       std::cout << "Loading mesh with: " << numVerts << " vertices." << std::endl;
       std::cout << "Loading " << scene->mMeshes[k]->mName.C_Str() << "." << std::endl;
-
       
       if(scene->mMeshes[k]->mMaterialIndex < scene->mNumMaterials)
       {
@@ -203,6 +202,7 @@ namespace i3d {
           count++;
         }
         mesh.faces_.push_back(TriFace(vi, ti));
+        //std::cout << "face: " << vi[0] << " " << vi[1] << " " << vi[2] << std::endl;
       }
       meshObj.transform_.translation_ = i3d::Vec4(0.f, 0.0f, 0.f, 0.f);
       meshObj.transform_.setRotationEuler(i3d::Vec3(0.0f, 0.0f, 0.0f));
