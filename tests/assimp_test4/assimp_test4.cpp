@@ -42,7 +42,7 @@ namespace i3d {
 
       void make_cloth_mesh()
       {
-        std::string fileName("../../meshes/cloth.obj");
+        std::string fileName("../../meshes/mycloth3.obj");
 
         using namespace std;
         ofstream myfile(fileName);
@@ -54,22 +54,22 @@ namespace i3d {
           std::exit(EXIT_FAILURE);
         }//end if
 
-        Vec3 min(-4, -4, 0);
+        Vec3 min(-2, 0, -2);
         int divs = 16;
         float fsize = 1.0f / float(divs);
-        float length = 8.0f;
+        float length = 4.0f;
         float cellSize = length * fsize;
         int vertsx = divs + 1;
         int vertsy = divs + 1;
         //Vec3 *mygrid = new Vec3[vertsx * vertsy];
         std::vector<Vec3> mygrid(vertsx * vertsy);
 
-        for (unsigned y(0); y <= divs; ++y)
+        for (unsigned z(0); z <= divs; ++z)
         {
           for (unsigned x(0); x <= divs; ++x)
           {
-            Vec3 v(min.x + x * cellSize, min.y + y * cellSize, min.z);
-            mygrid[y * vertsy + x] = v;
+            Vec3 v(min.x + x * cellSize, min.y, min.z + z * cellSize);
+            mygrid[z * vertsy + x] = v;
           }
         }
 
@@ -97,15 +97,16 @@ namespace i3d {
         myfile << "usemtl Material_#1.007\n";
         myfile << "s 1\n";
 
-        std::vector<TriFace> faces(divs * divs * 2);
         for (unsigned y(0); y < divs; ++y)
         {
           for (unsigned x(1); x <= divs; ++x)
           {
             int base = y * vertsy + x;
-            myfile << "f " << base << "/" << base << "/1 " << base + 1 << "/" << base + 1 << "/1 " << base + vertsy << "/" << base + vertsy << "/1\n";
-
-            myfile << "f " << base + 1<< "/" << base + 1<< "/1 " << base + vertsy + 1 << "/" << base + vertsy + 1 << "/1 " << base + vertsy << "/" << base + vertsy << "/1\n";
+            myfile << "f " << base << "/" << base << "/1 "
+                           << base + 1 << "/" << base + 1 << "/1 " 
+                           << base + vertsy + 1 << "/" << base + vertsy + 1 << "/1 "
+                           << base + vertsy << "/" << base + vertsy << "/1\n";
+            //myfile << "f " << base + 1<< "/" << base + 1<< "/1 " << base + vertsy + 1 << "/" << base + vertsy + 1 << "/1 " << base + vertsy << "/" << base + vertsy << "/1\n";
           }
         }
         myfile.close();
@@ -113,8 +114,8 @@ namespace i3d {
 
       virtual void loadAssets()
       {
-        //make_cloth_mesh();
-        //std::exit(EXIT_FAILURE);
+        make_cloth_mesh();
+        std::exit(EXIT_FAILURE);
         //if(!ResourceManager::loadScene("../../meshes/test_scene.dae"))
         //if (!ResourceManager::loadScene("../../meshes/nord_room_04.obj"))
         if (!ResourceManager::loadScene("../../meshes/cloth.obj"))

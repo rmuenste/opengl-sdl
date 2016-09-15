@@ -1,0 +1,507 @@
+# Blender MTL File: 'None'
+# Material Count: 46
+
+newmtl Material
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Material_#
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_wood_khaki_01.png
+
+newmtl Material_#1
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\Tx_metal_iron_rusty.png
+
+newmtl Material_#1.00
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_wood_khaki_01.png
+
+newmtl Material_#1.002
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_hinge_02.png
+
+newmtl Material_#1.002_tx_rope_heavy
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_rope_heavy.png
+
+newmtl Material_#1.005
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_wood_interior_plain_01.png
+
+newmtl Material_#1.006
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_hinge_02.png
+
+newmtl Material_#1.007
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_metal_strip_02.png
+
+newmtl Material_#1.008
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_keyhole_04.png
+
+newmtl Material_#1.01
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\Tx_wood_interior_plain_01.png
+
+newmtl Material_#1.02
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\@_metal_strip_02X.png
+
+newmtl Material_#1.04
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_wood_khaki_01.png
+
+newmtl Material_#1.05
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_wax_aqua_02.png
+
+newmtl Material_#179
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.992157 0.992157 0.992157
+Ks 0.000000 0.000000 0.000000
+Ke 0.992157 0.992157 0.992157
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_border_metal_bronze_01.png
+
+newmtl Material_#180
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_wood_brown_posts_02.png
+
+newmtl Material_#2.00
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\Tx_wood_oldwood_scarred.png
+
+newmtl Material_#2.01
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_metal_strip_02.png
+
+newmtl Material_#2.04
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_hinge_02.png
+
+newmtl Material_#2.05
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.876341 0.876341 0.876341
+Ks 0.000000 0.000000 0.000000
+Ke 0.876341 0.876341 0.876341
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_rope_heavy.png
+
+newmtl Material_#22
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_wood_brown_box_01.png
+
+newmtl Material_#25
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_wood_brown_posts_02.png
+
+newmtl Material_#25.00
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_wood_khaki_01.png
+
+newmtl Material_#25.001
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\Tx_wall_stuccostone_01.png
+
+newmtl Material_#25.002
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\Tx_thatch_01.png
+
+newmtl Material_#25.003
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\Tx_wall_stuccostone_eL_01.png
+
+newmtl Material_#25.004
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\Tx_wall_stuccostone_eR_01.png
+
+newmtl Material_#25.005
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_wood_baseboard_01.png
+
+newmtl Material_#25.006
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_wood_wornfloor_01.png
+
+newmtl Material_#25.01
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_wood_brown_posts_02.png
+
+newmtl Material_#25.02
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_wood_brown_posts_02.png
+
+newmtl Material_#26
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\Tx_metal_iron_rusty.png
+
+newmtl Material_#3
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_wood_brown_strip.png
+
+newmtl Material_#3.01
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.920989 0.920989 0.920989
+Ks 0.000000 0.000000 0.000000
+Ke 0.920989 0.920989 0.920989
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_canvaswrap_01.png
+
+newmtl Material_#31
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_metal_strip_01.png
+
+newmtl Material_#31.00
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_metal_strip_01.png
+
+newmtl Material_#31.001
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_wall_stone_01.png
+
+newmtl Material_#31.002
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\Tx_stone_plain_01.png
+
+newmtl Material_#4
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_ropestrip_01.png
+
+newmtl Material_#4.00
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\Tx_fabric_brown_bed.png
+
+newmtl Material_#5
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_metal_strip_02.png
+
+newmtl Material_#56
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\Tx_de_tapestry_03.png
+map_d D:\code\morrowmeshes\mytextures\Tx_de_tapestry_03.png
+
+newmtl Material_#6
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\Tx_wood_oldwood_rings.png
+
+newmtl Material_#6.00
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\Tx_fabric_tan.png
+
+newmtl Material_#6909
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd D:\code\morrowmeshes\mytextures\tx_hinge_01.png
+
+newmtl noname.10
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.031373 0.431373 0.525490
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
